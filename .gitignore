@@ -1,0 +1,29 @@
+# Node modules
+node_modules
+
+# Build outputs
+.output
+.vercel
+.svelte-kit
+/build
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite config timestamps
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# VSCode files
+.vscode/
