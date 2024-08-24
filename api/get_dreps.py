@@ -19,7 +19,7 @@ def fetch_dreps(base_url):
             if voting_power is not None:
                 voting_power /= 1_000_000  # Convert lovelaces to ADA
             all_data.append({
-                'label': element['drepId'],
+                'label': element['view'],
                 'votingPower': voting_power
             })
         

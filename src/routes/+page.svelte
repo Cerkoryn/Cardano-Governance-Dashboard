@@ -7,21 +7,36 @@
     let proposals: Proposal[] = [];
     let darkMode = get(isDarkMode);
 
-    onMount(async () => {
-        const response = await fetch('/tmp/spos.json');
+    onMount(() => {
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme) {
+            darkMode = storedTheme === 'dark';
+        } else {
+            darkMode = false; // Default to light mode
+        }
+        isDarkMode.set(darkMode);
+        updateBodyClass();
+    });
+
+    async function fetchData() {
+        const response = await fetch('/data/spos.json'); 
         const spoData = await response.json();
-        const response2 = await fetch('/tmp/dreps.json');
+        const response2 = await fetch('/data/dreps.json'); 
         const drepData = await response2.json();
 
         proposals = calculateProposals(spoData, drepData);
-    });
+    }
+
+    onMount(fetchData);
 
     function toggleTheme() {
         darkMode = !darkMode;
         isDarkMode.set(darkMode);
+        localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+        updateBodyClass();
     }
 
-    $: {
+    function updateBodyClass() {
         if (typeof document !== 'undefined') {
             if (darkMode) {
                 document.body.classList.add('dark-mode');
@@ -32,6 +47,8 @@
             }
         }
     }
+
+    $: updateBodyClass();
 
     type Pool = {
         stake: number;
