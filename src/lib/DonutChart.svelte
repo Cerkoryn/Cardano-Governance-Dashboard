@@ -2,15 +2,92 @@
     import { onMount } from 'svelte';
     import Chart from 'chart.js/auto';
 
-    export let values: { label: string; stake: number }[]; // Updated type
+    export let values: { label: string; stake: number }[] | { label: string; votingPower: number }[];
     export let title: string;
     export let subtitle: string = '';
     export let size: 'large' | 'medium' | 'small' = 'small';
-    export let chartType: 'default' | 'gray' = 'default';
+    export let chartType: 'default' | 'gray' | 'yellow' = 'default';
     export let minPools: number;
     export let displayValue: string;
+    export let secondaryDisplayValue: string;
 
     let canvas: HTMLCanvasElement;
+
+    function customTooltip(context: any) {
+    // Tooltip Element
+    let tooltipEl = document.getElementById('chartjs-tooltip');
+
+    // Create element on first render
+    if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.id = 'chartjs-tooltip';
+        tooltipEl.innerHTML = '<table></table>';
+        document.body.appendChild(tooltipEl);
+    }
+
+    // Hide if no tooltip
+    const tooltipModel = context.tooltip;
+    if (tooltipModel.opacity === 0) {
+        tooltipEl.style.opacity = '0';
+        return;
+    }
+
+    // Set caret Position
+    tooltipEl.classList.remove('above', 'below', 'no-transform');
+    if (tooltipModel.yAlign) {
+        tooltipEl.classList.add(tooltipModel.yAlign);
+    } else {
+        tooltipEl.classList.add('no-transform');
+    }
+
+    function getBody(bodyItem: { lines: string[] }) {
+        return bodyItem.lines;
+    }
+
+    // Set Text
+    if (tooltipModel.body) {
+        const titleLines = tooltipModel.title || [];
+        const bodyLines = tooltipModel.body.map(getBody);
+
+        let innerHtml = '<thead>';
+
+        titleLines.forEach(function (title: string) {
+            innerHtml += '<tr><th>' + title + '</th></tr>';
+        });
+        innerHtml += '</thead><tbody>';
+
+        bodyLines.forEach(function (body: string[], i: number) {
+            const colors = tooltipModel.labelColors[i];
+            const style = 'background:' + colors.backgroundColor + '; width: 10px; height: 10px; display: inline-block; margin-right: 5px;';
+            const span = '<span style="' + style + '"></span>';
+            innerHtml += '<tr><td>' + span + body + '</td></tr>';
+        });
+        innerHtml += '</tbody>';
+
+        const tableRoot = tooltipEl.querySelector('table');
+        if (tableRoot) {
+            tableRoot.innerHTML = innerHtml;
+        }
+    }
+
+    const position = context.chart.canvas.getBoundingClientRect();
+
+    // Display, position, and set styles for font
+    tooltipEl.style.opacity = '1';
+    tooltipEl.style.position = 'absolute';
+    tooltipEl.style.left = position.left + window.scrollX + tooltipModel.caretX + 'px';
+    tooltipEl.style.top = position.top + window.scrollY + tooltipModel.caretY + 'px';
+    tooltipEl.style.fontFamily = tooltipModel.options.bodyFont.family;
+    tooltipEl.style.fontSize = tooltipModel.options.bodyFont.size + 'px';
+    tooltipEl.style.fontStyle = tooltipModel.options.bodyFont.style;
+    tooltipEl.style.pointerEvents = 'none';
+    tooltipEl.style.zIndex = '9999'; // Ensure tooltip is on top
+    tooltipEl.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+    tooltipEl.style.color = 'white';
+    tooltipEl.style.textAlign = 'left';
+    tooltipEl.style.padding = '2px';
+    tooltipEl.style.transition = 'opacity 0.4s ease, transform 0.3s ease-in-out, background-color 0.4s linear';
+}
 
     onMount(() => {
         const ctx = canvas.getContext('2d');
@@ -20,13 +97,16 @@
                 data: {
                     labels: values.map(value => value.label), 
                     datasets: [{
-                        data: values.map(value => value.stake), 
+                        data: values.map(value => 'stake' in value ? value.stake : value.votingPower), 
                         backgroundColor: chartType === 'gray' 
                             ? ['#808080'] 
-                            : title === 'CC' 
-                                ? values.map((_, index) => index < 5 ? '#f44336' : '#4caf50') 
-                                : values.map((_, index) => index < minPools ? '#f44336' : '#4caf50'),
-                    borderWidth: 0
+                            : chartType === 'yellow'
+                                ? values.map((_, index) => index < minPools ? '#e65100' : '#fec104')
+                                : title === 'CC' 
+                                    ? values.map((_, index) => index < 5 ? '#f44336' : '#4caf50') 
+                                    : values.map((_, index) => index < minPools ? '#f44336' : '#4caf50'),
+                    borderWidth: 0.1,
+                    borderColor: 'black'
                     }]
                 },
                 options: {
@@ -36,13 +116,15 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            enabled: true,
+                            enabled: false,
+                            external: customTooltip,
+                            position: 'nearest',
                             callbacks: {
-                                label: function(context) {
+                                label: function(context: any) {
                                     if (chartType === 'gray') {
                                         return '';
                                     }
-                                    const totalStake = values.reduce((acc, value) => acc + value.stake, 0); 
+                                    const totalStake = values.reduce((acc, value) => acc + ('stake' in value ? value.stake : value.votingPower), 0); 
                                     const value = context.raw as number;
                                     const percentage = ((value / totalStake) * 100).toFixed(2);
                                     let label;
@@ -72,7 +154,12 @@
 
 <div class="chart-container {size}">
     <canvas bind:this={canvas}></canvas>
-    <div class="chart-value">{displayValue}</div>
+    <div class="chart-value-container">
+        <div class="chart-value" class:chart-value-yellow={chartType === 'yellow'}>{displayValue}</div>
+        {#if secondaryDisplayValue}
+            <div class="chart-secondary-value">{secondaryDisplayValue}</div>
+        {/if}
+    </div>
     {#if title}
         <div class="chart-title">{title}</div>
     {/if}
@@ -85,6 +172,7 @@
     .chart-container {
         position: relative;
         margin: 1rem auto 0 auto;
+        z-index: 1;
     }
     .chart-container.large {
         width: 350px;
@@ -98,13 +186,27 @@
         width: 150px;
         height: 150px;
     }
-    .chart-value {
+    .chart-value-container {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .chart-value {
         font-weight: bold;
-        color: white;
+        color: var(--chart-value-color);
+    }
+    .chart-secondary-value {
+        font-size: 1.2rem;
+        color: var(--chart-secondary-value-color);
+        margin-top: 0rem;
+    }
+    .chart-value-yellow {
+        color: #fd551f;
     }
     .chart-container.large .chart-value {
         font-size: 5rem;
@@ -122,7 +224,7 @@
         right: 0;
         text-align: center;
         font-size: 0.9rem;
-        color: white;
+        color: var(--chart-title-color);
     }
     .chart-subtitle {
         position: absolute;
@@ -130,6 +232,20 @@
         left: 0;
         right: 0;
         text-align: center;
-        color: #888;
+        color: var(--chart-subtitle-color);
+    }
+
+    :global(body.dark-mode) {
+        --chart-value-color: #f5f3eb;
+        --chart-secondary-value-color: #fd551f;
+        --chart-title-color: #f5f3eb;
+        --chart-subtitle-color: #888;
+    }
+
+    :global(body.light-mode) {
+        --chart-value-color: #1d1d1b;
+        --chart-secondary-value-color: #fd551f;
+        --chart-title-color: #1d1d1b;
+        --chart-subtitle-color: #666;
     }
 </style>

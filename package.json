@@ -27,6 +27,6 @@
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/adapter-vercel": "^5.4.1",
-		"chart.js": "^4.4.3"
+		"chart.js": "^4.4.4"
 	}
 }
