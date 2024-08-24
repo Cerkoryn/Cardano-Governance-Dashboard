@@ -1,17 +1,23 @@
 {
-    "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "build"
-        }
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "build/$1"
-      }
-    ]
-  }
+  "functions": {
+    "api/*.py": {
+      "runtime": "python3.9"
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "build/$1"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/get_dreps",
+      "schedule": "0 0 * * *" 
+    },
+    {
+      "path": "/api/get_spos",
+      "schedule": "0 0 * * *"  
+    }
+  ]
+}

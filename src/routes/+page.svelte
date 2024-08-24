@@ -8,9 +8,9 @@
     let darkMode = get(isDarkMode);
 
     onMount(async () => {
-        const response = await fetch('/data/mergeddata.json');
+        const response = await fetch('/tmp/spos.json');
         const spoData = await response.json();
-        const response2 = await fetch('/data/dreps.json');
+        const response2 = await fetch('/tmp/dreps.json');
         const drepData = await response2.json();
 
         proposals = calculateProposals(spoData, drepData);
@@ -53,6 +53,7 @@
         displayValue?: string;
         secondaryDisplayValue?: string;
         minPools?: number;
+        secondaryMinPools?: number;
     };
 
     type Proposal = {
@@ -85,6 +86,44 @@
         }
         return count;
     }
+
+    function calculateCombinedMAV(drepValues: { label: string; stake: number }[], spoValues: { label: string; stake: number }[], drepThreshold: number, spoThreshold: number, greyStatus: { CC: boolean; dRep: boolean; SPO: boolean }) {
+        const drepMAV = calculatedRepMAV(drepValues.map(({ label, stake }) => ({ label, votingPower: stake })), drepThreshold);
+        const spoMAV = calculateSPOMAV(spoValues, spoThreshold);
+        const ccMAV = 5
+        const ccLength = 7;
+        const totalMAV = (greyStatus.dRep ? 0 : drepMAV) + (greyStatus.SPO ? 0 : spoMAV) + (greyStatus.CC ? 0 : ccMAV);
+        let totalValues: { label: string; stake: number }[] = [];
+
+        if (!greyStatus.CC) {
+            const ccValues = Array.from({ length: ccLength }, () => ({ label: 'Any CC Member', stake: 1 }));
+            ccValues.forEach((value, index) => {
+                if (index < ccMAV) {
+                    totalValues.push(value);
+                }
+            });
+        }
+
+        if (!greyStatus.dRep) {
+            drepValues.forEach((value, index) => {
+                if (index < drepMAV) {
+                    totalValues.push({ label: value.label, stake: 1 });
+                }
+            });
+        }
+
+        if (!greyStatus.SPO) {
+            spoValues.forEach((value, index) => {
+                if (index < spoMAV) {
+                    totalValues.push({ label: value.label, stake: 1 });
+                }
+            });
+        }
+
+        totalValues.push({ label: 'Other', stake: totalMAV });
+
+        return { totalMAV, totalValues };
+}
 
     function calculateProposals(spoData: Pool[], drepData: dRep[]): Proposal[] {
         spoData.sort((a, b) => b.stake - a.stake);
@@ -162,11 +201,19 @@
         ];
 
         proposalTypes.forEach(proposal => {
-            let totalMav = 0;
+            let totalMav = 0, spoThreshold = 0, drepThreshold = 0;
+            let grayStatus = { CC: false, dRep: false, SPO: false };
             proposal.charts.forEach(chart => {
                 if (chart.chartType === 'gray') {
                     chart.values = [{ label: 'N/A', stake: 100 }];
                     chart.displayValue = 'N/A';
+                    if (chart.title === 'CC') {
+                        grayStatus.CC = true;
+                    } else if (chart.title === 'dReps') {
+                        grayStatus.dRep = true;
+                    } else if (chart.title === 'SPOs') {
+                        grayStatus.SPO = true;
+                    }
                 } else if (chart.title === 'CC') {
                     chart.values = ccNames;
                     chart.displayValue = '5';
@@ -176,26 +223,28 @@
                     chart.minPools = calculatedRepMAV(chart.values, chart.threshold);
                     chart.displayValue = chart.minPools.toString();
                     totalMav += chart.minPools;
+                    drepThreshold = chart.threshold
                 } else if (chart.title === 'SPOs') {
                     chart.values = spoData.map(pool => ({ label: pool.label, stake: pool.stake }));
                     chart.minPools = calculateSPOMAV(chart.values, chart.threshold);
                     chart.displayValue = chart.minPools.toString();
                     totalMav += chart.minPools;
+                    spoThreshold = chart.threshold
                 }
             });
             // Calculate the Total chart after all other charts have been processed
             proposal.charts.forEach(chart => {
-                if (chart.title === 'Total') {3
+                if (chart.title === 'Total') {
+                    const { totalMAV, totalValues } = calculateCombinedMAV(drepData.map(pool => ({ label: pool.label, stake: pool.votingPower})), spoData.map(pool => ({ label: pool.label, stake: pool.stake})), drepThreshold, spoThreshold, grayStatus);
+                    const spoMAV = calculateSPOMAV(spoData.map(pool => ({ label: pool.label, stake: pool.stake})), 51)
+                    chart.minPools = totalMAV;
+                    chart.values = totalValues;
+
                     if (proposal.title === 'Parameter Change (Network, Economic, and Technical Groups)' || proposal.title === 'Parameter Change (Governance Group)') {
-                        let combinedValues = spoData.map(pool => ({ label: pool.label, stake: pool.stake })).concat(drepData.map(pool => ({ label: pool.label, stake: pool.votingPower })));
-                        chart.values = combinedValues.sort((a, b) => b.stake - a.stake);
-                        chart.minPools = calculateSPOMAV(combinedValues, chart.threshold);
                         chart.secondaryDisplayValue = totalMav.toString();
-                        chart.displayValue = (totalMav - calculateSPOMAV(spoData.map(pool => ({ label: pool.label, stake: pool.stake})), 51)).toString();
+                        chart.displayValue = (totalMav - spoMAV).toString();
+                        chart.secondaryMinPools = totalMAV - spoMAV;
                     } else {
-                        let combinedValues = spoData.map(pool => ({ label: pool.label, stake: pool.stake })).concat(drepData.map(pool => ({ label: pool.label, stake: pool.votingPower })));
-                        chart.values = combinedValues.sort((a, b) => b.stake - a.stake);
-                        chart.minPools = calculateSPOMAV(combinedValues, chart.threshold);
                         chart.displayValue = totalMav.toString();
                     }
                 }
@@ -222,13 +271,33 @@
                 <h2 class="text-xl font-bold mb-4 text-white">{proposal.title}</h2>
                 {#if index === 0} 
                     <div class="flex flex-col items-center chart-item">
-                        <DonutChart values={proposal.charts[0].values ?? []} title={proposal.charts[0].title} subtitle={proposal.charts[0].subtitle} size={proposal.charts[0].size} chartType={proposal.charts[0].chartType} minPools={proposal.charts[0].minPools ?? 0} displayValue={proposal.charts[0].displayValue ?? 'ERROR'} secondaryDisplayValue={proposal.charts[0].secondaryDisplayValue ?? ''} />
+                        <DonutChart 
+                            values={proposal.charts[0].values ?? []} 
+                            title={proposal.charts[0].title} 
+                            subtitle={proposal.charts[0].subtitle} 
+                            size={proposal.charts[0].size} 
+                            chartType={proposal.charts[0].chartType} 
+                            minPools={proposal.charts[0].minPools ?? 0} 
+                            secondaryMinPools={proposal.charts[0].secondaryMinPools ?? 0} 
+                            displayValue={proposal.charts[0].displayValue ?? 'ERROR'} 
+                            secondaryDisplayValue={proposal.charts[0].secondaryDisplayValue ?? ''} 
+                        />
                     </div>
                 {:else}
                     <div class="grid grid-cols-4">
                         {#each proposal.charts as chart, chartIndex}
-                            <div class="flex flex-col items-center chart-item">
-                                <DonutChart values={chart.values ?? []} title={chart.title} subtitle={chart.subtitle} size={chart.size} chartType={chart.chartType} minPools={chart.minPools ?? 0} displayValue={chart.displayValue ?? 'ERROR'} secondaryDisplayValue={chart.secondaryDisplayValue ?? ''} />
+                        <div class="flex flex-col items-center chart-item">
+                            <DonutChart 
+                                values={chart.values ?? []} 
+                                title={chart.title} 
+                                subtitle={chart.subtitle} 
+                                size={chart.size} 
+                                chartType={chart.chartType} 
+                                minPools={chart.minPools ?? 0} 
+                                secondaryMinPools={chart.secondaryMinPools ?? 0}
+                                displayValue={chart.displayValue ?? 'ERROR'} 
+                                secondaryDisplayValue={chart.secondaryDisplayValue ?? ''} 
+                            />
                                 {#if index >= proposals.length - 2 && chartIndex == proposal.charts.length}
                                     <p class="sub-header">*SPOs only vote on security parameters</p>
                                 {/if}

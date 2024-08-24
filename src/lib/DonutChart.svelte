@@ -8,6 +8,7 @@
     export let size: 'large' | 'medium' | 'small' = 'small';
     export let chartType: 'default' | 'gray' | 'yellow' = 'default';
     export let minPools: number;
+    export let secondaryMinPools: number = 0;
     export let displayValue: string;
     export let secondaryDisplayValue: string;
 
@@ -104,7 +105,12 @@
                                 ? values.map((_, index) => index < minPools ? '#e65100' : '#fec104')
                                 : title === 'CC' 
                                     ? values.map((_, index) => index < 5 ? '#f44336' : '#4caf50') 
-                                    : values.map((_, index) => index < minPools ? '#f44336' : '#4caf50'),
+                                    : values.map((_, index) => {
+                                        if (secondaryMinPools !== 0 && index >= secondaryMinPools && index < minPools) {
+                                            return '#e65100'; // Orange for values under secondaryMinPools
+                                        }
+                                        return index < minPools ? '#f44336' : '#4caf50'; 
+                                    }),
                     borderWidth: 0.1,
                     borderColor: 'black'
                     }]
