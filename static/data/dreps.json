@@ -1,114 +1,761 @@
 [
     {
-        "label": "drep_always_abstain",
-        "votingPower": 1927857.650899
+        "label": "drep1sfr9rpws87tesvdzdlmznn5hrf3ezktmwqt9juj3jgelz6mqn60",
+        "votingPower": 25769615
     },
     {
-        "label": "drep14pjm8ytt682wkp4jcegdj2yerkcy9a20xevvp7udlcd0ggjxdud",
-        "votingPower": 1700195.28931
-    },
-    {
-        "label": "drep1jkdeccjwuun37e64l7zpjwe67xmsxmgpzkuhqtt0qjcrudkvfx2",
-        "votingPower": 1211481.598584
-    },
-    {
-        "label": "drep19k7efzg6fftk5fyze8ahm5u938np4uxww9muldh4m0nrjnvswrp",
-        "votingPower": 401414.666027
-    },
-    {
-        "label": "drep1cqkl7j3u9mr5kt74df42v49mcavcnqz8evkjvf5qdz7qg8jwh4a",
-        "votingPower": 258205.474239
-    },
-    {
-        "label": "drep13tupcm5xg34kz7hq7cy7f67p2nszl6l0em2fjd4dp5kkgvyg6uw",
-        "votingPower": 90323.442108
-    },
-    {
-        "label": "drep14x9gpk4w6v8k6n86qfqr77q0ec6334jnk8hrqn9ws288jjuf3p8",
-        "votingPower": 69988.851966
+        "label": "drep1km69g7ksf8t5g0h9d9tkrcd2tezxelx0wtr76rv2mrkl5nzd6v3",
+        "votingPower": 5591095
     },
     {
         "label": "drep1kyppjlhz4lawh4g0ewx2d8a5l20t4yclfnppnuvdkmt7vccg836",
-        "votingPower": 58329.114415
+        "votingPower": 4198643,
+        "givenName": "Sebastien Guillemot"
     },
     {
-        "label": "drep15v2a3djn6jp0efdr7q5ym9gndzj3gs83mtj0ngcvm73gugewgp2",
-        "votingPower": 52650.261501
+        "label": "drep13d6sxkyz6st9h65qqrzd8ukpywhr8swe9f6357qntgjqye0gttd",
+        "votingPower": 3693705,
+        "givenName": "Eternl DRep Committee"
     },
     {
-        "label": "drep12hw0lzdzsfe5zg4u32kjf6lrpvhqevr84c8pyr9zs4m22yajlqw",
-        "votingPower": 31525.1244
+        "label": "drep14pjm8ytt682wkp4jcegdj2yerkcy9a20xevvp7udlcd0ggjxdud",
+        "votingPower": 3330783,
+        "givenName": "Chris O"
     },
     {
-        "label": "drep1yn6hlm88yyacdm9lej0n2kp4u9y2m55mnha82ugn46afkspmyfv",
-        "votingPower": 20882.900447
+        "label": "drep1qz8frp3eq58v3dcguhv0753yt9gf3g50plrxw8rxu2f2krf2p5d",
+        "votingPower": 3290366,
+        "givenName": "Army of Spies"
     },
     {
-        "label": "drep179850zzjpj4g743sh2rc0w2t0llhcafcld537uan5xn6v4ge0dl",
-        "votingPower": 19899.323796
-    },
-    {
-        "label": "drep1nm3mpnnvtxvlmqt7lpnskm0clhtm7ngg4pm7qklv42j5qcvhhnw",
-        "votingPower": 15277.588176
-    },
-    {
-        "label": "drep1fcwj52pvrep5luusk0068v3pha84h5758w0tx8hgjr7q7k9e55q",
-        "votingPower": 7295.39362
-    },
-    {
-        "label": "drep1dlyr4r6p0ys2mjr63csvfcwuucpmeh0h7n6rmp9cuy6yqlfsvme",
-        "votingPower": 4327.798453
-    },
-    {
-        "label": "drep15nvw9d6zr6m08dpckkx4d3g6dplc5vh7yhekyjw0vq07spk38ak",
-        "votingPower": 2372.062105
-    },
-    {
-        "label": "drep197vrvw5thxhux8t9w5lc6lk6etm9cs44n2dav7jhe689u3gy4hs",
-        "votingPower": 1862.11775
-    },
-    {
-        "label": "drep_always_no_confidence",
-        "votingPower": 1860.705493
-    },
-    {
-        "label": "drep127pc58jyky40fvess0c4tjxkrnkf8ta3sfltvm4ptypqc5fgav3",
-        "votingPower": 517.695719
-    },
-    {
-        "label": "drep1aedt7mcgtm6armaypcrcypvuzx0z5xqyj0q77q53hug3c2jkam4",
-        "votingPower": 426.330592
-    },
-    {
-        "label": "drep14nys84knugup94a6endwz65crtqpsm7ce4mfgr22gjcm5azklxw",
-        "votingPower": 166.895329
-    },
-    {
-        "label": "drep122wd9ku9j2qetvr2n8yqfgapm820yzlxh6fa983w9pt6yry7wey",
-        "votingPower": 142.958679
+        "label": "drep13lrngcjhwpqdv4hdzgq2j0vdctahcw7fmhzy2dq239dq5xgtv28",
+        "votingPower": 3222878
     },
     {
         "label": "drep125s4lx920k0z38fptf2lvtf933kr5udts3ahdh5am0nxzcqwua9",
-        "votingPower": 68.828477
+        "votingPower": 3004744,
+        "givenName": "HOSKY"
     },
     {
-        "label": "drep1k3j8aeclqyhq7at8p35yfhvgdx5n2g2hgs0pfuw7y6vxgt0z66a",
-        "votingPower": 29.654388
+        "label": "drep1wrgh82x40ktxp27caqlts0a2uf4gphl2pp9zlvkh0lnnsmd5m40",
+        "votingPower": 2573229
     },
     {
-        "label": "drep1g0g4ntlgxfnanvtqaa405y3ruszqyfhx46snptktzwg8xvtce0u",
-        "votingPower": 22.812015
+        "label": "drep1mkmnzmtlflcadyyy7g6ju3sn9ppcrut5wn73x00mfwmw642g5qy",
+        "votingPower": 2011030,
+        "givenName": "Martin Lang"
     },
     {
-        "label": "drep1u3rxedper54sd8jfmkudltyhjh7x4y2c0hvj6e3j7j26xqmslxl",
-        "votingPower": 7.812015
+        "label": "drep1yexsztwc72cuhzgcs74slj5szlttg8ft7ywhhyql6pyhutj0uwp",
+        "votingPower": 1789179
     },
     {
-        "label": "drep1dj9qeqrh070ymszrm27y36per3uzrfd59jzshcngeud9zlv9jg8",
-        "votingPower": 7.632786
+        "label": "drep1yzzd7prdl628lwac455e0sc5wtw2fldg3f2th6jg7r5c7pvf3mk",
+        "votingPower": 1727303
+    },
+    {
+        "label": "drep1fgj46n9vvfyxg3q0qlcm3a6tf0vvjv9wuhkvrtcm35c0vrtxfky",
+        "votingPower": 1249832
+    },
+    {
+        "label": "drep1jkdeccjwuun37e64l7zpjwe67xmsxmgpzkuhqtt0qjcrudkvfx2",
+        "votingPower": 1211482
+    },
+    {
+        "label": "drep1qufe0rxxke9a6de2jz62ssr9lh7qdd72ywd0wu0tascqvmhpxel",
+        "votingPower": 1120935
+    },
+    {
+        "label": "drep1knfjmx50fh4vsyznaefn4xl49pg9wdy2a463sr457mj5u92jrel",
+        "votingPower": 1103901
+    },
+    {
+        "label": "drep1yn6hlm88yyacdm9lej0n2kp4u9y2m55mnha82ugn46afkspmyfv",
+        "votingPower": 1025203
     },
     {
         "label": "drep1ya6hzdt4kplm2zfnshschz8vweujcxt3f4azyvaplk6xjyw262e",
-        "votingPower": 6.549239
+        "votingPower": 804964
+    },
+    {
+        "label": "drep16v76d0z26a2wta75f4lt0mm9t6jq75ua67zqcz58vzk4jh5yuhc",
+        "votingPower": 774752
+    },
+    {
+        "label": "drep1ydvwp8x9j8u4flwjqwxf8jdjwp9p4zf2x4rk7vv7fgzk6j2k7c6",
+        "votingPower": 710833,
+        "givenName": "Phil UPLC"
+    },
+    {
+        "label": "drep1dj9qeqrh070ymszrm27y36per3uzrfd59jzshcngeud9zlv9jg8",
+        "votingPower": 643481,
+        "givenName": "intertreeJK"
+    },
+    {
+        "label": "drep1aaa7vvrlzcnvryjxy9cq346fksygppew3ylm999y7u4dyfqek9p",
+        "votingPower": 636839
+    },
+    {
+        "label": "drep127pc58jyky40fvess0c4tjxkrnkf8ta3sfltvm4ptypqc5fgav3",
+        "votingPower": 511824
+    },
+    {
+        "label": "drep1k5zdh24kmcdfnnl50yng9t7n33kq4mfzdetrh3ps2vx07famecw",
+        "votingPower": 492385,
+        "givenName": "YOADA"
+    },
+    {
+        "label": "drep1hvlx2cdu7ql8238dwhrjrncm43q3sl5hlmcmp24p0rcnzcwzcyd",
+        "votingPower": 472675
+    },
+    {
+        "label": "drep12xhxd3y3wanzfwfzwstat8zd77r52mx2vxqz6m07klnyvyhf7fl",
+        "votingPower": 456385
+    },
+    {
+        "label": "drep19k7efzg6fftk5fyze8ahm5u938np4uxww9muldh4m0nrjnvswrp",
+        "votingPower": 401414
+    },
+    {
+        "label": "drep1zpq3lch4hatmvctpcnma2sl96vjawd76gqq0h3vu28zkvms9xxw",
+        "votingPower": 386476
+    },
+    {
+        "label": "drep143lxtf54ps3xe3sjtls06r6apndw779njp0m4n4m0m3xvynaq4c",
+        "votingPower": 381124,
+        "givenName": "Holger"
+    },
+    {
+        "label": "drep102j4x2aqqj06l88678r8pnml58jc0c8gqltseswyjj3zkc60d43",
+        "votingPower": 371496
+    },
+    {
+        "label": "drep1jk8rk0p7py52vz4jnhwjtn4nhyptnr5tcvewgpahwu7djkqu46m",
+        "votingPower": 332257
+    },
+    {
+        "label": "drep122rgx3yhs7awjuxfe8kza5fz9qhyag7pdmfan55kh9gnc8394zp",
+        "votingPower": 323844
+    },
+    {
+        "label": "drep1smycdt70dg58adcxm7t9gyhznay3hkc48hznr5sss6dr72duwlz",
+        "votingPower": 320584,
+        "givenName": "Homer J"
+    },
+    {
+        "label": "drep1g24lel6ptfaad8fphzkn8jke0xwl7x3tz0hv7t0nvax8clrey9s",
+        "votingPower": 302581
+    },
+    {
+        "label": "drep1c6zslx9d0lzcndzcr4xafga30ekccv5pa93l6syy6mz8um0gj96",
+        "votingPower": 297804
+    },
+    {
+        "label": "drep1zekyxrq5auz5c8gf0p6zehtmfnl7s9q4uqq8m4wkvm4e764u3yw",
+        "votingPower": 265387
+    },
+    {
+        "label": "drep1ajmmrps8mkm59yma0r2syv9ne8p0a748gas2588gr2x6q5qrd5e",
+        "votingPower": 264752
+    },
+    {
+        "label": "drep18rs3skwj58udl2u7ej6dmtmnptvawj26h2prfpm9g2k3jhjntpf",
+        "votingPower": 257553
+    },
+    {
+        "label": "drep15td6lshfws8kezwkts6ysjacashk9y6ldl2v50klr3v8urfg02k",
+        "votingPower": 250679
+    },
+    {
+        "label": "drep1v0nrfwvvmwec3z2adtlxh9m6dmf4ft86fn55r79snprvynkpdzs",
+        "votingPower": 234124
+    },
+    {
+        "label": "drep1h92sg90589pmhaexdfxz04w00lsaldpllvjf5wwa2d5j5pcehve",
+        "votingPower": 216727
+    },
+    {
+        "label": "drep1nm3mpnnvtxvlmqt7lpnskm0clhtm7ngg4pm7qklv42j5qcvhhnw",
+        "votingPower": 208102,
+        "givenName": "AndreasSosilo"
+    },
+    {
+        "label": "drep1exw7u2wgr5f8juxzetejeudzc7d0wt47f0n07r348e07xn8s58j",
+        "votingPower": 207286
+    },
+    {
+        "label": "drep1y6k58mv2l2dferntqs5z66uvafcgj3dtr63sa68jpcf4sfxwy9c",
+        "votingPower": 200004
+    },
+    {
+        "label": "drep1g0g4ntlgxfnanvtqaa405y3ruszqyfhx46snptktzwg8xvtce0u",
+        "votingPower": 196466
+    },
+    {
+        "label": "drep19ervrqweq8vr50csuuysuuavzj2ffhpt8sufvpkwuqxjvxehnck",
+        "votingPower": 183281
+    },
+    {
+        "label": "drep109rd2sz08kvw089d4hw7zy2ygjs575rwh429ntn37fx5v3pwhtl",
+        "votingPower": 182532
+    },
+    {
+        "label": "drep1lnqegmlf9dlj029jr4nrn0luw2lqw9tmyaz77gzdw3nuqku22q5",
+        "votingPower": 169829,
+        "givenName": "Nathan Angelo Lopez Kanapi"
+    },
+    {
+        "label": "drep1rzx40e940r986szxqam9vv5qs2jellg5jc7n2yu6eymj6mre4kp",
+        "votingPower": 161585
+    },
+    {
+        "label": "drep1duf9wj2007jp8zd2k2khq69ppykwq68zsp8vksselwaj5nvnr3n",
+        "votingPower": 158341
+    },
+    {
+        "label": "drep185r8rr6j9evjs984vnr7haf5cn3qw5w220usk23cxffvwuutaz3",
+        "votingPower": 144812,
+        "givenName": "BRIAN (DRep & SPO)"
+    },
+    {
+        "label": "drep1dlp9vtz952q2dwydwdhs6tmevtgul3ce7l5lk0t9k5prs5c9u6x",
+        "votingPower": 142662
+    },
+    {
+        "label": "drep1x45z8ntumqvata787epqnr9n7jnz242hr39nlzlltt8cq8c93k2",
+        "votingPower": 141911
+    },
+    {
+        "label": "drep1ra0d88cf4n58pt3zdydxm26nq5ppkrq8qwu892hx8zwvueg6298",
+        "votingPower": 140124
+    },
+    {
+        "label": "drep1jde8rt3uh9yw23wkyf8zr8874u2g0qaue4d860fwdx7gzlktygq",
+        "votingPower": 139141
+    },
+    {
+        "label": "drep109sf5yy88t6lqrgtfw2uejek9z7kqqupzwckexp4e25a6j28a5v",
+        "votingPower": 125032
+    },
+    {
+        "label": "drep1g7eq6d2mkphtc5tk5fa24j7lzt0r7kytr0g3ccdjqhp6xw2y44n",
+        "votingPower": 120859,
+        "givenName": "Apex Pool"
+    },
+    {
+        "label": "drep17vw9clp7lnv2qjqtnx68vm6yjfslpgewprqa4kxg7rmkznaryj5",
+        "votingPower": 115143
+    },
+    {
+        "label": "drep13tupcm5xg34kz7hq7cy7f67p2nszl6l0em2fjd4dp5kkgvyg6uw",
+        "votingPower": 113716,
+        "givenName": "SAGAN Stake Pool"
+    },
+    {
+        "label": "drep10fcecuw3h3na96627x0s9l2guaycss7n8g3pdqg3x39rgj4l209",
+        "votingPower": 108816,
+        "givenName": "Chris Gianelloni"
+    },
+    {
+        "label": "drep1assw7l953xsy73ndy9sxmeqwy4yhr3gentgax7lcjynz7qkg5zx",
+        "votingPower": 102003,
+        "givenName": "ThisCorrosion"
+    },
+    {
+        "label": "drep19jtzh8h0gs6dcz9mcyyqlwunwhtregu9uwvntcmfdxxlyrgelza",
+        "votingPower": 101866
+    },
+    {
+        "label": "drep1taampxjr7zn0a89ple2yhlc0kr8tr4xqp5xu4v667v2lzac8rz2",
+        "votingPower": 101097
+    },
+    {
+        "label": "drep1pmy58hz70shnprfexg4z6ykfxnavtv5jdemvvl5yktydzml6wlq",
+        "votingPower": 94580
+    },
+    {
+        "label": "drep1msc78mfqlnh6pr5q5g5mmpp3se84n9veskmljafwwd0rv0gdxlw",
+        "votingPower": 93419
+    },
+    {
+        "label": "drep127egenn6ahk7ukkv3jafzr8k6tyspyhyz8qhx3dpmgtl2q87nse",
+        "votingPower": 89620
+    },
+    {
+        "label": "drep1m4zmrfswvf0e2xu29f28mm4mn2n289w7zdxlaq5gj095v2cq4qr",
+        "votingPower": 82860
+    },
+    {
+        "label": "drep1ymkp9t4k5lnpd5rw2vaup85kchs9qltctp8lv6kgzfqls02q00d",
+        "votingPower": 82625
+    },
+    {
+        "label": "drep14x9gpk4w6v8k6n86qfqr77q0ec6334jnk8hrqn9ws288jjuf3p8",
+        "votingPower": 69989
+    },
+    {
+        "label": "drep1lzfnx73pg39ehw6da2p6zhj54ttu7xfc7c9n0mrjfgqv6ga4l05",
+        "votingPower": 68482
+    },
+    {
+        "label": "drep1u632p38chcackajaw84rhsx7vpsxz4fcetee2tct8pyrgeftpr7",
+        "votingPower": 64464,
+        "givenName": "Giovanni Gargiulo"
+    },
+    {
+        "label": "drep19ryvtdugtzffk0l0prd8egy8vfrwh7gjd084kxqvfsr550e3u0c",
+        "votingPower": 63759
+    },
+    {
+        "label": "drep1x8ksrnfvsdf8wfvsx2p7fef46zs2vq96kgvgkpk9ne0qkql6ljc",
+        "votingPower": 62324,
+        "givenName": "Caleb Montiel"
+    },
+    {
+        "label": "drep1rg4jw8vkx32qjphpjmsrnw52sfv5ufcalv48nnwdqp6zvanhn7r",
+        "votingPower": 53372
+    },
+    {
+        "label": "drep15v2a3djn6jp0efdr7q5ym9gndzj3gs83mtj0ngcvm73gugewgp2",
+        "votingPower": 52650
+    },
+    {
+        "label": "drep15t44tkj2h0x7p2n8ewufh4fsk754adlftngrefzgz587sgm4k45",
+        "votingPower": 52283
+    },
+    {
+        "label": "drep1zg50s9rwt4tlww9ce6ws57sr98v0d3qnjgacls6wnq5tq608zjf",
+        "votingPower": 50151
+    },
+    {
+        "label": "drep10ygzpegn25c7x6kt4pfyr3rs82ehkvcpeqdn3huvh0hnvw5jq84",
+        "votingPower": 49483
+    },
+    {
+        "label": "drep15jspgw8ea9pw3w0fwyqam2lw58ulw7z6qhr8qyuah7j0yj962w7",
+        "votingPower": 46498
+    },
+    {
+        "label": "drep18c6dw0e6z9lx65f22zrzgl0z49j48k39ttxqk4q6h953utzepy5",
+        "votingPower": 45182,
+        "givenName": "Cerkoryn"
+    },
+    {
+        "label": "drep1x7fk09chccz499pn5ghg5s4aezzccgdx6m6v0mkpqgpfg9lmjrc",
+        "votingPower": 41812
+    },
+    {
+        "label": "drep1efj8hmm06p550extkumgsc9rs552dvlyrds20fvlsjdvy4wl890",
+        "votingPower": 40514,
+        "givenName": "Tobias Ilskov"
+    },
+    {
+        "label": "drep1afwp2zvqa6v0qhmlfrncm394cyyx7xhd39mh0her89l66s026yc",
+        "votingPower": 38932
+    },
+    {
+        "label": "drep1fcwj52pvrep5luusk0068v3pha84h5758w0tx8hgjr7q7k9e55q",
+        "votingPower": 36369,
+        "givenName": "Benjamin Braatz"
+    },
+    {
+        "label": "drep1kycm43zxnjur3vku2eh4u5fv7uam57620qwnz58yusr8y022xl8",
+        "votingPower": 35365
+    },
+    {
+        "label": "drep1y286hnwjkxsrg4220fpd4hzer4j5pnj59mqd0fe55xtmzyra6as",
+        "votingPower": 33274,
+        "givenName": "Dubbleu_43"
+    },
+    {
+        "label": "drep1n6gwr6wsyhawt2lewpssmqqnfu4ss75h0stc25lkpsl2q72gycy",
+        "votingPower": 33179
+    },
+    {
+        "label": "drep1u3rxedper54sd8jfmkudltyhjh7x4y2c0hvj6e3j7j26xqmslxl",
+        "votingPower": 28629
+    },
+    {
+        "label": "drep1m0n0kl4kyxmfdmyn6gypj5w4acerzskx8zpnjn288fwfcquaq7c",
+        "votingPower": 25527
+    },
+    {
+        "label": "drep1t2vz3lrh2vjxcah2mwdjlcsm9l2kxmqy4lqhnm7tawltsm6rugp",
+        "votingPower": 22487
+    },
+    {
+        "label": "drep1v520qaglzjgah35ju2rexqyp85fqtd965ufkvw4etz4mwdgmz2d",
+        "votingPower": 21000
+    },
+    {
+        "label": "drep1hsclvjegdzhltnu9yek5asjedkjtzg763m8cl46krfplvgks70z",
+        "votingPower": 20987
+    },
+    {
+        "label": "drep136083nwmqj39uhe9huudjc43fu9njtv4j8p3zh97f7vvchlmwnj",
+        "votingPower": 19981
+    },
+    {
+        "label": "drep179850zzjpj4g743sh2rc0w2t0llhcafcld537uan5xn6v4ge0dl",
+        "votingPower": 19899
+    },
+    {
+        "label": "drep1m4482zwcxjx8addrtm4489rg38zcj4a2ful9jenxl6u3x2vkn0u",
+        "votingPower": 19867
+    },
+    {
+        "label": "drep1fj40ksfux7pmf8rzqnlajrjqnf888t323vv7yur3p7z0w4pwtrk",
+        "votingPower": 19854
+    },
+    {
+        "label": "drep1k4h4cd5jknvcfeq5uuzqthpl7sdjxrwf9gn25tdk49qxyfhusgm",
+        "votingPower": 19758
+    },
+    {
+        "label": "drep10xm0dgqfw9le9av4zc97kjfdh8pd8fverrs3ekpnu982q38y6x7",
+        "votingPower": 18045
+    },
+    {
+        "label": "drep1uygrv5qxyalmdgu0xdjh8ru6juae6426y6048fugyf97g4srzkn",
+        "votingPower": 17818
+    },
+    {
+        "label": "drep10g5e0pdr5zj7m2xuvjlauu6xg77yccv9yzukd0gpwhhkjam27cy",
+        "votingPower": 17727
+    },
+    {
+        "label": "drep1e364nt4y8hgft8ezdztu5hemgezempljsdacgrghc6j6g23whmq",
+        "votingPower": 15437,
+        "givenName": "MonedaCloud"
+    },
+    {
+        "label": "drep17lrrkca9zyfzyd0gay4vg95sv377gferknh0c7cdv8e556668wr",
+        "votingPower": 14538
+    },
+    {
+        "label": "drep1afrkn0g7na9d0ahc3zj9nvnlk8zzdw6pre09whf0p9kvzljedj0",
+        "votingPower": 14274
+    },
+    {
+        "label": "drep1my8mjhftn3unr0jss6xapgpwf74p3v6w5mfu40ct2r3v2kmwh76",
+        "votingPower": 13967
+    },
+    {
+        "label": "drep16tsw66jtrver8ur3y3zzq2fl0m4swl4lwk88fvu8d4z4ydukrj0",
+        "votingPower": 13757
+    },
+    {
+        "label": "drep15nvw9d6zr6m08dpckkx4d3g6dplc5vh7yhekyjw0vq07spk38ak",
+        "votingPower": 12438
+    },
+    {
+        "label": "drep1jwwnle5ky60m22q8cgf986lyftegzm6t4ea5tx3f4nas78kfs86",
+        "votingPower": 11334
+    },
+    {
+        "label": "drep1lvph5f02spd6zjn9ncchwntjcsgexkpqdd43k76q8f232e0dcru",
+        "votingPower": 11099
+    },
+    {
+        "label": "drep1nh0vufazx3pw4qqn8qg5lnhyfunny4tqdvuhn0zxcc3ac42c5ck",
+        "votingPower": 9592
+    },
+    {
+        "label": "drep1cfegf9ffrpzktxqak3ld5gguuz8d6gdkgzem2xf8jwkxqqsfcf4",
+        "votingPower": 9060
+    },
+    {
+        "label": "drep1sh842zeupjceky6qyxculqdss67lcy97mx7aqzl9e3k3sr6xlga",
+        "votingPower": 8892,
+        "givenName": "Hephaestus Stake Pool [HEPHY]"
+    },
+    {
+        "label": "drep164cs4lja083klyc8gvrqje49w3lut7z2q3r9n3c3n46560wudmk",
+        "votingPower": 8886
+    },
+    {
+        "label": "drep1r43pzv0wj8xr8a50sa78zlc6ld70q2xrdqmzgxp0nxj7u70jjzq",
+        "votingPower": 8705
+    },
+    {
+        "label": "drep107e480v044a2rjjny8xg6xvjurpgrxkg75f5jnfa35dwswcd7we",
+        "votingPower": 8597
+    },
+    {
+        "label": "drep1w9g4vv76t0gu4nc3zetfd8df4acmfjy4acngsxwe5p78jht0svz",
+        "votingPower": 7936
+    },
+    {
+        "label": "drep13ws3rjsec7yp858an0h73l4aeeekr77hwz3yd6suwmyr2fzlapq",
+        "votingPower": 7748,
+        "givenName": "8Ball"
+    },
+    {
+        "label": "drep1ad63e79n0yzk7h03l529wtwzhlwcajdxjlr2508c88mvj97agxs",
+        "votingPower": 7488
+    },
+    {
+        "label": "drep1dky9vcghd9nycclr5uhduxs2u32zs4lyhxn8z3nyyen7cw3wytj",
+        "votingPower": 7477,
+        "givenName": "Jeff Bra gg"
+    },
+    {
+        "label": "drep13zz5ngfxrjhm8lfqdrh8cr7flfemwh4ds2d9kh4xlcf6yvxrt9r",
+        "votingPower": 7294
+    },
+    {
+        "label": "drep1s0q86gha8hdq4dgy5usve5evf7c77y3srqvxespmf56c7q55rm2",
+        "votingPower": 7132
+    },
+    {
+        "label": "drep17gkfelzk93thqfaselspj2juh5wkgtqqe7xdhf34ap9xv2h7syk",
+        "votingPower": 6179
+    },
+    {
+        "label": "drep1uc9qz3gg3f50rq576fyxf9kmf3k976qqst0f9cm56gutvguq5m8",
+        "votingPower": 5879
+    },
+    {
+        "label": "drep12gzas8f4kmt9r35s67rej9l3xle8cpfzm6et50j7eh4asqvu2p2",
+        "votingPower": 5240
+    },
+    {
+        "label": "drep1vwq48jx7d9clps6wkx64yaqvruxrge4ulu45qua2xmjgukw9wae",
+        "votingPower": 5093
+    },
+    {
+        "label": "drep1354sytnvd9vfemthjqqqy3rukdnkgh5hxynykq5qhu0870r7zua",
+        "votingPower": 5058
+    },
+    {
+        "label": "drep1lvs070xte7kfunnmx260lnc8fr66rpu7xzt90fz9s2ee5rympw9",
+        "votingPower": 4762
+    },
+    {
+        "label": "drep1tmtq9vrpwmm2nmvfrwhv6aq5r66dasadcuyyq3c7r30tyx5ctlu",
+        "votingPower": 4553
+    },
+    {
+        "label": "drep1fhww8ew4ax5320agyykm3pacf8mnmwfhx56q20hexc2wyamcn7r",
+        "votingPower": 4508
+    },
+    {
+        "label": "drep1dlyr4r6p0ys2mjr63csvfcwuucpmeh0h7n6rmp9cuy6yqlfsvme",
+        "votingPower": 4323
+    },
+    {
+        "label": "drep1u6tl84vysvvjzu8tuvs4e47xdxc8ut76mazf7tauw0cy7nd3gy2",
+        "votingPower": 3931
+    },
+    {
+        "label": "drep1z60zgqvhu4ty75ltkxnrknfethxh3n9vwq5g40xcv8y4vp8s3p2",
+        "votingPower": 3846
+    },
+    {
+        "label": "drep1gsnseus5um6kckgtyx3pvav23wv9ss2pzyndawtj3uqsw5dr4q5",
+        "votingPower": 3631
+    },
+    {
+        "label": "drep1sz060pl2nh4nrq59c6m8ug45uee4fgxmhl29ujereya8jqhnr65",
+        "votingPower": 3295
+    },
+    {
+        "label": "drep1va9myj6l39j2ja4g3w6w7gygtycjxh7p3098trkq0p85kvdrvlt",
+        "votingPower": 2737
+    },
+    {
+        "label": "drep1dunwz7ggt9j224wtpwtkhkwvzyl9w09j4ex8h92jsqagkhdrvcv",
+        "votingPower": 2703
+    },
+    {
+        "label": "drep1hmtfse5v2xn5pe45va78qsktnc8807ak8k5vydmzy7n45p54pgt",
+        "votingPower": 2097
+    },
+    {
+        "label": "drep1yvsn7mpypmtm2x2jzmx4es43zwn332w9u4taewq9z23rs398595",
+        "votingPower": 1987
+    },
+    {
+        "label": "drep197vrvw5thxhux8t9w5lc6lk6etm9cs44n2dav7jhe689u3gy4hs",
+        "votingPower": 1862
+    },
+    {
+        "label": "drep1hythq7gzjpyv0vsre2x28564t2p64vtpdrknkwd9ac9dx0u0vnt",
+        "votingPower": 1824
+    },
+    {
+        "label": "drep1wag488nllncaf8ef7la6wrugz3s3e8399x2dq46srwcq2pl0v60",
+        "votingPower": 1635
+    },
+    {
+        "label": "drep1al4xku2xh9vv6cruz7w63x3y2pss0qgdmstr7vw98plgw9zfg3r",
+        "votingPower": 1542
+    },
+    {
+        "label": "drep1aedt7mcgtm6armaypcrcypvuzx0z5xqyj0q77q53hug3c2jkam4",
+        "votingPower": 1441
+    },
+    {
+        "label": "drep144wfkax4lcn9rwfp66z9l60a5ra58nlfwdvl8spenddr5t3m03n",
+        "votingPower": 1423
+    },
+    {
+        "label": "drep14l69ewnmc5h6uftda9ghs3mw49hdu7w93e9alhzxckp0v5pczql",
+        "votingPower": 1420
+    },
+    {
+        "label": "drep1af3rzgy0d4m4tx00lv3c5ecjfk0nc8j25qs5x2kszcjn2a3h6l8",
+        "votingPower": 1195
+    },
+    {
+        "label": "drep1yaj3k43yjt26y2hz7d2wm42j6gkvaq5j6z2da2f7n7jpkn854jk",
+        "votingPower": 939
+    },
+    {
+        "label": "drep16n6qwthvq6suegyxrc0phm62j9y0ffxtrwrr7yv8gpehzccqe2u",
+        "votingPower": 774
+    },
+    {
+        "label": "drep1udzxju0gt844dzk4s87d9vk79lql9vfd3qhrq9ms9pa2xllt5a0",
+        "votingPower": 730
+    },
+    {
+        "label": "drep1g2qjfxcxj6ewx3aw0nqh2lfcaq0at3a2wcusxgjmgrnuzph6ddt",
+        "votingPower": 700
+    },
+    {
+        "label": "drep1267nyk448adm7ac0s9ywjhpka7gwwtlegx5lep6g0667zx8v0kg",
+        "votingPower": 697
+    },
+    {
+        "label": "drep1plm3zm53xcusez3sx0hx3htz27sdlgux04ulagvngq4zu7cry5f",
+        "votingPower": 566,
+        "givenName": "Nils Codes"
+    },
+    {
+        "label": "drep1g4r8sq8554m2euwakh6wq6g76dzpatrullgcmwp2tcphv8y0xwd",
+        "votingPower": 524
+    },
+    {
+        "label": "drep1zmymjy8xyzmxvxuz4mptxpam52exdq4chmwuqsesr2se57jz0v0",
+        "votingPower": 512
+    },
+    {
+        "label": "drep1z55gvtqtqhavjdyzlmgmh7ntzutdkvdkaq6jc8vc7f2hvg0d0s5",
+        "votingPower": 480
+    },
+    {
+        "label": "drep1rmdgqugrj694apvu4m2ystnwwkpmxc8fnee5fpahlqfnq2xkmv4",
+        "votingPower": 473,
+        "givenName": "Sandip.Pandey"
+    },
+    {
+        "label": "drep1t0rpat8je8jyqg07feaq932qrtpty9c269wer9mlwy8w6hpqttc",
+        "votingPower": 445
+    },
+    {
+        "label": "drep16rsmgdx253prd22e9094zra5fpa88tvfmphv8f8xx6c9x0rymp9",
+        "votingPower": 328
+    },
+    {
+        "label": "drep1uz9v5d3vzyp3xwh8y2ceswqxqx4ljecfwd2kwnjysjapzh3avs7",
+        "votingPower": 285
+    },
+    {
+        "label": "drep1d3gwr8a6537a0g3x59w5vvfm9vygq3d3lcsknaqpt47ssh0d4d2",
+        "votingPower": 247
+    },
+    {
+        "label": "drep1s66dp7mlmpvqwqp4xltvzn6q2086whe0n48kwrfrmmyngmuvvhr",
+        "votingPower": 223
+    },
+    {
+        "label": "drep14nys84knugup94a6endwz65crtqpsm7ce4mfgr22gjcm5azklxw",
+        "votingPower": 167
+    },
+    {
+        "label": "drep1k3j8aeclqyhq7at8p35yfhvgdx5n2g2hgs0pfuw7y6vxgt0z66a",
+        "votingPower": 156
+    },
+    {
+        "label": "drep122wd9ku9j2qetvr2n8yqfgapm820yzlxh6fa983w9pt6yry7wey",
+        "votingPower": 143
+    },
+    {
+        "label": "drep1nmuhufqmhkcr3szju68yuz6cx6zg6le52arp0yhgsxlwkw7ykls",
+        "votingPower": 108
+    },
+    {
+        "label": "drep1gnxjs820d0ayrzufqxnfjt7n0s3qj762lvs5he3cnjt6se5tjqq",
+        "votingPower": 99
+    },
+    {
+        "label": "drep1hjq8wx6effgg9angf9ddpwcljt5nupswukvql8qsgq9fscyscyk",
+        "votingPower": 98
+    },
+    {
+        "label": "drep1su5pahwh9l33vu7fglfvsn00vunwgtra5dg9ctq9q2mych6ksl9",
+        "votingPower": 98
+    },
+    {
+        "label": "drep1tnlscvpyqzx5qemzqlyx6v38gdwtepc6q48p7e2pn3gqua4t8vw",
+        "votingPower": 92
+    },
+    {
+        "label": "drep1m56h8sqf90ql45fsr0kwd62u2z3ysfjdwslzrskumd3xv78pujj",
+        "votingPower": 85
+    },
+    {
+        "label": "drep16gx8g5wqxnsgcutg8cdgnn2svrjfznjdn08pv9u70d2g2uw7tqq",
+        "votingPower": 65
+    },
+    {
+        "label": "drep1lrtg6qx8tend00wuxs0eg5mgwxejrcu8s5w6zyk07745xuzqf7a",
+        "votingPower": 48
+    },
+    {
+        "label": "drep1p2kzkkz0mphapp8zww0cu3gv5k6j0znmplmjt7txlf4vqvdh9qh",
+        "votingPower": 24
+    },
+    {
+        "label": "drep1000002hneyj7jl9y95m0zxdsg6dp9n9y59lvlm7xjqp4qh2jx7h",
+        "votingPower": 18
+    },
+    {
+        "label": "drep1vxwzw7jfhnkdy0e48h86fhkku0jqkyqva0wpxfal0k9lk0hqnwk",
+        "votingPower": 16
+    },
+    {
+        "label": "drep1xt7mz4vps99ruacy5tpk6x620qta6ystxhjtx83tjr3n2mg8skf",
+        "votingPower": 15
+    },
+    {
+        "label": "drep12ezrfwhqtrva6gvs7lu5ks6z55hfla4g675zzps8fw3jwamdxtr",
+        "votingPower": 9
+    },
+    {
+        "label": "drep154r6hqyyhlhys69x05wekzhq2nhpw5g7k29dgn28chvu7nj90k4",
+        "votingPower": 9,
+        "givenName": "Protect the Treasury"
+    },
+    {
+        "label": "drep1sykgm32etsv58sekj2xrdv4kvfycfm7l25kvy3hjvssx2ygagmd",
+        "votingPower": 8
+    },
+    {
+        "label": "drep1srrfjku9xakl5kfpzgkedx20nyfwgp920pwnfl2h56njgvf8qwy",
+        "votingPower": 8
+    },
+    {
+        "label": "drep1r5x95z3zmuld2gqwrfqym60g7dr9fer7ujy6j903lue36rd4fll",
+        "votingPower": 4
+    },
+    {
+        "label": "drep1xgzlpyy3pvywm5wvhkvyz9cpga5wylme6wdu6l9vn5g6cp38jdj",
+        "votingPower": 3
+    },
+    {
+        "label": "drep1ev2xf6fs25kv2ah2heyakyvkqps7205d4478rcjl9mf0776plvg",
+        "votingPower": 2
     }
 ]

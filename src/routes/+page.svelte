@@ -58,6 +58,7 @@
     type dRep = {
         votingPower: number;
         label: string;
+        givenName?: string;
     };
 
     type Chart = {
@@ -236,7 +237,7 @@
                     chart.displayValue = '5';
                     totalMav += 5;
                 } else if (chart.title === 'dReps') {
-                    chart.values = drepData.map(pool => ({ label: pool.label, votingPower: pool.votingPower }));
+                    chart.values = drepData.map(dRep => ({ label: dRep.givenName ? dRep.givenName : dRep.label, votingPower: dRep.votingPower }));
                     chart.minPools = calculatedRepMAV(chart.values, chart.threshold);
                     chart.displayValue = chart.minPools.toString();
                     totalMav += chart.minPools;

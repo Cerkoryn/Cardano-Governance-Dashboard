@@ -107,7 +107,7 @@
                                     ? values.map((_, index) => index < 5 ? '#f44336' : '#4caf50') 
                                     : values.map((_, index) => {
                                         if (secondaryMinPools !== 0 && index >= secondaryMinPools && index < minPools) {
-                                            return '#e65100'; // Orange for values under secondaryMinPools
+                                            return '#e65100'; 
                                         }
                                         return index < minPools ? '#f44336' : '#4caf50'; 
                                     }),
