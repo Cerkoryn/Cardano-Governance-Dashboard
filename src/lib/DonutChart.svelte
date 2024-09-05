@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import Chart from 'chart.js/auto';
 
-    export let values: { label: string; stake: number }[] | { label: string; votingPower: number }[];
+    export let values: { label: string; stake: number }[] | { label: string; live_power: number }[];
     export let title: string;
     export let subtitle: string = '';
     export let size: 'large' | 'medium' | 'small' = 'small';
@@ -98,7 +98,7 @@
                 data: {
                     labels: values.map(value => value.label), 
                     datasets: [{
-                        data: values.map(value => 'stake' in value ? value.stake : value.votingPower), 
+                        data: values.map(value => 'stake' in value ? value.stake : value.live_power), 
                         backgroundColor: chartType === 'gray' 
                             ? ['#808080'] 
                             : chartType === 'yellow'
@@ -130,7 +130,7 @@
                                     if (chartType === 'gray') {
                                         return '';
                                     }
-                                    const totalStake = values.reduce((acc, value) => acc + ('stake' in value ? value.stake : value.votingPower), 0); 
+                                    const totalStake = values.reduce((acc, value) => acc + ('stake' in value ? value.stake : value.live_power), 0); 
                                     const value = context.raw as number;
                                     const percentage = ((value / totalStake) * 100).toFixed(2);
                                     let label;
