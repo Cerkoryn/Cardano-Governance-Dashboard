@@ -251,11 +251,12 @@
 
     .chart-secondary-subtitle {
         position: absolute;
-        bottom: -80px; 
+        bottom: -60px; 
         left: 0;
         right: 0;
         text-align: center;
         color: #fd551f;
+        font-size: 0.7rem;
     }
     :global(body.dark-mode) {
         --chart-value-color: #f5f3eb;
