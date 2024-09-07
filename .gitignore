@@ -27,3 +27,4 @@ __pycache__/
 
 # VSCode files
 .vscode/
+.vercel

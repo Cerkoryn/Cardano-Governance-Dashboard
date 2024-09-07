@@ -19,9 +19,9 @@
     });
 
     async function fetchData() {
-        const response = await fetch('/data/spos.json'); 
+        const response = await fetch('/api/get_spos'); 
         const spoData = await response.json();
-        const response2 = await fetch('/data/dreps.json'); 
+        const response2 = await fetch('/api/get_dreps'); 
         const drepData = await response2.json();
 
         proposals = calculateProposals(spoData, drepData);
@@ -68,7 +68,7 @@
         size?: 'large' | 'medium' | 'small';
         chartType?: 'default' | 'gray' | 'yellow';
         subtitle?: string;
-        values?: { label: string; stake: number }[] | { label: string; live_power: number }[];
+        values?: { label: string; stake: number }[] | { label: string; active_power: number }[];
         displayValue?: string;
         secondaryDisplayValue?: string;
         minPools?: number;
@@ -93,13 +93,13 @@
         return count;
     }
 
-    function calculatedRepMAV(values: { label: string; live_power: number }[], threshold: number) {
-        const totalStake = values.reduce((acc, value) => acc + value.live_power, 0); 
+    function calculatedRepMAV(values: { label: string; active_power: number }[], threshold: number) {
+        const totalStake = values.reduce((acc, value) => acc + value.active_power, 0); 
         const thresholdValue = (threshold / 100) * totalStake;
         let sum = 0;
         let count = 0;
         for (let value of values) {
-            sum += value.live_power;
+            sum += value.active_power;
             count++;
             if (sum >= thresholdValue) break;
         }
@@ -107,7 +107,7 @@
     }
 
     function calculateCombinedMAV(drepValues: { label: string; stake: number }[], spoValues: { label: string; stake: number }[], drepThreshold: number, spoThreshold: number, greyStatus: { CC: boolean; dRep: boolean; SPO: boolean }) {
-        const drepMAV = calculatedRepMAV(drepValues.map(({ label, stake }) => ({ label, live_power: stake })), drepThreshold);
+        const drepMAV = calculatedRepMAV(drepValues.map(({ label, stake }) => ({ label, active_power: stake })), drepThreshold);
         const spoMAV = calculateSPOMAV(spoValues, spoThreshold);
         const ccMAV = 5
         const ccLength = 7;
@@ -146,7 +146,7 @@
 
     function calculateProposals(spoData: Pool[], drepData: dRep[]): Proposal[] {
         spoData.sort((a, b) => b.stake - a.stake);
-        drepData.sort((a, b) => b.live_power - a.live_power);
+        drepData.sort((a, b) => b.active_power - a.active_power);
 
         // Move the item with label === "SINGLEPOOL" to the end
         const singlePoolIndex = spoData.findIndex(pool => pool.label === "SINGLEPOOL");
@@ -252,7 +252,7 @@
                     chart.displayValue = '5';
                     totalMav += 5;
                 } else if (chart.title === 'dReps') {
-                    chart.values = drepData.map(dRep => ({ label: dRep.given_name ? dRep.given_name : dRep.drep_id, live_power: dRep.live_power }));
+                    chart.values = drepData.map(dRep => ({ label: dRep.given_name ? dRep.given_name : dRep.drep_id, active_power: dRep.active_power }));
                     chart.minPools = calculatedRepMAV(chart.values, chart.threshold);
                     chart.displayValue = chart.minPools.toString();
                     totalMav += chart.minPools;
@@ -268,7 +268,7 @@
             // Calculate the Total chart after all other charts have been processed
             proposal.charts.forEach(chart => {
                 if (chart.title === 'Total') {
-                    const { totalMAV, totalValues } = calculateCombinedMAV(drepData.map(dRep => ({ label: dRep.drep_id, stake: dRep.live_power})), spoData.map(pool => ({ label: pool.label, stake: pool.stake})), drepThreshold, spoThreshold, grayStatus);
+                    const { totalMAV, totalValues } = calculateCombinedMAV(drepData.map(dRep => ({ label: dRep.drep_id, stake: dRep.active_power})), spoData.map(pool => ({ label: pool.label, stake: pool.stake})), drepThreshold, spoThreshold, grayStatus);
                     const spoMAV = calculateSPOMAV(spoData.map(pool => ({ label: pool.label, stake: pool.stake})), 51)
                     chart.minPools = totalMAV;
                     chart.values = totalValues;
