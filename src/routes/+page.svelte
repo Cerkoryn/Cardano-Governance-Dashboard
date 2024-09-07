@@ -300,7 +300,7 @@
     
     {#each proposals as proposal, index}
         <div class="proposal-wrapper">
-            <div class="proposal-container {index === 0 ? 'bg-black' : ''}">
+            <div class="proposal-container mx-auto max-w-4xl {index === 0 ? 'bg-black' : ''}">
                 <h2 class="text-xl font-bold mb-4 text-white">{proposal.title}</h2>
                 {#if index === 0} 
                     <div class="flex flex-col items-center chart-item">
@@ -317,8 +317,8 @@
                         />
                     </div>
                 {:else}
-                    <div class="grid grid-cols-4">
-                        {#each proposal.charts as chart, chartIndex}
+                <div class="chart-container">
+                    {#each proposal.charts as chart, chartIndex}
                         <div class="flex flex-col items-center chart-item">
                             <DonutChart 
                                 values={chart.values ?? []} 
@@ -330,16 +330,11 @@
                                 secondaryMinPools={chart.secondaryMinPools ?? 0}
                                 displayValue={chart.displayValue ?? 'ERROR'} 
                                 secondaryDisplayValue={chart.secondaryDisplayValue ?? ''} 
+                                showSecondarySubtitle={chartIndex === 3 && (index === proposals.length - 1 || index === proposals.length - 2)}
                             />
-                                {#if index >= proposals.length - 2 && chartIndex == proposal.charts.length}
-                                    <p class="sub-header">*SPOs only vote on security parameters</p>
-                                {/if}
-                            </div>
-                        {/each}
-                    </div>
-                {/if}
-                {#if index >= proposals.length - 2}
-                    <p class="sub-header">*SPOs only vote on security parameters</p>
+                        </div>
+                    {/each}
+                </div>
                 {/if}
             </div>
         </div>
@@ -364,16 +359,13 @@
         background-color: #1d1d1b;
         color: #f5f3eb;
     }
-
     :global(body.light-mode) {
         background-color: #f5f3eb;
         color: #1d1d1b;
     }
-
     main, main * {
         text-align: center;
     }
-
     .header-bar {
         display: flex;
         justify-content: space-between;
@@ -386,7 +378,6 @@
         border-radius: 0;
         margin-bottom: 2rem;
     }
-
     .footer-bar {
         display: flex;
         justify-content: flex-end;
@@ -399,18 +390,15 @@
         border-radius: 0;
         margin-bottom: 0rem;
     }
-
     .title-text {
         margin: 0;
-        font-size: 3rem; 
+        font-size: 2rem; 
         color: var(--title-text-color);
     }
-
     .title-wrapper {
         flex-grow: 1;
         text-align: center;
     }
-
     button {
         font-size: 1rem;
         padding: 0rem 0rem;
@@ -420,63 +408,53 @@
         border-radius: 0.5rem;
         cursor: pointer;
     }
-
     button:hover {
         background-color: var(--button-hover-bg-color);
     }
-
-    .grid-cols-4 {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-    }
-
     .proposal-container {
         margin-bottom: 2rem;
         background-color: var(--proposal-bg-color); 
-        border-radius: 4rem; /* Rounded corners */
-        padding: 1rem 0rem 3rem 0rem;
+        border-radius: 2.5rem; 
+        padding: 1rem;
         overflow: visible;
+        max-width: 50%; 
+        margin-left: auto;
+        margin-right: auto;
+        padding-bottom: 4rem; 
     }
-
     .proposal-wrapper {
-        padding: 0 30rem; 
+        padding: 0 1rem; 
     }
-
     .proposal-wrapper:last-child {
         margin-bottom: 6rem;
     }
-
     h2 {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
-
-    .chart-item {
+    .chart-container {
         display: flex;
-        justify-content: center; 
-        align-items: center; 
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
     }
-
-    .sub-header {
-        text-align: right;
-        color:  #fd551f;
-        padding-top: 1rem; 
-        padding-right: 1rem;
+    .chart-item {
+        flex: 1 1 20%;
+    }
+    .chart-item:first-child {
+        flex: 1 1 30%;
     }
     .bg-black {
         background-color: var(--proposal-bg-color);
     }
-
     .footer-icon {
         font-size: 2rem; 
         color: var(--footer-icon-color);
         text-decoration: none;
-        margin-left: 2rem
+        margin-left: 1rem;
     }
-
     .footer-icon:hover {
         color: var(--footer-icon-hover-color); 
     }
-
     :global(body.dark-mode) {
         --title-bg-color: #1d1d1b;
         --title-text-color: #f5f3eb;
@@ -485,7 +463,6 @@
         --footer-icon-color: #f5f3eb;
         --footer-icon-hover-color: #ccc;
     }
-
     :global(body.light-mode) {
         --title-bg-color: #2353ff;
         --title-text-color: #f5f3eb;
@@ -493,6 +470,11 @@
         --footer-bg-color: #2353ff;
         --footer-icon-color: #f5f3eb;
         --footer-icon-hover-color: #4a90e2;
+    }
+    @media (max-width: 768px) {
+        .proposal-container {
+            max-width: 100%; /* Make the container full width on narrow screens */
+        }
     }
 </style>
 

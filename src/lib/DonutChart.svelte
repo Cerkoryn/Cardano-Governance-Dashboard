@@ -11,6 +11,7 @@
     export let secondaryMinPools: number = 0;
     export let displayValue: string;
     export let secondaryDisplayValue: string;
+    export let showSecondarySubtitle: boolean = false;
 
     let canvas: HTMLCanvasElement;
 
@@ -172,24 +173,30 @@
     {#if subtitle && chartType !== 'gray'}
         <div class="chart-subtitle">{subtitle}</div>
     {/if}
+    {#if showSecondarySubtitle}
+        <div class="chart-secondary-subtitle">*SPOs only vote on security parameters</div>
+    {/if}
 </div>
   
 <style>
     .chart-container {
         position: relative;
-        margin: 1rem auto 0 auto;
+        margin: 0 auto;
         z-index: 1;
     }
     .chart-container.large {
-        width: 350px;
+        width: 100%;
+        max-width: 350px;
         height: 350px;
     }
     .chart-container.medium {
-        width: 200px;
+        width: 100%;
+        max-width: 200px;
         height: 200px;
     }
     .chart-container.small {
-        width: 150px;
+        width: 100%;
+        max-width: 150px;
         height: 150px;
     }
     .chart-value-container {
@@ -225,29 +232,37 @@
     }
     .chart-title {
         position: absolute;
-        bottom: -30px;
+        bottom: -20px;
         left: 0;
         right: 0;
         text-align: center;
         font-size: 0.9rem;
         color: var(--chart-title-color);
     }
+
     .chart-subtitle {
         position: absolute;
-        bottom: -50px;
+        bottom: -40px; 
         left: 0;
         right: 0;
         text-align: center;
         color: var(--chart-subtitle-color);
     }
 
+    .chart-secondary-subtitle {
+        position: absolute;
+        bottom: -80px; 
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: #fd551f;
+    }
     :global(body.dark-mode) {
         --chart-value-color: #f5f3eb;
         --chart-secondary-value-color: #fd551f;
         --chart-title-color: #f5f3eb;
         --chart-subtitle-color: #888;
     }
-
     :global(body.light-mode) {
         --chart-value-color: #1d1d1b;
         --chart-secondary-value-color: #fd551f;
