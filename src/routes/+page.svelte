@@ -420,7 +420,7 @@
         max-width: 50%; 
         margin-left: auto;
         margin-right: auto;
-        padding-top: 2rem;
+        padding-top: 1rem;
         padding-bottom: 0rem; 
     }
     .proposal-wrapper {
@@ -445,6 +445,7 @@
     }
     .chart-item:first-child {
         flex: 1 1 30%;
+        padding-bottom: 2rem
     }
     .bg-black {
         background-color: var(--proposal-bg-color);
