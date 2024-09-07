@@ -85,8 +85,7 @@ class handler(BaseHTTPRequestHandler):
                         try:
                             response = requests.get(url, timeout=10)
                             response.raise_for_status()
-                            if is_valid_jsonld(response):
-                                given_name = response.json().get('name', given_name)
+                            given_name = is_valid_jsonld(response)
                         except (requests.exceptions.RequestException, requests.exceptions.Timeout):
                             pass
                 
