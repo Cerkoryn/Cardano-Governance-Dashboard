@@ -251,7 +251,7 @@
 
     .chart-secondary-subtitle {
         position: absolute;
-        bottom: -60px; 
+        bottom: -65px; 
         left: 0;
         right: 0;
         text-align: center;
