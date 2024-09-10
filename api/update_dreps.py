@@ -45,9 +45,9 @@ class handler(BaseHTTPRequestHandler):
 
         while True:
             attempts = 0
-            while attempts < 10:
+            while attempts < 2:
                 try:
-                    response = requests.get(base_url.format(page), timeout=30)
+                    response = requests.get(base_url.format(page), timeout=3)
                     response.raise_for_status() 
                     break
                 except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
@@ -56,7 +56,7 @@ class handler(BaseHTTPRequestHandler):
                         self.send_response(500)
                         self.send_header('Content-type', 'application/json')
                         self.end_headers()
-                        self.wfile.write(json.dumps({'error': 'Failed to fetch data after 10 attempts'}).encode('utf-8'))
+                        self.wfile.write(json.dumps({'error': 'Failed to fetch data after 2 attempts'}).encode('utf-8'))
                         return
             data = response.json()
             
