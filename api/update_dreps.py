@@ -68,6 +68,8 @@ class handler(BaseHTTPRequestHandler):
 
                 live_power = dRep.get('live_stake')
                 active_power = dRep.get('voting_power')
+                if active_power is None:
+                    continue
                 
                 # Check for "NaN" and handle it appropriately
                 if live_power is not None and live_power != "NaN":
