@@ -45,6 +45,7 @@ class handler(BaseHTTPRequestHandler):
 
         while True:
             attempts = 0
+            response = None  
             while attempts < 2:
                 try:
                     response = requests.get(base_url.format(page), timeout=3)
@@ -52,14 +53,16 @@ class handler(BaseHTTPRequestHandler):
                     break
                 except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
                     attempts += 1
-                    if attempts == 10:
+                    if attempts == 2:  
                         self.send_response(500)
                         self.send_header('Content-type', 'application/json')
                         self.end_headers()
                         self.wfile.write(json.dumps({'error': 'Failed to fetch data after 2 attempts'}).encode('utf-8'))
                         return
-            data = response.json()
+            if response is None:  
+                break         
             
+            data = response.json()
             dreps = data.get('data', [])
             if not dreps:
                 break
