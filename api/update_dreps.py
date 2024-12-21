@@ -87,12 +87,12 @@ class handler(BaseHTTPRequestHandler):
             if data:
                 dreps.extend(data)
             else:
-                self.send_json_response(500, {'error': 'Failed to fetch dRep info.'})
+                self.send_json_response(500, {'error': 'Response is empty.'})
                 return
         
         final_data = []
         for dRep in dreps:
-
+            given_name = None
             active_power = int(dRep.get('amount', 0))
             if active_power is None or active_power <= 0:
                 continue
@@ -102,11 +102,11 @@ class handler(BaseHTTPRequestHandler):
             # Will probably miss some who host on other places.
             if meta_url and ("ipfs" in meta_url or "github" in meta_url):
                 try:
-                    response = requests.get(meta_url, timeout=5)
+                    response = requests.get(meta_url, timeout=2)
                     response.raise_for_status()
                     given_name = is_valid_jsonld(response)
                 except (requests.exceptions.RequestException, requests.exceptions.Timeout):
-                    pass
+                    given_name = None
             
             final_data.append({
                 'drep_id': dRep.get('drep_id'),
