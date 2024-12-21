@@ -93,7 +93,7 @@ class handler(BaseHTTPRequestHandler):
         final_data = []
         for dRep in dreps:
 
-            active_power = dRep.get('amount')
+            active_power = int(dRep.get('amount', 0))
             if active_power is None or active_power <= 0:
                 continue
             
