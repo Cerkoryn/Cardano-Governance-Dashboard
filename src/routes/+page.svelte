@@ -2,8 +2,7 @@
     import Header from '$lib/components/Header.svelte'
     import Footer from '$lib/components/Footer.svelte'
     import Container from '$lib/components/Container.svelte';
-    //import { fetchProposalsData, calculateProposals } from '$lib/utils/calcs';
-    import { calculateProposals } from '$lib/utils/calcs';
+    import { fetchData } from '$lib/utils/calcs';
     import type { Proposal } from '$lib/types';
     import { isDarkMode } from '$lib/stores/stores';
     import { onMount } from 'svelte';
@@ -11,15 +10,6 @@
 
     let proposals: Proposal[] = [];
     let darkMode = get(isDarkMode);
-
-    async function fetchData() {
-        const response = await fetch('/api/get_spos'); 
-        const spoData = await response.json();
-        const response2 = await fetch('/api/get_dreps'); 
-        const drepData = await response2.json();
-
-        proposals = calculateProposals(spoData, drepData);
-    }
 
     onMount(async () => {
         const storedTheme = localStorage.getItem('theme');
@@ -30,7 +20,7 @@
         }
         isDarkMode.set(darkMode);
         updateBodyClass();
-        fetchData();
+        proposals = await fetchData();
     });
 
     function toggleTheme() {

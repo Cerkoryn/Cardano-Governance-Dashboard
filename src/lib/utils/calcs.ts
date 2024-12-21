@@ -1,16 +1,19 @@
 import type { Proposal, Pool, dRep } from '$lib/types';
-//import {fetchAPI } from '$lib/utils/api';
 
-/* 
-// NOT WORKING YET
-export async function fetchProposalsData(): Promise<{ spoData: Pool[]; drepData: dRep[] }> {
-    const [spoData, drepData] = await Promise.all([
-        fetchAPI('get_spos'),
-        fetchAPI('get_dreps')
+export async function fetchData(): Promise<Proposal[]> {
+    const [spoResponse, drepResponse] = await Promise.all([
+        fetch('/api/get_spos'),
+        fetch('/api/get_dreps')
     ]);
 
-    return { spoData, drepData };
-}*/
+    const [spoData, drepData] = await Promise.all([
+        spoResponse.json(),
+        drepResponse.json()
+    ]);
+    
+    const proposals = calculateProposals(spoData, drepData);
+    return proposals;
+}
 
 export function calculateSPOMAV(values: { label: string; stake: number }[], threshold: number) {
     const totalStake = values.reduce((acc, value) => acc + value.stake, 0);

@@ -16,103 +16,111 @@ def is_valid_jsonld(response):
         return None
     return None
 
+def fetch_drep_list():
+    drep_list_url = "https://api.koios.rest/api/v1/drep_list"
+
+    try:
+        response = requests.get(drep_list_url, timeout=3)
+        response.raise_for_status()
+    except (requests.exceptions.RequestException, requests.exceptions.Timeout):
+        print({'error': 'Failed to fetch dRep list.'})
+        return None
+    if response is None:
+        print({'error': 'Response is empty.'})
+        return None
+    
+    drep_list_data = response.json()
+    return [drep['drep_id'] for drep in drep_list_data if 'drep_id' in drep]
+
 class handler(BaseHTTPRequestHandler):
+
+    def send_json_response(self, status_code, body):
+        self.send_response(status_code)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(body).encode('utf-8'))
 
     def do_GET(self):
         cron_token = os.getenv("CRON_SECRET")
         auth_header = self.headers.get('Authorization')
 
         if not auth_header or not auth_header.startswith('Bearer '):
-            self.send_response(403)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps({'error': 'Forbidden'}).encode('utf-8'))
+            self.send_json_response(403, {'error': 'Forbidden'})
             return
 
         request_token = auth_header.split(' ')[1]
 
         if request_token != cron_token:
-            self.send_response(403)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps({'error': 'Forbidden'}).encode('utf-8'))
+            self.send_json_response(403, {'error': 'Forbidden'})
             return
 
         start_time = time.time()
-        base_url = "https://www.1694.io/api/dreps?s=&page={}"
-        page = 1
-        all_data = []
+        drep_list = fetch_drep_list()
+        if drep_list is None:
+            return
 
-        while True:
-            attempts = 0
-            response = None  
-            while attempts < 2:
-                try:
-                    response = requests.get(base_url.format(page), timeout=3)
-                    response.raise_for_status() 
-                    break
-                except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
-                    attempts += 1
-                    if attempts == 2:  
-                        self.send_response(500)
-                        self.send_header('Content-type', 'application/json')
-                        self.end_headers()
-                        self.wfile.write(json.dumps({'error': 'Failed to fetch data after 2 attempts'}).encode('utf-8'))
-                        return
-            if response is None:  
-                break         
-            
+        drep_info_url = "https://api.koios.rest/api/v1/drep_info"
+
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+
+
+        dreps = []
+        for i in range(0, len(drep_list), 50):
+            batch_drep_ids = drep_list[i:i+50]
+            payload = {
+                "_drep_ids": batch_drep_ids
+            }
+            try:
+                response = requests.post(drep_info_url, headers=headers, json=payload, timeout=5)
+                response.raise_for_status()
+            except (requests.exceptions.RequestException, requests.exceptions.Timeout):
+                self.send_json_response(500, {'error': 'Failed to fetch dRep info.'})
+                return
+
             data = response.json()
-            dreps = data.get('data', [])
-            if not dreps:
-                break
-            
-            for dRep in dreps:
+            if not isinstance(data, list):
+                self.send_json_response(500, {'error': 'Unexpected response format.'})
+                return
+            if data:
+                dreps.extend(data)
+            else:
+                self.send_json_response(500, {'error': 'Failed to fetch dRep info.'})
+                return
+        
+        final_data = []
+        for dRep in dreps:
 
-                live_power = dRep.get('live_stake')
-                active_power = dRep.get('voting_power')
-                if active_power is None:
-                    continue
-                
-                # Check for "NaN" and handle it appropriately
-                if live_power is not None and live_power != "NaN":
-                    live_power = float(live_power)
-                else:
-                    live_power = None
-                
-                if active_power is not None:
-                    active_power = float(active_power)
-                
-                given_name = dRep.get('given_name')
-                if given_name is None:
-                    url = dRep.get('url')
-                    if url:
-                        try:
-                            response = requests.get(url, timeout=10)
-                            response.raise_for_status()
-                            given_name = is_valid_jsonld(response)
-                        except (requests.exceptions.RequestException, requests.exceptions.Timeout):
-                            pass
-                
-                # Only store the dRep if live_power and active_power are not both None or 0
-                if (live_power or 0) != 0 or (active_power or 0) != 0:
-                    all_data.append({
-                        'drep_id': dRep.get('view'),
-                        'live_power': live_power,
-                        'active_power': active_power,
-                        'given_name': given_name
-                    })
+            active_power = dRep.get('amount')
+            if active_power is None or active_power <= 0:
+                continue
             
-            if page >= data.get('totalPages', 1):
-                break
-            page += 1
+            meta_url = dRep.get('meta_url')
+            # Lazy way to not have to do a request to everyone's URL.
+            # Will probably miss some who host on other places.
+            if meta_url and ("ipfs" in meta_url or "github" in meta_url):
+                try:
+                    response = requests.get(meta_url, timeout=5)
+                    response.raise_for_status()
+                    given_name = is_valid_jsonld(response)
+                except (requests.exceptions.RequestException, requests.exceptions.Timeout):
+                    pass
+            
+            final_data.append({
+                'drep_id': dRep.get('drep_id'),
+                'is_active': dRep.get('active'),
+                'active_power': active_power,
+                'given_name': given_name
+            })
 
-        all_data.sort(key=lambda x: x['active_power'], reverse=True)
+        final_data.sort(key=lambda x: x['active_power'], reverse=True)
         
         # Save to Vercel KV using requests
         VERCEL_KV_API_URL = os.getenv("KV_REST_API_URL")
         VERCEL_KV_TOKEN = os.getenv("KV_REST_API_TOKEN")
-        url = f"{VERCEL_KV_API_URL}/set/drep_data/{json.dumps(all_data)}"
+        url = f"{VERCEL_KV_API_URL}/set/drep_data/{json.dumps(final_data)}"
         headers = {
             "Authorization": f"Bearer {VERCEL_KV_TOKEN}",
             "Content-Type": "application/json"
@@ -126,8 +134,5 @@ class handler(BaseHTTPRequestHandler):
             'elapsed_time': elapsed_time
         }
 
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps(response_body).encode('utf-8'))
+        self.send_json_response(200, response_body)
         return

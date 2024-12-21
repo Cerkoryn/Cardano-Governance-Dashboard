@@ -4,7 +4,7 @@ export type Pool = {
 };
 
 export type dRep = {
-    live_power: number;
+    is_active: boolean;
     active_power: number;
     drep_id: string;
     given_name?: string;

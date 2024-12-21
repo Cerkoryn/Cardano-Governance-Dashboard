@@ -29,4 +29,6 @@ __pycache__/
 .vscode/
 .vercel
 
-.vercel
+# API test files
+test.py
+BACKUPupdate_dreps.py
