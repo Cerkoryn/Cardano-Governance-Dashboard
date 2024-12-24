@@ -1,6 +1,6 @@
-import type { Proposal, Pool, dRep } from '$lib/types';
+import type { Proposal, Pool, dRep, FetchDataResult } from '$lib/types';
 
-export async function fetchData(): Promise<Proposal[]> {
+export async function fetchData(): Promise<FetchDataResult> {
     const [spoResponse, drepResponse] = await Promise.all([
         fetch('/api/get_spos'),
         fetch('/api/get_dreps')
@@ -11,8 +11,7 @@ export async function fetchData(): Promise<Proposal[]> {
         drepResponse.json()
     ]);
     
-    const proposals = calculateProposals(spoData, drepData);
-    return proposals;
+    return { spoData, drepData };
 }
 
 export function calculateSPOMAV(values: { label: string; stake: number }[], threshold: number) {
@@ -79,9 +78,10 @@ export function calculateCombinedMAV(drepValues: { label: string; stake: number 
     return { totalMAV, totalValues };
 }
 
-export function calculateProposals(spoData: Pool[], drepData: dRep[]): Proposal[] {
+export function calculateProposals(spoData: Pool[], drepData: dRep[], includeInactive: boolean): Proposal[] {
+    const filteredDrepData = includeInactive ? drepData : drepData.filter(drep => drep.is_active);
     spoData.sort((a, b) => b.stake - a.stake);
-    drepData.sort((a, b) => b.active_power - a.active_power);
+    filteredDrepData.sort((a, b) => b.active_power - a.active_power);
 
     // Move the item with label === "SINGLEPOOL" to the end
     const singlePoolIndex = spoData.findIndex(pool => pool.label === "SINGLEPOOL");
@@ -91,17 +91,17 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[]): Proposal[
     }
 
     // Move the item with label === "drep_always_no_confidence" to the end
-    const noConfidenceIndex = drepData.findIndex(drep => drep.drep_id === "drep_always_no_confidence");
+    const noConfidenceIndex = filteredDrepData.findIndex(drep => drep.drep_id === "drep_always_no_confidence");
     if (noConfidenceIndex !== -1) {
-        const [noConfidenceDrep] = drepData.splice(noConfidenceIndex, 1);
-        drepData.push(noConfidenceDrep);
+        const [noConfidenceDrep] = filteredDrepData.splice(noConfidenceIndex, 1);
+        filteredDrepData.push(noConfidenceDrep);
     }
 
     // Move the item with label === "drep_always_abstain" to the end
-    const abstainIndex = drepData.findIndex(drep => drep.drep_id === "drep_always_abstain");
+    const abstainIndex = filteredDrepData.findIndex(drep => drep.drep_id === "drep_always_abstain");
     if (abstainIndex !== -1) {
-        const [abstainDrep] = drepData.splice(abstainIndex, 1);
-        //drepData.push(abstainDrep);                               // TODO: Make this a toggle later
+        const [abstainDrep] = filteredDrepData.splice(abstainIndex, 1);
+        //filteredDrepData.push(abstainDrep);                               // If we ever need to add this back this is where it would go.
     }
 
     const proposalTypes: Proposal[] = [
@@ -187,13 +187,21 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[]): Proposal[
                 chart.displayValue = '5';
                 totalMav += 5;
             } else if (chart.title === 'dReps') {
-                chart.values = drepData.map(dRep => ({ label: dRep.given_name ? dRep.given_name : dRep.drep_id, active_power: dRep.active_power }));
+                chart.values = filteredDrepData.map(dRep => ({
+                    label: dRep.given_name ? dRep.given_name : dRep.drep_id,
+                    active_power: dRep.active_power,
+                    is_active: dRep.is_active,
+                })) as dRep[];
                 chart.minPools = calculatedRepMAV(chart.values, chart.threshold);
                 chart.displayValue = chart.minPools.toString();
                 totalMav += chart.minPools;
                 drepThreshold = chart.threshold
             } else if (chart.title === 'SPOs') {
-                chart.values = spoData.map(pool => ({ label: pool.label, stake: pool.stake }));
+                chart.values = spoData.map(pool => ({
+                    label: pool.label,
+                    stake: pool.stake,
+                    // is_active: pool.is_active, // uncomment this later to be able to toggle retired SPOs.
+                }));
                 chart.minPools = calculateSPOMAV(chart.values, chart.threshold);
                 chart.displayValue = chart.minPools.toString();
                 totalMav += chart.minPools;
@@ -203,7 +211,7 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[]): Proposal[
         // Calculate the Total chart after all other charts have been processed
         proposal.charts.forEach(chart => {
             if (chart.title === 'Total') {
-                const { totalMAV, totalValues } = calculateCombinedMAV(drepData.map(dRep => ({ label: dRep.drep_id, stake: dRep.active_power})), spoData.map(pool => ({ label: pool.label, stake: pool.stake})), drepThreshold, spoThreshold, grayStatus);
+                const { totalMAV, totalValues } = calculateCombinedMAV(filteredDrepData.map(dRep => ({ label: dRep.drep_id, stake: dRep.active_power})), spoData.map(pool => ({ label: pool.label, stake: pool.stake})), drepThreshold, spoThreshold, grayStatus);
                 const spoMAV = calculateSPOMAV(spoData.map(pool => ({ label: pool.label, stake: pool.stake})), 51)
                 chart.minPools = totalMAV;
                 chart.values = totalValues;

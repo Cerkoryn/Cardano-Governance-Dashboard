@@ -1,15 +1,18 @@
 <script lang=ts>
-    import Header from '$lib/components/Header.svelte'
-    import Footer from '$lib/components/Footer.svelte'
+    import Header from '$lib/components/Header.svelte';
+    import Footer from '$lib/components/Footer.svelte';
     import Container from '$lib/components/Container.svelte';
-    import { fetchData } from '$lib/utils/calcs';
-    import type { Proposal } from '$lib/types';
-    import { isDarkMode } from '$lib/stores/stores';
+    import { fetchData, calculateProposals } from '$lib/utils/calcs';
+    import type { Proposal, Pool, dRep } from '$lib/types';
+    import { isDarkMode, includeInactiveDReps } from '$lib/stores/stores';
     import { onMount } from 'svelte';
     import { get } from 'svelte/store';
 
-    let proposals: Proposal[] = [];
     let darkMode = get(isDarkMode);
+    let proposals: Proposal[] = [];
+    let spoData: Pool[] = [];    
+    let drepData: dRep[] = [];
+    let loading = true; 
 
     onMount(async () => {
         const storedTheme = localStorage.getItem('theme');
@@ -20,7 +23,12 @@
         }
         isDarkMode.set(darkMode);
         updateBodyClass();
-        proposals = await fetchData();
+        
+        const data = await fetchData();
+        spoData = data.spoData;
+        drepData = data.drepData;
+        proposals = calculateProposals(spoData, drepData, get(includeInactiveDReps));
+        loading = false; 
     });
 
     function toggleTheme() {
@@ -43,23 +51,64 @@
     }
 
     $: updateBodyClass();
+
+    // Recalculate proposals whenever includeInactiveDReps changes
+    $: if (spoData.length && drepData.length) {
+        proposals = calculateProposals(spoData, drepData, $includeInactiveDReps);
+    }
 </script>
 
 <Header {darkMode} {toggleTheme} />
 
-<main class="container mx-auto p-4 bg-dashboard-bg text-center">
-    {#each proposals as proposal, index}
-        <Container 
-            {proposal} 
-            {index} 
-            isLastTwoProposals={index >= proposals.length - 2}
-        />
-    {/each}
+<main>
+    {#if loading}
+        <div class="loading-container">
+            <p class="loading-text">Loading data...</p>
+        </div>
+    {:else}
+        <div class="content">
+            {#each proposals as proposal, index}
+                <Container 
+                    {proposal} 
+                    {index} 
+                    isLastTwoProposals={index >= proposals.length - 2}
+                />
+            {/each}
+        </div>
+    {/if}
 </main>
 
 <Footer />
 
 <style>
+    main {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - var(--header-height) - var(--footer-height));
+        padding-top: calc(var(--header-height) + 2rem);
+        background-color: var(--dashboard-bg);
+    }
+
+    .loading-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .loading-text {
+        font-size: 48px; 
+        font-weight: bold;
+        text-align: center;
+        color: inherit; 
+    }
+
+    .content {
+        width: 100%;
+    }
+
     :global(body) {
         margin: 0;
         padding: 0;

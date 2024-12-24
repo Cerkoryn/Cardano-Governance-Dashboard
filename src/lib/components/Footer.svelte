@@ -10,7 +10,7 @@
 <style>
     .margin-icon {
         font-size: 2rem;
-        color: var(--footer-icon-color);
+        color: var(--title-text-color);
         text-decoration: none;
         margin-left: 1rem;
     }

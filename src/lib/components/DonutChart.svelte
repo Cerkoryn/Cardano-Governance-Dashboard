@@ -14,6 +14,39 @@
     export let showSecondarySubtitle: boolean = false;
 
     let canvas: HTMLCanvasElement;
+    let chartInstance: Chart<'doughnut', number[], string>;
+
+    function getBackgroundColors() {
+    return values.map((value, index) => {
+        let color: string;
+
+        // Make the color white if the dRep/SPO is inactive
+        if ('is_active' in value && value.is_active === false) {
+            color = '#ffffff'; 
+            return color
+        }
+
+        // Determine base color based on chartType and index
+        if (chartType === 'gray') {
+            color = '#808080';
+        } else if (chartType === 'yellow') {
+            color = index < minPools ? '#e65100' : '#fec104';
+        } else if (title === 'CC') {
+            color = index < 5 ? '#f44336' : '#4caf50';
+        } else {
+            if (
+                secondaryMinPools !== 0 &&
+                index >= secondaryMinPools &&
+                index < minPools
+            ) {
+                color = '#e65100';
+            } else {
+                color = index < minPools ? '#f44336' : '#4caf50';
+            }
+        }
+        return color;
+    });
+}
 
     function customTooltip(context: any) {
     // Tooltip Element
@@ -94,27 +127,20 @@
     onMount(() => {
         const ctx = canvas.getContext('2d');
         if (ctx) {
-            new Chart(ctx, {
+            chartInstance = new Chart<'doughnut', number[], string>(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: values.map(value => value.label), 
-                    datasets: [{
-                        data: values.map(value => 'stake' in value ? value.stake : value.active_power), 
-                        backgroundColor: chartType === 'gray' 
-                            ? ['#808080'] 
-                            : chartType === 'yellow'
-                                ? values.map((_, index) => index < minPools ? '#e65100' : '#fec104')
-                                : title === 'CC' 
-                                    ? values.map((_, index) => index < 5 ? '#f44336' : '#4caf50') 
-                                    : values.map((_, index) => {
-                                        if (secondaryMinPools !== 0 && index >= secondaryMinPools && index < minPools) {
-                                            return '#e65100'; 
-                                        }
-                                        return index < minPools ? '#f44336' : '#4caf50'; 
-                                    }),
-                    borderWidth: 0.1,
-                    borderColor: 'black'
-                    }]
+                    datasets: [
+                        {
+                            data: values.map((value) =>
+                                'stake' in value ? value.stake : value.active_power
+                            ),
+                            backgroundColor: getBackgroundColors(),
+                            borderWidth: 0.1,
+                            borderColor: 'black',
+                        },
+                    ],
                 },
                 options: {
                     cutout: '50%',
@@ -157,6 +183,15 @@
             });
         }
     });
+
+    $: if (chartInstance) {
+        chartInstance.data.labels = values.map((value) => value.label);
+        chartInstance.data.datasets[0].data = values.map((value) =>
+            'stake' in value ? value.stake : value.active_power
+        );
+        chartInstance.data.datasets[0].backgroundColor = getBackgroundColors();
+        chartInstance.update();
+    }
 </script>
 
 <div class="chart-container {size}">
