@@ -8,10 +8,10 @@
 </script>
 
 <div class="proposal-wrapper">
-    <div class="proposal-container mx-auto max-w-4xl {index === 0 ? 'bg-black' : ''}">
-        <h2 class="text-xl font-bold mb-4 text-white">{proposal.title}</h2>
+    <div class="proposal-container {index === 0 ? 'bg-black' : ''}">
+        <h2>{proposal.title}</h2>
         {#if index === 0} 
-            <div class="flex flex-col items-center chart-item">
+            <div class="chart-item">
                 <DonutChart 
                     values={proposal.charts[0].values ?? []} 
                     title={proposal.charts[0].title} 
@@ -27,7 +27,7 @@
         {:else}
             <div class="chart-container">
                 {#each proposal.charts as chart, chartIndex}
-                    <div class="flex flex-col items-center chart-item">
+                    <div class="chart-item">
                         <DonutChart 
                             values={chart.values ?? []} 
                             title={chart.title} 
