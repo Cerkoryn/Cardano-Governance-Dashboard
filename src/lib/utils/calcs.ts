@@ -1,17 +1,21 @@
 import type { Proposal, Pool, dRep, FetchDataResult } from '$lib/types';
 
-export async function fetchData(): Promise<FetchDataResult> {
-    const [spoResponse, drepResponse] = await Promise.all([
+export async function fetchData(): Promise<FetchDataResult & { circulatingADA: number }> {
+    const [spoResponse, drepResponse, adaResponse] = await Promise.all([
         fetch('/api/get_spos'),
-        fetch('/api/get_dreps')
+        fetch('/api/get_dreps'),
+        fetch('/api/get_circulating_ada')
     ]);
 
-    const [spoData, drepData] = await Promise.all([
+    const [spoData, drepData, adaData] = await Promise.all([
         spoResponse.json(),
-        drepResponse.json()
+        drepResponse.json(),
+        adaResponse.json()
     ]);
-    
-    return { spoData, drepData };
+
+    const circulatingADA = Math.round(adaData.supply);
+
+    return { spoData, drepData, circulatingADA };
 }
 
 export function calculateSPOMAV(values: { label: string; stake: number }[], threshold: number) {
@@ -78,7 +82,7 @@ export function calculateCombinedMAV(drepValues: { label: string; stake: number 
     return { totalMAV, totalValues };
 }
 
-export function calculateProposals(spoData: Pool[], drepData: dRep[], includeInactive: boolean): Proposal[] {
+export function calculateProposals(spoData: Pool[], drepData: dRep[], circulatingADA: number, includeInactive: boolean): Proposal[] {
     const filteredDrepData = includeInactive ? drepData : drepData.filter(drep => drep.is_active);
     spoData.sort((a, b) => b.stake - a.stake);
     filteredDrepData.sort((a, b) => b.active_power - a.active_power);
@@ -107,6 +111,12 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[], includeIna
     const proposalTypes: Proposal[] = [
         { title: 'Uncontrolled Hard Fork', charts: [
             { title: 'SPOs', threshold: 50, size: 'large' } 
+        ]},
+        { title: 'Total dRep Delegation', charts: [
+            { title: 'Total', threshold: 50, size: 'medium' }
+        ]},
+        { title: 'Total Stake Pool Delegation', charts: [
+            { title: 'Total', threshold: 50, size: 'medium' }
         ]},
         { title: 'No Confidence in Constitutional Committee', charts: [
             { title: 'Total', threshold: 50, size: 'medium' },
@@ -169,62 +179,82 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[], includeIna
     ];
 
     proposalTypes.forEach(proposal => {
-        let totalMav = 0, spoThreshold = 0, drepThreshold = 0;
-        let grayStatus = { CC: false, dRep: false, SPO: false };
-        proposal.charts.forEach(chart => {
-            if (chart.chartType === 'gray') {
-                chart.values = [{ label: 'N/A', stake: 100 }];
-                chart.displayValue = 'N/A';
-                if (chart.title === 'CC') {
-                    grayStatus.CC = true;
+        if (proposal.title === 'Total dRep Delegation') {
+            let totalVotingPowerDelegated = filteredDrepData.reduce((acc, drep) => acc + drep.active_power, 0) / 1_000_000;
+            let delegatedPercent = (totalVotingPowerDelegated / circulatingADA) * 100;
+            let undelegatedPercent = 100 - delegatedPercent;
+            proposal.charts[0].values = [
+                { label: 'Delegated Voting Power', active_power: delegatedPercent } as dRep,
+                { label: 'Undelegated Voting Power', active_power: undelegatedPercent } as dRep
+            ];
+            proposal.charts[0].displayValue = `${delegatedPercent.toFixed(1)}%`;
+        } else if (proposal.title === 'Total Stake Pool Delegation') {
+            let totalStakeDelegated = spoData.reduce((acc, pool) => acc + pool.stake, 0);
+            let delegatedPercent = (totalStakeDelegated / circulatingADA) * 100;
+            let undelegatedPercent = 100 - delegatedPercent;
+            proposal.charts[0].values = [
+                { label: 'Delegated Stake', stake: delegatedPercent } as Pool,
+                { label: 'Undelegated Stake', stake: undelegatedPercent } as Pool
+            ];
+            proposal.charts[0].displayValue = `${delegatedPercent.toFixed(1)}%`;
+        } else {
+            let totalMav = 0, spoThreshold = 0, drepThreshold = 0;
+            let grayStatus = { CC: false, dRep: false, SPO: false };
+            proposal.charts.forEach(chart => {
+                if (chart.chartType === 'gray') {
+                    chart.values = [{ label: 'N/A', stake: 100 }];
+                    chart.displayValue = 'N/A';
+                    if (chart.title === 'CC') {
+                        grayStatus.CC = true;
+                    } else if (chart.title === 'dReps') {
+                        grayStatus.dRep = true;
+                    } else if (chart.title === 'SPOs') {
+                        grayStatus.SPO = true;
+                    }
+                } else if (chart.title === 'CC') {
+                    chart.values = ccNames;
+                    chart.displayValue = '5';
+                    totalMav += 5;
                 } else if (chart.title === 'dReps') {
-                    grayStatus.dRep = true;
+                    chart.values = filteredDrepData.map(dRep => ({
+                        label: dRep.given_name ? dRep.given_name : dRep.drep_id,
+                        active_power: dRep.active_power,
+                        is_active: dRep.is_active,
+                    })) as dRep[];
+                    chart.minPools = calculatedRepMAV(chart.values, chart.threshold);
+                    chart.displayValue = chart.minPools.toString();
+                    totalMav += chart.minPools;
+                    drepThreshold = chart.threshold
                 } else if (chart.title === 'SPOs') {
-                    grayStatus.SPO = true;
+                    chart.values = spoData.map(pool => ({
+                        label: pool.label,
+                        stake: pool.stake,
+                        // is_active: pool.is_active, // uncomment this later to be able to toggle retired SPOs.
+                    }));
+                    chart.minPools = calculateSPOMAV(chart.values, chart.threshold);
+                    chart.displayValue = chart.minPools.toString();
+                    totalMav += chart.minPools;
+                    spoThreshold = chart.threshold
                 }
-            } else if (chart.title === 'CC') {
-                chart.values = ccNames;
-                chart.displayValue = '5';
-                totalMav += 5;
-            } else if (chart.title === 'dReps') {
-                chart.values = filteredDrepData.map(dRep => ({
-                    label: dRep.given_name ? dRep.given_name : dRep.drep_id,
-                    active_power: dRep.active_power,
-                    is_active: dRep.is_active,
-                })) as dRep[];
-                chart.minPools = calculatedRepMAV(chart.values, chart.threshold);
-                chart.displayValue = chart.minPools.toString();
-                totalMav += chart.minPools;
-                drepThreshold = chart.threshold
-            } else if (chart.title === 'SPOs') {
-                chart.values = spoData.map(pool => ({
-                    label: pool.label,
-                    stake: pool.stake,
-                    // is_active: pool.is_active, // uncomment this later to be able to toggle retired SPOs.
-                }));
-                chart.minPools = calculateSPOMAV(chart.values, chart.threshold);
-                chart.displayValue = chart.minPools.toString();
-                totalMav += chart.minPools;
-                spoThreshold = chart.threshold
-            }
-        });
-        // Calculate the Total chart after all other charts have been processed
-        proposal.charts.forEach(chart => {
-            if (chart.title === 'Total') {
-                const { totalMAV, totalValues } = calculateCombinedMAV(filteredDrepData.map(dRep => ({ label: dRep.drep_id, stake: dRep.active_power})), spoData.map(pool => ({ label: pool.label, stake: pool.stake})), drepThreshold, spoThreshold, grayStatus);
-                const spoMAV = calculateSPOMAV(spoData.map(pool => ({ label: pool.label, stake: pool.stake})), 51)
-                chart.minPools = totalMAV;
-                chart.values = totalValues;
+            });
+            // Calculate the Total chart after all other charts have been processed
+            proposal.charts.forEach(chart => {
+                if (chart.title === 'Total') {
+                    const { totalMAV, totalValues } = calculateCombinedMAV(filteredDrepData.map(dRep => ({ label: dRep.drep_id, stake: dRep.active_power})), spoData.map(pool => ({ label: pool.label, stake: pool.stake})), drepThreshold, spoThreshold, grayStatus);
+                    const spoMAV = calculateSPOMAV(spoData.map(pool => ({ label: pool.label, stake: pool.stake})), 51)
+                    chart.minPools = totalMAV;
+                    chart.values = totalValues;
 
-                if (proposal.title === 'Parameter Change (Network, Economic, and Technical Groups)' || proposal.title === 'Parameter Change (Governance Group)') {
-                    chart.secondaryDisplayValue = totalMav.toString();
-                    chart.displayValue = (totalMav - spoMAV).toString();
-                    chart.secondaryMinPools = totalMAV - spoMAV;
-                } else {
-                    chart.displayValue = totalMav.toString();
+                    if (proposal.title === 'Parameter Change (Network, Economic, and Technical Groups)' || proposal.title === 'Parameter Change (Governance Group)') {
+                        chart.secondaryDisplayValue = totalMav.toString();
+                        chart.displayValue = (totalMav - spoMAV).toString();
+                        chart.secondaryMinPools = totalMAV - spoMAV;
+                    } else {
+                        chart.displayValue = totalMav.toString();
+                    }
                 }
-            }
-        });
+            });
+        }
     });
 
     return proposalTypes;

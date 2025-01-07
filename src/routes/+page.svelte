@@ -10,8 +10,10 @@
 
     let darkMode = get(isDarkMode);
     let proposals: Proposal[] = [];
+    let filteredProposals: Proposal[] = [];
     let spoData: Pool[] = [];    
     let drepData: dRep[] = [];
+    let circulatingADA = 0
     let loading = true; 
 
     onMount(async () => {
@@ -27,8 +29,10 @@
         const data = await fetchData();
         spoData = data.spoData;
         drepData = data.drepData;
-        proposals = calculateProposals(spoData, drepData, get(includeInactiveDReps));
-        loading = false; 
+        circulatingADA = data.circulatingADA;
+        proposals = calculateProposals(spoData, drepData, circulatingADA, get(includeInactiveDReps));
+        filterProposals();
+        loading = false;
     });
 
     function toggleTheme() {
@@ -50,11 +54,18 @@
         }
     }
 
+    function filterProposals() {
+        filteredProposals = proposals.filter(proposal => 
+            proposal.title === 'Total dRep Delegation' || 
+            proposal.title === 'Total Stake Pool Delegation'
+        );
+    }
+
     $: updateBodyClass();
 
     // Recalculate proposals whenever includeInactiveDReps changes
     $: if (spoData.length && drepData.length) {
-        proposals = calculateProposals(spoData, drepData, $includeInactiveDReps);
+        proposals = calculateProposals(spoData, drepData, circulatingADA, $includeInactiveDReps);
     }
 </script>
 
@@ -62,25 +73,59 @@
 
 <main>
     {#if loading}
-        <div class="loading-container">
-            <p class="loading-text">Loading data...</p>
-        </div>
+      <div class="loading-container">
+        <p class="loading-text">Loading data...</p>
+      </div>
     {:else}
-        <div class="content">
-            {#each proposals as proposal, index}
+      <div class="content">
+        <!-- Arrange the first three proposals side by side -->
+        {#if proposals.length > 0}
+          <div class="triple-container">
+            {#if proposals.length > 1}
+              <div class="side-container">
                 <Container 
-                    {proposal} 
-                    {index} 
-                    isLastTwoProposals={index >= proposals.length - 2}
+                  proposal={proposals[1]} 
+                  index={1}
                 />
-            {/each}
-        </div>
+              </div>
+            {/if}
+            <div class="center-container">
+              <Container 
+                proposal={proposals[0]} 
+                index={0}
+              />
+            </div>
+            {#if proposals.length > 2}
+              <div class="side-container">
+                <Container 
+                  proposal={proposals[2]} 
+                  index={2}
+                />
+              </div>
+            {/if}
+          </div>
+        {/if}
+  
+        <!-- Remaining proposals each on their own row -->
+        {#each proposals.slice(3) as proposal, index}
+          <div class="single-container">
+            <Container 
+              proposal={proposal} 
+              index={index + 3}
+            />
+          </div>
+        {/each}
+      </div>
     {/if}
-</main>
+  </main>
 
 <Footer />
 
 <style>
+        *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
     main {
         display: flex;
         align-items: center;
@@ -105,8 +150,51 @@
         color: inherit; 
     }
 
+    .triple-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: center;
+        margin-bottom: 1rem;
+        gap: 16px;
+    }
+
+    .side-container, .center-container {
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .center-container {
+        max-width: 600px; 
+    }
+
+    .single-container {
+        width: 100%;
+        max-width: 800px; 
+        margin: 0 auto;
+        padding: 0;
+        margin-bottom: 1rem; 
+    }
+
+    @media (max-width: 768px) {
+        .triple-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        .side-container, .center-container {
+            max-width: 100%;
+            padding: 0;
+            margin: 0; 
+        }
+        .single-container {
+            max-width: 100%; 
+        }
+    }
+
     .content {
         width: 100%;
+        padding: 0; 
+        margin: 0 auto; 
     }
 
     :global(body) {

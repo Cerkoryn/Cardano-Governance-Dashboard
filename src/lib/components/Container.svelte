@@ -49,23 +49,22 @@
 
 <style>
     .proposal-container {
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
         background-color: var(--proposal-bg-color); 
         border-radius: 2.5rem; 
         padding: 1rem;
         overflow: visible;
-        max-width: 50%; 
-        margin-left: auto;
-        margin-right: auto;
-        padding-top: 1rem;
-        padding-bottom: 0rem; 
+        width: 100%; 
+        margin: 0 auto; 
         text-align: center;
     }
+
     .proposal-wrapper {
         padding: 0 1rem; 
     }
+
     .proposal-wrapper:last-child {
-        margin-bottom: 6rem;
+        margin-bottom: 2rem; 
     }
     h2 {
         font-size: 1.5rem;
@@ -89,9 +88,25 @@
     .bg-black {
         background-color: var(--proposal-bg-color);
     }
-    @media (max-width: 768px) {
+        @media (max-width: 768px) {
         .proposal-container {
-            max-width: 100%;
+            padding: 0.5rem;
+        }
+            .chart-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chart-item {
+            flex: none;
+            width: 100%;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;   
+        }
+
+        .chart-item:first-child {
+            padding-bottom: 1.5rem;
         }
     }
+
 </style>

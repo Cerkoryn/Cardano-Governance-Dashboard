@@ -33,6 +33,8 @@
             color = index < minPools ? '#e65100' : '#fec104';
         } else if (title === 'CC') {
             color = index < 5 ? '#f44336' : '#4caf50';
+        } else if (values.length === 2) { // Applies to total dRep and total SPO charts.
+            color = index >= 1 ? '#f44336' : '#4caf50';
         } else {
             if (
                 secondaryMinPools !== 0 &&
@@ -260,7 +262,7 @@
         font-size: 5rem;
     }
     .chart-container.medium .chart-value {
-        font-size: 2.5rem; 
+        font-size: 2rem; 
     }
     .chart-container.small .chart-value {
         font-size: 1.5rem; 
