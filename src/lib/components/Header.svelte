@@ -1,4 +1,5 @@
 <script lang="ts">
+    import TooltipIcon from '$lib/components/TooltipIcon.svelte';
     import { includeInactiveDReps } from '$lib/stores/stores';
 
     export let darkMode: boolean;
@@ -14,6 +15,9 @@
             />
             Include Inactive dReps
         </label>
+        <div class="info-tooltip">
+            <em>What do these charts mean?</em> <TooltipIcon message="These charts show the Minimum Attack Vector (similarly known as the Nakamoto Coefficient) for each proposal and each governing body on Cardano.<br/><br/>Each chart indicates the smallest number of entities needed to collectively meet or exceed the required threshold for a given governance action." />
+        </div>
     </div>
     <div class="title-wrapper">
         <h1 class="title-text">Cardano Governance Dashboard</h1>
@@ -37,9 +41,8 @@
         width: 100%;
         z-index: 1000; 
         display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
         align-items: center;
+        justify-content: center; 
         padding: 1rem 2rem;
         box-sizing: border-box;
         background-color: var(--footer-bg-color);
@@ -47,26 +50,21 @@
         margin-bottom: 2rem;
     }
 
-    .left-controls {
-        flex: 0 0 auto;
-        order: 1; 
+    .left-controls,
+    .right-controls {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
     }
 
-    .title-wrapper {
-        text-align: center;
-        order: 2; 
-
+    .left-controls {
+        left: 2rem;
     }
 
     .right-controls {
-        flex: 0 0 auto;
-        order: 3; 
-    }
-
-    .title-text {
-        margin: 0 auto;
-        font-size: 2rem; 
-        color: var(--title-text-color);
+        right: 2rem;
     }
 
     .toggle-label {
@@ -78,6 +76,24 @@
 
     .toggle-label input {
         margin-right: 0.5rem;
+    }
+
+    .info-tooltip {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        color: var(--title-text-color);
+        margin-left: 1rem;
+    }
+
+    .title-wrapper {
+        text-align: center;
+    }
+
+    .title-text {
+        margin: 0;
+        font-size: 2rem; 
+        color: var(--title-text-color);
     }
 
     .margin-icon {
@@ -107,26 +123,25 @@
 
     @media (max-width: 768px) {
         :root {
-        --header-height: 180px; 
+            --header-height: 180px; 
         }
 
         .header-bar {
             flex-direction: column;
             align-items: center;
+            padding: 1rem;
         }
 
-        .title-wrapper {
-            order: 1; /* Ensure title is on top */
-        }
-
-        .left-controls {
-            order: 2; 
+        .left-controls,
+        .right-controls {
+            position: static;
+            transform: none;
             margin-bottom: 0.5rem;
         }
 
-        .right-controls {
-            order: 3; 
-            margin-bottom: 0.5rem; 
+        .info-tooltip {
+            margin-left: 0; 
+            margin-top: 0.5rem;
         }
 
         .title-text {

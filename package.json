@@ -22,6 +22,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@fortawesome/free-solid-svg-icons": "^6.7.2",
+		"@fortawesome/svelte-fontawesome": "^0.2.3",
 		"@sveltejs/adapter-vercel": "^5.4.1",
 		"chart.js": "^4.4.4"
 	}

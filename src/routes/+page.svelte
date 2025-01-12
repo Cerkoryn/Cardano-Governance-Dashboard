@@ -155,7 +155,7 @@
         flex-wrap: wrap;
         align-items: flex-start;
         justify-content: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0rem;
         gap: 16px;
     }
 
