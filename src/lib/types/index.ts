@@ -28,6 +28,7 @@ export type Chart = {
     secondaryDisplayValue?: string;
     minPools?: number;
     secondaryMinPools?: number;
+    tooltipMessage?: string;
 };
 
 export type Proposal = {

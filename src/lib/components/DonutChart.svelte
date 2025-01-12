@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import Chart from 'chart.js/auto';
+    import TooltipIcon from '$lib/components/TooltipIcon.svelte';
 
     export let values: { label: string; stake: number }[] | { label: string; active_power: number }[];
     export let title: string;
@@ -12,6 +13,7 @@
     export let displayValue: string;
     export let secondaryDisplayValue: string;
     export let showSecondarySubtitle: boolean = false;
+    export let tooltipMessage: string = '';
 
     let canvas: HTMLCanvasElement;
     let chartInstance: Chart<'doughnut', number[], string>;
@@ -213,6 +215,11 @@
     {#if showSecondarySubtitle}
         <div class="chart-secondary-subtitle">*SPOs only vote on security parameters</div>
     {/if}
+    {#if tooltipMessage}
+        <div class="tooltip-icon-container">
+            <TooltipIcon message={tooltipMessage} />
+        </div>
+    {/if}
 </div>
   
 <style>
@@ -220,6 +227,7 @@
         position: relative;
         margin: 0 auto;
         z-index: 1;
+        overflow: visible;
     }
     .chart-container.large {
         width: 100%;
@@ -294,6 +302,13 @@
         text-align: center;
         color: #fd551f;
         font-size: 0.7rem;
+    }
+    
+    .tooltip-icon-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 5px;
     }
     :global(body.dark-mode) {
         --chart-value-color: #f5f3eb;

@@ -1,107 +1,106 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-    export let message: string = '';
-  
-    let tooltipText: HTMLElement;
-    let tooltipContainer: HTMLElement;
-  
-    const adjustTooltipPosition = () => {
-      // Reset styles
-      tooltipText.style.right = 'auto';
-      tooltipText.style.left = '50%';
-      tooltipText.style.transform = 'translateX(-50%)';
-  
-      const rect = tooltipText.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-  
-      // Adjust horizontally
-      if (rect.left < 0) {
-        tooltipText.style.left = '0';
-        tooltipText.style.transform = 'none';
-      } else if (rect.right > viewportWidth) {
-        tooltipText.style.right = '0';
-        tooltipText.style.left = 'auto';
-        tooltipText.style.transform = 'none';
-      }
-  
-      // Adjust vertically if needed (e.g., if tooltip goes below the viewport)
-      if (rect.bottom > viewportHeight) {
-        tooltipText.style.top = 'auto';
-        tooltipText.style.bottom = '125%';
-      }
-    };
-  
-    const showTooltip = () => {
+  import { onMount } from 'svelte';
+  import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+  import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+
+  export let message: string = '';
+
+  let tooltipText: HTMLElement | null = null;
+  let tooltipContainer: HTMLElement | null = null;
+
+  const showTooltip = () => {
+    if (tooltipText && tooltipContainer) {
+      tooltipText.style.display = 'block';
       tooltipText.style.visibility = 'visible';
       tooltipText.style.opacity = '1';
-      adjustTooltipPosition();
-    };
-  
-    const hideTooltip = () => {
+
+      const rect = tooltipContainer.getBoundingClientRect();
+      const tooltipRect = tooltipText.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+
+      let left = rect.left + window.scrollX + rect.width / 2;
+
+      // Adjust left position to keep tooltip within viewport
+      if (left - tooltipRect.width / 2 < 0) {
+        left = tooltipRect.width / 2 + 8; // Adding a small padding
+      } else if (left + tooltipRect.width / 2 > viewportWidth) {
+        left = viewportWidth - tooltipRect.width / 2 - 8; // Adding a small padding
+      }
+
+      tooltipText.style.top = `${rect.bottom + window.scrollY + 8}px`;
+      tooltipText.style.left = `${left}px`;
+      tooltipText.style.transform = 'translateX(-50%)';
+    }
+  };
+
+  const hideTooltip = () => {
+    if (tooltipText) {
       tooltipText.style.visibility = 'hidden';
       tooltipText.style.opacity = '0';
-      // Reset vertical position
-      tooltipText.style.top = '125%';
-      tooltipText.style.bottom = 'auto';
+      tooltipText.style.display = 'none';
+      tooltipText.style.top = '0';
+      tooltipText.style.left = '0';
+    }
+  };
+
+  onMount(() => {
+    tooltipText = document.createElement('div');
+    tooltipText.className = 'tooltip-text';
+    tooltipText.innerHTML = message;
+    document.body.appendChild(tooltipText);
+
+    return () => {
+      if (tooltipText && tooltipText.parentNode) {
+        tooltipText.parentNode.removeChild(tooltipText);
+      }
     };
-  </script>
-  
-  <div
-    class="tooltip-container"
-    bind:this={tooltipContainer}
-    on:mouseenter={showTooltip}
-    on:mouseleave={hideTooltip}
-    role="button"
-    tabindex="0"
-    aria-haspopup="true"
-    aria-expanded="false"
-  >
-    <FontAwesomeIcon icon="{faQuestionCircle}" class="tooltip-icon" />
-    <div class="tooltip-text" bind:this={tooltipText}>
-      {@html message}
-    </div>
-  </div>
-  
-  <style>
-    .tooltip-container {
-      position: relative;
-      display: inline-block;
-      cursor: pointer;
-      margin-left: 4px;
-    }
-  
-    .tooltip-text {
-      visibility: hidden;
-      width: max-content;
-      max-width: 200px;
-      background-color: var(--tooltip-background-color, #333);
-      color: var(--tooltip-text-color, #fff);
-      text-align: left;
-      border-radius: 6px;
-      padding: 8px;
-      position: absolute;
-      z-index: 10;
-      top: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-  
-    .tooltip-text::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      margin-left: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: var(--tooltip-background-color, #333) transparent transparent transparent;
-      transform: translateY(-100%);
-    }
-  </style>
+  });
+</script>
+
+<div
+  class="tooltip-container"
+  bind:this={tooltipContainer}
+  on:mouseenter={showTooltip}
+  on:mouseleave={hideTooltip}
+  on:focus={showTooltip}
+  on:blur={hideTooltip}
+  role="button"
+  tabindex="0"
+  aria-haspopup="true"
+  aria-expanded="false"
+>
+  <FontAwesomeIcon icon={faQuestionCircle} class="tooltip-icon" />
+</div>
+
+<style>  
+  :global(.tooltip-text) {
+    visibility: hidden;
+    opacity: 0;
+    width: max-content;
+    max-width: 250px;
+    background-color: var(--tooltip-background-color, #333);
+    color: var(--tooltip-text-color, #fff);
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute; 
+    z-index: 10000;
+    transition: opacity 0.3s, visibility 0.3s;
+    pointer-events: none; 
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    top: 0;
+    left: 0;
+  }
+
+  :global(.tooltip-text::after) {
+    content: '';
+    position: absolute;
+    top: -5px; 
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent var(--tooltip-background-color, #333) transparent;
+  }
+</style>

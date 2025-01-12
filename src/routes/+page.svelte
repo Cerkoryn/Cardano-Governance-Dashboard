@@ -122,7 +122,7 @@
 <Footer />
 
 <style>
-        *, *::before, *::after {
+    *, *::before, *::after {
         box-sizing: border-box;
     }
 

@@ -21,7 +21,8 @@
                     minPools={proposal.charts[0].minPools ?? 0} 
                     secondaryMinPools={proposal.charts[0].secondaryMinPools ?? 0} 
                     displayValue={proposal.charts[0].displayValue ?? 'ERROR'} 
-                    secondaryDisplayValue={proposal.charts[0].secondaryDisplayValue ?? ''} 
+                    secondaryDisplayValue={proposal.charts[0].secondaryDisplayValue ?? ''}
+                    tooltipMessage={proposal.charts[0].tooltipMessage ?? ''}
                 />
             </div>
         {:else}
@@ -39,6 +40,7 @@
                             displayValue={chart.displayValue ?? 'ERROR'} 
                             secondaryDisplayValue={chart.secondaryDisplayValue ?? ''} 
                             showSecondarySubtitle={chartIndex === 3 && isLastTwoProposals}
+                            tooltipMessage={chart.tooltipMessage ?? ''}
                         />
                     </div>
                 {/each}
