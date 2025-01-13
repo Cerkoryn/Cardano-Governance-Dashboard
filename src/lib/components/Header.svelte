@@ -13,10 +13,10 @@
                 type="checkbox" 
                 bind:checked={$includeInactiveDReps} 
             />
-            Include Inactive dReps
+            Include Inactive dReps 
         </label>
         <div class="info-tooltip">
-            <em>What do these charts mean?</em> <TooltipIcon message="These charts show the Minimum Attack Vector (similarly known as the Nakamoto Coefficient) for each proposal and each governing body on Cardano.<br/><br/>Each chart indicates the smallest number of entities needed to collectively meet or exceed the required threshold for a given governance action." />
+            <em> What do these charts mean?</em> <TooltipIcon message="These charts show the Minimum Attack Vector (similarly known as the Nakamoto Coefficient) for each proposal and each governing body on Cardano.<br/><br/>Each chart indicates the smallest number of entities needed to collectively meet or exceed the required threshold for a given governance action." />
         </div>
     </div>
     <div class="title-wrapper">
@@ -121,31 +121,98 @@
         background-color: var(--button-hover-bg-color);
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1280px) {
         :root {
-            --header-height: 180px; 
+            --header-height: 50px; /* Reduce header height */
         }
 
         .header-bar {
             flex-direction: column;
             align-items: center;
-            padding: 1rem;
+            padding: 0.5rem; /* Reduce padding */
         }
 
         .left-controls,
         .right-controls {
             position: static;
             transform: none;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0rem; /* Reduce margin */
+            width: 100%;
+            display: flex;
+            justify-content: center; /* Center contents */
+            align-items: center;
+        }
+
+        /* Add gap between toggle-label and info-tooltip */
+        .left-controls {
+            gap: 1rem; /* Adjust the gap as needed */
+            margin-bottom: 0.5rem; /* Add some space below for the icon row */
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem; /* Reduce font size */
+            color: var(--title-text-color);
+        }
+
+        .toggle-label input {
+            margin-right: 0.25rem; /* Adjust spacing */
+            transform: scale(0.9); /* Scale down checkbox */
         }
 
         .info-tooltip {
+            display: flex;
+            align-items: center;
+            font-size: 0.6rem; /* Reduce font size */
+            color: var(--title-text-color);
             margin-left: 0; 
-            margin-top: 0.5rem;
+            margin-top: 0.3rem; /* Adjust margin */
+        }
+
+        .title-wrapper {
+            order: 1;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 0.5rem; /* Reduce margin */
         }
 
         .title-text {
-            font-size: 1.5rem; 
+            margin: 0;
+            font-size: 1rem; /* Adjust as needed */
+            color: var(--title-text-color);
+        }
+
+        .margin-icon {
+            font-size: 1.25rem; /* Reduce icon size */
+            color: var(--title-text-color);
+            margin-left: 0; /* Remove left margin */
+            margin-bottom: 0rem;
+        }
+
+        button {
+            font-size: 0.9rem; /* Reduce font size */
+            padding: 0.3rem 0.6rem; /* Adjust padding */
+            background-color: var(--button-bg-color);
+            color: var(--title-text-color);
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+
+        /* Adjust order for responsive design */
+        .left-controls {
+            order: 2;
+        }
+
+        .right-controls {
+            order: 3;
+            /* Ensure the icon is centered */
+            justify-content: center;
         }
     }
 </style>
