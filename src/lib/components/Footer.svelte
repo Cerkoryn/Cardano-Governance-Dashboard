@@ -2,7 +2,7 @@
     <div class="attributions">
         <span>
             dRep and Stake Pool Data Sourced From 
-            <a href="https://api.koios.rest/" target="_blank">Koios</a>.
+            <a href="https://koios.rest/" target="_blank">Koios</a>.
         </span>
         <span>
             Pool Group Data Sourced from 
