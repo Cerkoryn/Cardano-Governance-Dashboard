@@ -239,7 +239,7 @@ export const proposalTypes: Proposal[] = [
                 threshold: 51,
                 subtitle: 'Threshold - 51%',
                 chartType: 'yellow',
-                tooltipMessage: 'The fewest number of stake pool operators needed to surpass the required stake threshold for this proposal.'
+                tooltipMessage: 'The fewest number of stake pool operators needed to surpass the required stake threshold for this proposal.<br/><br/>SPOs only vote on this proposal if the parameter to be changed is a security parameter.'
             }
         ]
     },
@@ -269,7 +269,7 @@ export const proposalTypes: Proposal[] = [
                 threshold: 51,
                 subtitle: 'Threshold - 51%',
                 chartType: 'yellow',
-                tooltipMessage: 'The fewest number of stake pool operators needed to surpass the required stake threshold for this proposal.'
+                tooltipMessage: 'The fewest number of stake pool operators needed to surpass the required stake threshold for this proposal.<br/><br/>SPOs only vote on this proposal if the parameter to be changed is a security parameter.'
             }
         ]
     }
