@@ -46,6 +46,7 @@
                 {/each}
             </div>
         {/if}
+        <slot />
     </div>
 </div>
 

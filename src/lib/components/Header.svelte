@@ -123,76 +123,75 @@
 
     @media (max-width: 1280px) {
         :root {
-            --header-height: 50px; /* Reduce header height */
+            --header-height: 50px; 
         }
 
         .header-bar {
             flex-direction: column;
             align-items: center;
-            padding: 0.5rem; /* Reduce padding */
+            padding: 0.5rem;
         }
 
         .left-controls,
         .right-controls {
             position: static;
             transform: none;
-            margin-bottom: 0rem; /* Reduce margin */
+            margin-bottom: 0rem; 
             width: 100%;
             display: flex;
-            justify-content: center; /* Center contents */
+            justify-content: center; 
             align-items: center;
         }
 
-        /* Add gap between toggle-label and info-tooltip */
         .left-controls {
-            gap: 1rem; /* Adjust the gap as needed */
-            margin-bottom: 0.5rem; /* Add some space below for the icon row */
+            gap: 1rem; 
+            margin-bottom: 0.5rem;
         }
 
         .toggle-label {
             display: flex;
             align-items: center;
-            font-size: 0.9rem; /* Reduce font size */
+            font-size: 0.9rem; 
             color: var(--title-text-color);
         }
 
         .toggle-label input {
-            margin-right: 0.25rem; /* Adjust spacing */
-            transform: scale(0.9); /* Scale down checkbox */
+            margin-right: 0.25rem; 
+            transform: scale(0.9); 
         }
 
         .info-tooltip {
             display: flex;
             align-items: center;
-            font-size: 0.6rem; /* Reduce font size */
+            font-size: 0.6rem; 
             color: var(--title-text-color);
             margin-left: 0; 
-            margin-top: 0.3rem; /* Adjust margin */
+            margin-top: 0.3rem; 
         }
 
         .title-wrapper {
             order: 1;
             width: 100%;
             text-align: center;
-            margin-bottom: 0.5rem; /* Reduce margin */
+            margin-bottom: 0.5rem; 
         }
 
         .title-text {
             margin: 0;
-            font-size: 1rem; /* Adjust as needed */
+            font-size: 1rem; 
             color: var(--title-text-color);
         }
 
         .margin-icon {
-            font-size: 1.25rem; /* Reduce icon size */
+            font-size: 1.25rem;
             color: var(--title-text-color);
-            margin-left: 0; /* Remove left margin */
+            margin-left: 0; 
             margin-bottom: 0rem;
         }
 
         button {
-            font-size: 0.9rem; /* Reduce font size */
-            padding: 0.3rem 0.6rem; /* Adjust padding */
+            font-size: 0.9rem; 
+            padding: 0.3rem 0.6rem; 
             background-color: var(--button-bg-color);
             color: var(--title-text-color);
             border: none;
@@ -204,14 +203,12 @@
             background-color: var(--button-hover-bg-color);
         }
 
-        /* Adjust order for responsive design */
         .left-controls {
             order: 2;
         }
 
         .right-controls {
             order: 3;
-            /* Ensure the icon is centered */
             justify-content: center;
         }
     }

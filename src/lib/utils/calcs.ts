@@ -1,11 +1,11 @@
 import type { Proposal, Pool, dRep, FetchDataResult } from '$lib/types/types';
 import { proposalTypes, ccNames } from '$lib/constants/constants';
 
-export async function fetchData(): Promise<FetchDataResult & { circulatingADA: number }> {
+export async function fetchData(): Promise<FetchDataResult & { totalData: { total_spos: number; total_pools: number; total_pool_delegators: number; circulating_ada: number } }> {
     const [spoResponse, drepResponse, adaResponse] = await Promise.all([
         fetch('/api/get_spos'),
         fetch('/api/get_dreps'),
-        fetch('/api/get_circulating_ada')
+        fetch('/api/get_spo_totals')
     ]);
 
     const [spoData, drepData, adaData] = await Promise.all([
@@ -14,9 +14,14 @@ export async function fetchData(): Promise<FetchDataResult & { circulatingADA: n
         adaResponse.json()
     ]);
 
-    const circulatingADA = Math.round(adaData.supply);
+    const totalData = {
+        total_spos: adaData.total_spos,
+        total_pools: adaData.total_pools,
+        total_pool_delegators: adaData.total_pool_delegators,
+        circulating_ada: Math.round(adaData.circulating_ada)
+    };
 
-    return { spoData, drepData, circulatingADA };
+    return { spoData, drepData, totalData };
 }
 
 export function calculateSPOMAV(values: { label: string; stake: number }[], threshold: number) {

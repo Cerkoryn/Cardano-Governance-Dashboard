@@ -19,21 +19,27 @@ def is_valid_jsonld(response):
 
 def fetch_drep_list():
     drep_list_url = "https://api.koios.rest/api/v1/drep_list"
+    offset = 0
+    limit = 500
+    drep_ids = []
 
-    try:
-        response = requests.get(drep_list_url, timeout=3)
-        response.raise_for_status()
-    except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
-        print({'error': 'Failed to fetch dRep list.'})
-        print(e)
-        return None
-    if response is None:
-        print({'error': 'Response is empty.'})
-        print(e)
-        return None
-    
-    drep_list_data = response.json()
-    drep_ids = [drep['drep_id'] for drep in drep_list_data if 'drep_id' in drep]
+    while True:
+        paginated_url = f"{drep_list_url}?offset={offset}&limit={limit}"
+        try:
+            response = requests.get(paginated_url, timeout=5)
+            response.raise_for_status()
+        except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
+            print({'error': 'Failed to fetch dRep list.'})
+            print(e)
+            return None
+
+        drep_list_data = response.json()
+        if not drep_list_data:
+            break
+
+        drep_ids.extend([drep['drep_id'] for drep in drep_list_data if 'drep_id' in drep])
+        offset += limit
+
     drep_ids.append("drep_always_abstain")
     drep_ids.append("drep_always_no_confidence")
     return drep_ids

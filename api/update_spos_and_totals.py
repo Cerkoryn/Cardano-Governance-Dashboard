@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 import json
@@ -29,17 +30,17 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(body).encode('utf-8'))
 
     def do_GET(self):
-        #if not self.authenticate_request():
-        #    return
+        if not self.authenticate_request():
+            return
 
         start_time = time.time()
 
         try:
             # Update SPO Data
-            self.update_spo_data()
+            groupdata = self.update_spo_data()
 
-            # Update Circulating ADA Data
-            self.update_circulating_ada_data()
+            # Update Totals
+            self.update_totals(groupdata)
 
             elapsed_time = time.time() - start_time
             response_body = {
@@ -106,8 +107,10 @@ class handler(BaseHTTPRequestHandler):
 
         spo_response = requests.post(spo_url, headers=spo_headers)
         spo_response.raise_for_status()
+        return groupdata
 
-    def update_circulating_ada_data(self):
+    def update_totals(self, groupdata):
+
         circulating_ada_url = "https://api.koios.rest/api/v1/totals"
         ada_response = requests.get(circulating_ada_url)
         ada_response.raise_for_status()
@@ -115,14 +118,77 @@ class handler(BaseHTTPRequestHandler):
 
         # Find the entry with the largest epoch_no
         latest_epoch = max(ada_data, key=lambda x: x['epoch_no'])
-        supply_value = (int(latest_epoch['supply']) / 1000000)
+        ada_supply = (int(latest_epoch['supply']) / 1000000)
 
-        extracted_ada_data = {'supply': supply_value}
+        pool_list_url = "https://api.koios.rest/api/v1/pool_list"
+        offset = 0
+        limit = 500
+        pool_list = []
+
+        while True:
+            paginated_url = f"{pool_list_url}?offset={offset}&limit={limit}"
+            pool_list_response = requests.get(paginated_url)
+            pool_list_response.raise_for_status()
+            pool_list_data = pool_list_response.json()
+            
+            if not pool_list_data:
+                break
+            
+            for pool in pool_list_data:
+                if pool.get('pool_status') != 'retired':
+                    pool_list.append(pool['pool_id_bech32'])
+                else:
+                    groupdata[:] = [group for group in groupdata if group.get('pool_hash') != pool['pool_id_bech32']]
+            offset += limit
+
+        pool_info_url = "https://api.koios.rest/api/v1/pool_info"
+        total_pool_delegators = 0
+
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+
+        def fetch_pool_info(batch_pool_ids):
+            payload = {
+                "_pool_bech32_ids": batch_pool_ids
+            }
+            try:
+                response = requests.post(pool_info_url, headers=headers, json=payload, timeout=15)
+                response.raise_for_status()
+                return response.json()
+            except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
+                print({'error': 'Failed to fetch pool info.'})
+                print(e)
+                return []
+
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            futures = {executor.submit(fetch_pool_info, pool_list[i:i+50]): i for i in range(0, len(pool_list), 50)}
+            for future in as_completed(futures):
+                pool_info_data = future.result()
+                for pool in pool_info_data:
+                    total_pool_delegators += pool.get('live_delegators', 0)
+
+        unique_groups = set()
+        singlepool_count = 0
+        for group in groupdata:
+            if group['pool_group'] == 'SINGLEPOOL':
+                singlepool_count += 1
+            else:
+                unique_groups.add(group['pool_group'])
+        total_spos = len(unique_groups) + singlepool_count
+
+        total_data = {
+            'total_spos': total_spos,
+            'total_pools': len(pool_list),
+            'total_pool_delegators': total_pool_delegators,
+            'circulating_ada': ada_supply
+        }
 
         # Save Circulating ADA Data to Vercel KV
         VERCEL_KV_API_URL = os.getenv("KV_REST_API_URL")
         VERCEL_KV_TOKEN = os.getenv("KV_REST_API_TOKEN")
-        ada_url = f"{VERCEL_KV_API_URL}/set/circulating_ada/{json.dumps(extracted_ada_data)}"
+        ada_url = f"{VERCEL_KV_API_URL}/set/totals/{json.dumps(total_data)}"
         ada_headers = {
             "Authorization": f"Bearer {VERCEL_KV_TOKEN}",
             "Content-Type": "application/json"

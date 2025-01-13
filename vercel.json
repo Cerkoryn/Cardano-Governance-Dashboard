@@ -17,7 +17,7 @@
       "schedule": "0 0 * * *" 
     },
     {
-      "path": "/api/update_spos_and_supply",
+      "path": "/api/update_spos_and_totals",
       "schedule": "0 0 * * *"  
     }
   ]

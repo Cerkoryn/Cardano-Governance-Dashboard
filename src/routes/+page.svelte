@@ -13,7 +13,10 @@
     let filteredProposals: Proposal[] = [];
     let spoData: Pool[] = [];    
     let drepData: dRep[] = [];
-    let circulatingADA = 0
+    let total_pools = 0;
+    let total_spos = 0;
+    let total_pool_delegators = 0;
+    let circulatingADA = 0;
     let loading = true; 
 
     onMount(async () => {
@@ -29,7 +32,10 @@
         const data = await fetchData();
         spoData = data.spoData;
         drepData = data.drepData;
-        circulatingADA = data.circulatingADA;
+        total_pools = data.totalData.total_pools;
+        total_spos = data.totalData.total_spos;
+        total_pool_delegators = data.totalData.total_pool_delegators;
+        circulatingADA = data.totalData.circulating_ada;
         proposals = calculateProposals(spoData, drepData, circulatingADA, get(includeInactiveDReps));
         filterProposals();
         loading = false;
@@ -86,7 +92,11 @@
                 <Container 
                   proposal={proposals[1]} 
                   index={1}
-                />
+                >
+                <p class="total-number">dRep Count: 300</p>
+                <p class="total-number">dRep Delegator Count: 1000</p>
+                <br/>
+                </Container>
               </div>
             {/if}
             <div class="center-container">
@@ -100,7 +110,12 @@
                 <Container 
                   proposal={proposals[2]} 
                   index={2}
-                />
+                >
+                <p class="total-number">Stake Pool Count: {total_pools}</p>
+                <p class="total-number">Stake Pool Operator Count: {total_spos}</p>
+                <p class="total-number">Stake Pool Delegator Count: {total_pool_delegators}</p>
+                <br/>
+                </Container>
               </div>
             {/if}
           </div>
@@ -174,6 +189,13 @@
         margin: 0 auto;
         padding: 0;
         margin-bottom: 1rem; 
+    }
+
+    .total-number {
+        text-align: left;
+        font-size: 15px;
+        padding-left: 1px;
+        padding-right: 0px;
     }
 
     @media (max-width: 768px) {
