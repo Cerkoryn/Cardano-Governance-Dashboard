@@ -3,7 +3,7 @@
     import Footer from '$lib/components/Footer.svelte';
     import Container from '$lib/components/Container.svelte';
     import { fetchData, calculateProposals } from '$lib/utils/calcs';
-    import type { Proposal, Pool, dRep } from '$lib/types';
+    import type { Proposal, Pool, dRep } from '$lib/types/types';
     import { isDarkMode, includeInactiveDReps } from '$lib/stores/stores';
     import { onMount } from 'svelte';
     import { get } from 'svelte/store';

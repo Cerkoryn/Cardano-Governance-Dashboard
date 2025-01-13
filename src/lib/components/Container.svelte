@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Proposal } from '$lib/types';
+    import type { Proposal } from '$lib/types/types';
     import DonutChart from '$lib/components/DonutChart.svelte';
 
     export let proposal: Proposal;
