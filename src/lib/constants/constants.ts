@@ -30,7 +30,7 @@ export const proposalTypes: Proposal[] = [
                 title: 'Total',
                 threshold: 50,
                 size: 'medium',
-                tooltipMessage: 'The percentage of total circulating ADA that is delegated to stake pools.'
+                tooltipMessage: 'The percentage of total circulating ADA that is delegated to stake pools.<br/><br/>Cardano stake pools (known as validators in other blockchain ecosystems) have a limit to the total amount of delegated stake they can manage. However, some stake pool operators open additional stake pools to bypass this constraint. Therefore, stake pools and stake pool operators are tracked separately here.'
             }
         ]
     },

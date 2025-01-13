@@ -17,6 +17,8 @@
     let total_spos = 0;
     let total_pool_delegators = 0;
     let circulatingADA = 0;
+    let total_dreps = 0;
+    let total_drep_delegators = 0;
     let loading = true; 
 
     onMount(async () => {
@@ -36,6 +38,8 @@
         total_spos = data.totalData.total_spos;
         total_pool_delegators = data.totalData.total_pool_delegators;
         circulatingADA = data.totalData.circulating_ada;
+        total_dreps = data.totalData.total_dreps,
+        total_drep_delegators = data.totalData.total_drep_delegators
         proposals = calculateProposals(spoData, drepData, circulatingADA, get(includeInactiveDReps));
         filterProposals();
         loading = false;
@@ -93,8 +97,8 @@
                   proposal={proposals[1]} 
                   index={1}
                 >
-                <p class="total-number">dRep Count: 300</p>
-                <p class="total-number">dRep Delegator Count: 1000</p>
+                <p class="total-number">dRep Count: {total_dreps.toLocaleString()}</p>
+                <p class="total-number">dRep Delegator Count: {total_drep_delegators.toLocaleString()}</p>
                 <br/>
                 </Container>
               </div>
@@ -111,9 +115,9 @@
                   proposal={proposals[2]} 
                   index={2}
                 >
-                <p class="total-number">Stake Pool Count: {total_pools}</p>
-                <p class="total-number">Stake Pool Operator Count: {total_spos}</p>
-                <p class="total-number">Stake Pool Delegator Count: {total_pool_delegators}</p>
+                <p class="total-number">Stake Pool Count: {total_pools.toLocaleString()}</p>
+                <p class="total-number">Stake Pool Operator Count: {total_spos.toLocaleString()}</p>
+                <p class="total-number">Stake Pool Delegator Count: {total_pool_delegators.toLocaleString()}</p>
                 <br/>
                 </Container>
               </div>

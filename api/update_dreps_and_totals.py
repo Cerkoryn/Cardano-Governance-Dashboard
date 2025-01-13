@@ -18,7 +18,7 @@ def is_valid_jsonld(response):
     return None
 
 def fetch_drep_list():
-    drep_list_url = "https://api.koios.rest/api/v1/drep_list"
+    drep_list_url = "https://api.koios.rest/api/v1/drep_list?select=drep_id"
     offset = 0
     limit = 500
     drep_ids = []
@@ -28,9 +28,8 @@ def fetch_drep_list():
         try:
             response = requests.get(paginated_url, timeout=5)
             response.raise_for_status()
-        except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
+        except (requests.exceptions.RequestException, requests.exceptions.Timeout):
             print({'error': 'Failed to fetch dRep list.'})
-            print(e)
             return None
 
         drep_list_data = response.json()
@@ -77,7 +76,7 @@ class handler(BaseHTTPRequestHandler):
         if drep_list is None:
             return
 
-        drep_info_url = "https://api.koios.rest/api/v1/drep_info"
+        drep_info_url = "https://api.koios.rest/api/v1/drep_info?select=drep_id,active,amount,meta_url"
 
         headers = {
             "Accept": "application/json",
@@ -93,26 +92,24 @@ class handler(BaseHTTPRequestHandler):
             try:
                 response = requests.post(drep_info_url, headers=headers, json=payload, timeout=5)
                 response.raise_for_status()
-            except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
+            except (requests.exceptions.RequestException, requests.exceptions.Timeout):
                 self.send_json_response(500, {'error': 'Failed to fetch dRep info.'})
-                print(e)
                 return
 
             data = response.json()
             if not isinstance(data, list):
                 self.send_json_response(500, {'error': 'Unexpected response format.'})
-                print(e)
                 return
             if data:
                 dreps.extend(data)
             else:
                 self.send_json_response(500, {'error': 'Response is empty.'})
-                print(e)
                 return
         
         final_data = []
         # Defining here to use with threads.
         def process_drep(dRep):
+            drep_id = dRep.get('drep_id')
             given_name = None
             active_power = int(dRep.get('amount', 0))
             if active_power <= 0:
@@ -127,11 +124,22 @@ class handler(BaseHTTPRequestHandler):
                 except (requests.exceptions.RequestException, requests.exceptions.Timeout):
                     given_name = None
 
+            delegator_url = f"https://api.koios.rest/api/v1/drep_delegators?_drep_id={drep_id}&select=count"
+            try:
+                response = requests.get(delegator_url, timeout=7)
+                response.raise_for_status()
+                delegator_data = response.json()
+                delegator_count = delegator_data[0]['count'] if delegator_data else 0
+            except (requests.exceptions.RequestException, requests.exceptions.Timeout):
+                print({'error': f'Failed to fetch delegators for dRep {drep_id}.'})
+                delegator_count = 0
+
             return {
-                'drep_id': dRep.get('drep_id'),
+                'drep_id': drep_id,
                 'is_active': dRep.get('active'),
                 'active_power': active_power,
-                'given_name': given_name
+                'given_name': given_name,
+                'delegator_count': delegator_count
             }
 
         # Use ThreadPoolExecutor to process concurrently
@@ -154,7 +162,16 @@ class handler(BaseHTTPRequestHandler):
         }
         response = requests.post(url, headers=headers)
         response.raise_for_status()
-        
+
+        totals = {
+            'total_dreps': len(drep_list),
+            'total_drep_delegators': sum(drep['delegator_count'] for drep in final_data)
+        }
+
+        url2 = f"{VERCEL_KV_API_URL}/set/drep_totals/{json.dumps(totals)}"
+        response = requests.post(url2, headers=headers)
+        response.raise_for_status()
+
         elapsed_time = time.time() - start_time
         response_body = {
             'status': 'ok',

@@ -13,7 +13,7 @@
   ],
   "crons": [
     {
-      "path": "/api/update_dreps",
+      "path": "/api/update_dreps_and_totals",
       "schedule": "0 0 * * *" 
     },
     {

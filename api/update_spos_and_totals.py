@@ -126,7 +126,7 @@ class handler(BaseHTTPRequestHandler):
         pool_list = []
 
         while True:
-            paginated_url = f"{pool_list_url}?offset={offset}&limit={limit}"
+            paginated_url = f"{pool_list_url}?select=pool_id_bech32,pool_status&offset={offset}&limit={limit}"
             pool_list_response = requests.get(paginated_url)
             pool_list_response.raise_for_status()
             pool_list_data = pool_list_response.json()
@@ -188,7 +188,7 @@ class handler(BaseHTTPRequestHandler):
         # Save Circulating ADA Data to Vercel KV
         VERCEL_KV_API_URL = os.getenv("KV_REST_API_URL")
         VERCEL_KV_TOKEN = os.getenv("KV_REST_API_TOKEN")
-        ada_url = f"{VERCEL_KV_API_URL}/set/totals/{json.dumps(total_data)}"
+        ada_url = f"{VERCEL_KV_API_URL}/set/spo_totals/{json.dumps(total_data)}"
         ada_headers = {
             "Authorization": f"Bearer {VERCEL_KV_TOKEN}",
             "Content-Type": "application/json"

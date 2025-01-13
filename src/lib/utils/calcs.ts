@@ -1,24 +1,28 @@
 import type { Proposal, Pool, dRep, FetchDataResult } from '$lib/types/types';
 import { proposalTypes, ccNames } from '$lib/constants/constants';
 
-export async function fetchData(): Promise<FetchDataResult & { totalData: { total_spos: number; total_pools: number; total_pool_delegators: number; circulating_ada: number } }> {
-    const [spoResponse, drepResponse, adaResponse] = await Promise.all([
+export async function fetchData(): Promise<FetchDataResult & { totalData: { total_spos: number; total_pools: number; total_pool_delegators: number; circulating_ada: number, total_dreps: number, total_drep_delegators: number } }> {
+    const [spoResponse, drepResponse, spoTotalResponse, drepTotalResponse] = await Promise.all([
         fetch('/api/get_spos'),
         fetch('/api/get_dreps'),
-        fetch('/api/get_spo_totals')
+        fetch('/api/get_spo_totals'),
+        fetch('/api/get_drep_totals')
     ]);
 
-    const [spoData, drepData, adaData] = await Promise.all([
+    const [spoData, drepData, spoTotal, drepTotal] = await Promise.all([
         spoResponse.json(),
         drepResponse.json(),
-        adaResponse.json()
+        spoTotalResponse.json(),
+        drepTotalResponse.json()
     ]);
 
     const totalData = {
-        total_spos: adaData.total_spos,
-        total_pools: adaData.total_pools,
-        total_pool_delegators: adaData.total_pool_delegators,
-        circulating_ada: Math.round(adaData.circulating_ada)
+        total_spos: spoTotal.total_spos,
+        total_pools: spoTotal.total_pools,
+        total_pool_delegators: spoTotal.total_pool_delegators,
+        circulating_ada: Math.round(spoTotal.circulating_ada),
+        total_dreps: drepTotal.total_dreps,
+        total_drep_delegators: drepTotal.total_drep_delegators
     };
 
     return { spoData, drepData, totalData };

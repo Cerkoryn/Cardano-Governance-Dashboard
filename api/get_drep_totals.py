@@ -9,7 +9,7 @@ class handler(BaseHTTPRequestHandler):
         VERCEL_KV_API_URL = os.getenv("KV_REST_API_URL")
         VERCEL_KV_TOKEN = os.getenv("KV_REST_API_TOKEN")
         
-        url = f"{VERCEL_KV_API_URL}/get/spo_totals"
+        url = f"{VERCEL_KV_API_URL}/get/drep_totals"
         headers = {
             "Authorization": f"Bearer {VERCEL_KV_TOKEN}",
             "Content-Type": "application/json"
