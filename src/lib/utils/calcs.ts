@@ -119,7 +119,7 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[], circulatin
     }
 
     proposalTypes.forEach(proposal => {
-        if (proposal.title === 'Total dRep Delegation') {
+        if (proposal.title === '% of Circulating ADA Delegated to dReps') {
             let totalVotingPowerDelegated = filteredDrepData.reduce((acc, drep) => acc + drep.active_power, 0) / 1_000_000;
             let delegatedPercent = (totalVotingPowerDelegated / circulatingADA) * 100;
             let undelegatedPercent = 100 - delegatedPercent;
@@ -128,7 +128,7 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[], circulatin
                 { label: 'Undelegated Voting Power', active_power: undelegatedPercent } as dRep
             ];
             proposal.charts[0].displayValue = `${delegatedPercent.toFixed(1)}%`;
-        } else if (proposal.title === 'Total Stake Pool Delegation') {
+        } else if (proposal.title === '% of Circulating ADA Delegated to Stake Pools') {
             let totalStakeDelegated = spoData.reduce((acc, pool) => acc + pool.stake, 0);
             let delegatedPercent = (totalStakeDelegated / circulatingADA) * 100;
             let undelegatedPercent = 100 - delegatedPercent;
@@ -185,7 +185,7 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[], circulatin
                     chart.minPools = totalMAV;
                     chart.values = totalValues;
 
-                    if (proposal.title === 'Parameter Change (Network, Economic, and Technical Groups)' || proposal.title === 'Parameter Change (Governance Group)') {
+                    if (proposal.title === 'Fewest # Needed to Change a Network, Economic, or Technical Parameter' || proposal.title === 'Fewest # Needed to Change a Governance Parameter') {
                         chart.secondaryDisplayValue = totalMav.toString();
                         chart.displayValue = (totalMav - spoMAV).toString();
                         chart.secondaryMinPools = totalMAV - spoMAV;

@@ -66,8 +66,8 @@
 
     function filterProposals() {
         filteredProposals = proposals.filter(proposal => 
-            proposal.title === 'Total dRep Delegation' || 
-            proposal.title === 'Total Stake Pool Delegation'
+            proposal.title === '% of Circulating ADA Delegated to dReps' || 
+            proposal.title === '% of Circulating ADA Delegated to Stake Pools'
         );
     }
 

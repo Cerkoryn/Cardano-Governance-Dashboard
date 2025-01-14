@@ -2,18 +2,18 @@ import type { Proposal } from '$lib/types/types';
 
 export const proposalTypes: Proposal[] = [
     {
-        title: 'Uncontrolled Hard Fork',
+        title: 'Fewest # of SPOs Capable of Performing a 51% Attack',
         charts: [
             {
                 title: 'SPOs',
                 threshold: 50,
                 size: 'large',
-                tooltipMessage: 'The fewest number of SPOs who could collude to conduct an uncontrolled hard fork, otherwise known as a 51% attack.'
+                tooltipMessage: 'The fewest number of stake pool operators who could collude to conduct an uncontrolled hard fork, otherwise known as a 51% attack.'
             }
         ]
     },
     {
-        title: 'Total dRep Delegation',
+        title: '% of Circulating ADA Delegated to dReps',
         charts: [
             {
                 title: 'Total',
@@ -24,7 +24,7 @@ export const proposalTypes: Proposal[] = [
         ]
     },
     {
-        title: 'Total Stake Pool Delegation',
+        title: '% of Circulating ADA Delegated to Stake Pools',
         charts: [
             {
                 title: 'Total',
@@ -35,7 +35,7 @@ export const proposalTypes: Proposal[] = [
         ]
     },
     {
-        title: 'No Confidence in Constitutional Committee',
+        title: 'Fewest # Needed to Pass a Vote of No Confidence in Constitutional Committee',
         charts: [
             {
                 title: 'Total',
@@ -65,7 +65,7 @@ export const proposalTypes: Proposal[] = [
         ]
     },
     {
-        title: 'New Constitutional Committee (Normal State)',
+        title: 'Fewest # Needed to Elect a New Constitutional Committee while in a Normal State',
         charts: [
             {
                 title: 'Total',
@@ -95,7 +95,7 @@ export const proposalTypes: Proposal[] = [
         ]
     },
     {
-        title: 'New Constitutional Committee (State of No Confidence)',
+        title: 'Fewest # Needed to Elect a New Constitutional Committee while in a State of No Confidence',
         charts: [
             {
                 title: 'Total',
@@ -125,7 +125,7 @@ export const proposalTypes: Proposal[] = [
         ]
     },
     {
-        title: 'Update Constitution',
+        title: 'Fewest # Needed to Update the Cardano Constitution',
         charts: [
             {
                 title: 'Total',
@@ -155,7 +155,7 @@ export const proposalTypes: Proposal[] = [
         ]
     },
     {
-        title: 'Initiate Hard Fork',
+        title: 'Fewest # Needed to Initiate a Hard Fork',
         charts: [
             {
                 title: 'Total',
@@ -184,7 +184,7 @@ export const proposalTypes: Proposal[] = [
         ]
     },
     {
-        title: 'Treasury Withdrawal',
+        title: 'Fewest # Needed to Withdraw from the Cardano Treasury',
         charts: [
             {
                 title: 'Total',
@@ -214,7 +214,7 @@ export const proposalTypes: Proposal[] = [
         ]
     },
     {
-        title: 'Parameter Change (Network, Economic, and Technical Groups)',
+        title: 'Fewest # Needed to Change a Network, Economic, or Technical Parameter',
         charts: [
             {
                 title: 'Total',
@@ -244,7 +244,7 @@ export const proposalTypes: Proposal[] = [
         ]
     },
     {
-        title: 'Parameter Change (Governance Group)',
+        title: 'Fewest # Needed to Change a Governance Parameter',
         charts: [
             {
                 title: 'Total',
