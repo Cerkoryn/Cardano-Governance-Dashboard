@@ -18,13 +18,13 @@ def is_valid_jsonld(response):
     return None
 
 def fetch_drep_list():
-    drep_list_url = "https://api.koios.rest/api/v1/drep_list?select=drep_id"
+    drep_list_url = "https://api.koios.rest/api/v1/drep_list?select=drep_id,registered"
     offset = 0
     limit = 500
     drep_ids = []
 
     while True:
-        paginated_url = f"{drep_list_url}?offset={offset}&limit={limit}"
+        paginated_url = f"{drep_list_url}&offset={offset}&limit={limit}"
         try:
             response = requests.get(paginated_url, timeout=5)
             response.raise_for_status()
@@ -36,7 +36,7 @@ def fetch_drep_list():
         if not drep_list_data:
             break
 
-        drep_ids.extend([drep['drep_id'] for drep in drep_list_data if 'drep_id' in drep])
+        drep_ids.extend([drep['drep_id'] for drep in drep_list_data if 'drep_id' in drep and drep.get('registered')])
         offset += limit
 
     drep_ids.append("drep_always_abstain")
