@@ -126,7 +126,7 @@ class handler(BaseHTTPRequestHandler):
 
             delegator_url = f"https://api.koios.rest/api/v1/drep_delegators?_drep_id={drep_id}&select=count"
             try:
-                response = requests.get(delegator_url, timeout=7)
+                response = requests.get(delegator_url, timeout=9)
                 response.raise_for_status()
                 delegator_data = response.json()
                 delegator_count = delegator_data[0]['count'] if delegator_data else 0
@@ -155,12 +155,12 @@ class handler(BaseHTTPRequestHandler):
         # Save to Vercel KV using requests
         VERCEL_KV_API_URL = os.getenv("KV_REST_API_URL")
         VERCEL_KV_TOKEN = os.getenv("KV_REST_API_TOKEN")
-        url = f"{VERCEL_KV_API_URL}/set/drep_data/{json.dumps(final_data)}"
+        url = f"{VERCEL_KV_API_URL}/set/drep_data/"
         headers = {
             "Authorization": f"Bearer {VERCEL_KV_TOKEN}",
             "Content-Type": "application/json"
         }
-        response = requests.post(url, headers=headers)
+        response = requests.post(url, headers=headers, json={"value": final_data})
         response.raise_for_status()
 
         totals = {
@@ -168,8 +168,8 @@ class handler(BaseHTTPRequestHandler):
             'total_drep_delegators': sum(drep['delegator_count'] for drep in final_data)
         }
 
-        url2 = f"{VERCEL_KV_API_URL}/set/drep_totals/{json.dumps(totals)}"
-        response = requests.post(url2, headers=headers)
+        url2 = f"{VERCEL_KV_API_URL}/set/drep_totals"
+        response = requests.post(url2, headers=headers, json={"value": totals})
         response.raise_for_status()
 
         elapsed_time = time.time() - start_time

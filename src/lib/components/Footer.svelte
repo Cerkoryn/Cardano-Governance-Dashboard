@@ -1,11 +1,11 @@
 <div class="footer-bar">
     <div class="attributions">
         <span>
-            dRep and Stake Pool Data Sourced From 
+            dRep and Stake Pool Data sourced from 
             <a href="https://koios.rest/" target="_blank">Koios</a>.
         </span>
         <span>
-            Pool Group Data Sourced from 
+            Pool Group Data sourced from 
             <a href="https://www.balanceanalytics.io/" target="_blank">Balance Analytics</a>.
         </span>
     </div>

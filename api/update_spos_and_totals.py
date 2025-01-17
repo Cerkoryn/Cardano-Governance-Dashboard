@@ -99,13 +99,13 @@ class handler(BaseHTTPRequestHandler):
         # Save SPO Data to Vercel KV
         VERCEL_KV_API_URL = os.getenv("KV_REST_API_URL")
         VERCEL_KV_TOKEN = os.getenv("KV_REST_API_TOKEN")
-        spo_url = f"{VERCEL_KV_API_URL}/set/spo_data/{json.dumps(extracted_data)}"
+        spo_url = f"{VERCEL_KV_API_URL}/set/spo_data"
         spo_headers = {
             "Authorization": f"Bearer {VERCEL_KV_TOKEN}",
             "Content-Type": "application/json"
         }
 
-        spo_response = requests.post(spo_url, headers=spo_headers)
+        spo_response = requests.post(spo_url, headers=spo_headers, json={"value": extracted_data})
         spo_response.raise_for_status()
         return groupdata
 
@@ -188,13 +188,13 @@ class handler(BaseHTTPRequestHandler):
         # Save Circulating ADA Data to Vercel KV
         VERCEL_KV_API_URL = os.getenv("KV_REST_API_URL")
         VERCEL_KV_TOKEN = os.getenv("KV_REST_API_TOKEN")
-        ada_url = f"{VERCEL_KV_API_URL}/set/spo_totals/{json.dumps(total_data)}"
+        ada_url = f"{VERCEL_KV_API_URL}/set/spo_totals"
         ada_headers = {
             "Authorization": f"Bearer {VERCEL_KV_TOKEN}",
             "Content-Type": "application/json"
         }
 
-        ada_save_response = requests.post(ada_url, headers=ada_headers)
+        ada_save_response = requests.post(ada_url, headers=ada_headers, json={"value": total_data})
         ada_save_response.raise_for_status()
 
 def run(server_class=HTTPServer, handler_class=handler, port=8000):

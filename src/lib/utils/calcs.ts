@@ -2,31 +2,32 @@ import type { Proposal, Pool, dRep, FetchDataResult } from '$lib/types/types';
 import { proposalTypes, ccNames } from '$lib/constants/constants';
 
 export async function fetchData(): Promise<FetchDataResult & { totalData: { total_spos: number; total_pools: number; total_pool_delegators: number; circulating_ada: number, total_dreps: number, total_drep_delegators: number } }> {
-    const [spoResponse, drepResponse, spoTotalResponse, drepTotalResponse] = await Promise.all([
-        fetch('/api/get_spos'),
-        fetch('/api/get_dreps'),
-        fetch('/api/get_spo_totals'),
-        fetch('/api/get_drep_totals')
-    ]);
-
     const [spoData, drepData, spoTotal, drepTotal] = await Promise.all([
-        spoResponse.json(),
-        drepResponse.json(),
-        spoTotalResponse.json(),
-        drepTotalResponse.json()
+      fetch('/api/get_spos')
+        .then((res) => res.json())
+        .then((data) => data.value),
+      fetch('/api/get_dreps')
+        .then((res) => res.json())
+        .then((data) => data.value),
+      fetch('/api/get_spo_totals')
+        .then((res) => res.json())
+        .then((data) => data.value),
+      fetch('/api/get_drep_totals')
+        .then((res) => res.json())
+        .then((data) => data.value),
     ]);
-
+  
     const totalData = {
-        total_spos: spoTotal.total_spos,
-        total_pools: spoTotal.total_pools,
-        total_pool_delegators: spoTotal.total_pool_delegators,
-        circulating_ada: Math.round(spoTotal.circulating_ada),
-        total_dreps: drepTotal.total_dreps,
-        total_drep_delegators: drepTotal.total_drep_delegators
+      total_spos: spoTotal.total_spos,
+      total_pools: spoTotal.total_pools,
+      total_pool_delegators: spoTotal.total_pool_delegators,
+      circulating_ada: Math.round(spoTotal.circulating_ada),
+      total_dreps: drepTotal.total_dreps,
+      total_drep_delegators: drepTotal.total_drep_delegators,
     };
-
+  
     return { spoData, drepData, totalData };
-}
+  }
 
 export function calculateSPOMAV(values: { label: string; stake: number }[], threshold: number) {
     const totalStake = values.reduce((acc, value) => acc + value.stake, 0);
