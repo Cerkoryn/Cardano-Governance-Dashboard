@@ -78,11 +78,15 @@
         flex-wrap: wrap;
         justify-content: center;
         gap: 4px;
+        flex-direction: row;
+        align-items: flex-start; 
     }
     .chart-item {
         flex: 1 1 20%;
         padding-top: 0rem;
         padding-bottom: 5rem;
+        width: auto; 
+        margin-bottom: 0;
     }
     .chart-item:first-child {
         flex: 1 1 30%;

@@ -126,7 +126,7 @@ class handler(BaseHTTPRequestHandler):
 
             delegator_url = f"https://api.koios.rest/api/v1/drep_delegators?_drep_id={drep_id}&select=count"
             try:
-                response = requests.get(delegator_url, timeout=9)
+                response = requests.get(delegator_url, timeout=15)
                 response.raise_for_status()
                 delegator_data = response.json()
                 delegator_count = delegator_data[0]['count'] if delegator_data else 0
