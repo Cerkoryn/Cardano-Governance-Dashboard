@@ -36,11 +36,8 @@ class handler(BaseHTTPRequestHandler):
         start_time = time.time()
 
         try:
-            # Update SPO Data
-            groupdata = self.update_spo_data()
-
-            # Update Totals
-            self.update_totals(groupdata)
+            self.update_spo_data()
+            self.update_totals()
 
             elapsed_time = time.time() - start_time
             response_body = {
@@ -57,16 +54,9 @@ class handler(BaseHTTPRequestHandler):
             return
 
     def update_spo_data(self):
-
         mavdata_url = 'https://www.balanceanalytics.io/api/mavdata.json'
-        groupdata_url = 'https://www.balanceanalytics.io/api/groupdata.json'
-        weird_exceptions = ['WAVE', '1PCT', 'BLOOM']  # Add new exceptions here for weird pool names that break things.
-
         mavdata_response = requests.get(mavdata_url)
         mavdata = mavdata_response.json()['api_data']
-
-        groupdata_response = requests.get(groupdata_url)
-        groupdata = groupdata_response.json()[0]['pool_group_json']
 
         singlepool_stake = 0
         extracted_data = []
@@ -75,17 +65,7 @@ class handler(BaseHTTPRequestHandler):
             label = entry['label']
             stake = entry['stake']
             
-            # Check if the label corresponds to a pool_ticker in groupdata with SINGLEPOOL as pool_group
-            is_singlepool = False
-            for group in groupdata:
-                if group['pool_ticker'] == label and group['pool_group'] == 'SINGLEPOOL':
-                    if label in weird_exceptions:                                  
-                        is_singlepool = False
-                        break
-                    is_singlepool = True
-                    break
-            
-            if is_singlepool:
+            if entry['class'] == 'sSPO':
                 singlepool_stake += stake
             else:
                 extracted_data.append({'label': label, 'stake': stake})
@@ -107,14 +87,17 @@ class handler(BaseHTTPRequestHandler):
 
         spo_response = requests.post(spo_url, headers=spo_headers, json={"value": extracted_data})
         spo_response.raise_for_status()
-        return groupdata
 
-    def update_totals(self, groupdata):
+    def update_totals(self):
 
         circulating_ada_url = "https://api.koios.rest/api/v1/totals"
         ada_response = requests.get(circulating_ada_url)
         ada_response.raise_for_status()
         ada_data = ada_response.json()
+
+        groupdata_url = 'https://www.balanceanalytics.io/api/groupdata.json'
+        groupdata_response = requests.get(groupdata_url)
+        groupdata = groupdata_response.json()[0]['pool_group_json']
 
         # Find the entry with the largest epoch_no
         latest_epoch = max(ada_data, key=lambda x: x['epoch_no'])
