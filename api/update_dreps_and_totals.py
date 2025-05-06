@@ -17,7 +17,7 @@ META_URL_WHITELIST = [
     "coffeepool",
     "drep.one",
     "nedscave",
-    "aichi",
+    "aichi"
 ]
 
 def is_valid_jsonld(response):
