@@ -125,7 +125,6 @@ class handler(BaseHTTPRequestHandler):
             offset += limit
 
         pool_info_url = "https://api.koios.rest/api/v1/pool_info"
-        total_pool_delegators = 0
 
         headers = {
             "Accept": "application/json",
@@ -145,13 +144,6 @@ class handler(BaseHTTPRequestHandler):
                 print(e)
                 return []
 
-        with ThreadPoolExecutor(max_workers=20) as executor:
-            futures = {executor.submit(fetch_pool_info, pool_list[i:i+50]): i for i in range(0, len(pool_list), 50)}
-            for future in as_completed(futures):
-                pool_info_data = future.result()
-                for pool in pool_info_data:
-                    total_pool_delegators += pool.get('live_delegators', 0)
-
         unique_groups = set()
         singlepool_count = 0
         for group in groupdata:
@@ -164,7 +156,6 @@ class handler(BaseHTTPRequestHandler):
         total_data = {
             'total_spos': total_spos,
             'total_pools': len(pool_list),
-            'total_pool_delegators': total_pool_delegators,
             'circulating_ada': ada_supply
         }
 

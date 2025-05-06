@@ -13,7 +13,7 @@
         <a href="https://github.com/Cerkoryn/Cardano-Governance-Dashboard" target="_blank" class="margin-icon">
             <i class="fab fa-github"></i>
         </a>
-        <a href="https://twitter.com/cerkoryn" target="_blank" class="margin-icon">
+        <a href="https://x.com/cerkoryn" target="_blank" class="margin-icon">
             <i class="fab fa-x-twitter"></i>
         </a>
     </div>

@@ -1,7 +1,7 @@
 import type { Proposal, Pool, dRep, FetchDataResult } from '$lib/types/types';
 import { proposalTypes, ccNames } from '$lib/constants/constants';
 
-export async function fetchData(): Promise<FetchDataResult & { totalData: { total_spos: number; total_pools: number; total_pool_delegators: number; circulating_ada: number, total_dreps: number, total_drep_delegators: number } }> {
+export async function fetchData(): Promise<FetchDataResult & { totalData: { total_spos: number; total_pools: number; circulating_ada: number, total_dreps: number } }> {
     const [spoData, drepData, spoTotal, drepTotal] = await Promise.all([
       fetch('/api/get_spos')
         .then((res) => res.json())
@@ -20,10 +20,8 @@ export async function fetchData(): Promise<FetchDataResult & { totalData: { tota
     const totalData = {
       total_spos: spoTotal.total_spos,
       total_pools: spoTotal.total_pools,
-      total_pool_delegators: spoTotal.total_pool_delegators,
       circulating_ada: Math.round(spoTotal.circulating_ada),
       total_dreps: drepTotal.total_dreps,
-      total_drep_delegators: drepTotal.total_drep_delegators,
     };
   
     return { spoData, drepData, totalData };

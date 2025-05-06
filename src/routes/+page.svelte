@@ -15,10 +15,8 @@
     let drepData: dRep[] = [];
     let total_pools = 0;
     let total_spos = 0;
-    let total_pool_delegators = 0;
     let circulatingADA = 0;
     let total_dreps = 0;
-    let total_drep_delegators = 0;
     let loading = true; 
 
     onMount(async () => {
@@ -36,10 +34,8 @@
         drepData = data.drepData;
         total_pools = data.totalData.total_pools;
         total_spos = data.totalData.total_spos;
-        total_pool_delegators = data.totalData.total_pool_delegators;
         circulatingADA = data.totalData.circulating_ada;
         total_dreps = data.totalData.total_dreps,
-        total_drep_delegators = data.totalData.total_drep_delegators
         proposals = calculateProposals(spoData, drepData, circulatingADA, get(includeInactiveDReps));
         filterProposals();
         loading = false;
@@ -98,7 +94,6 @@
                   index={1}
                 >
                 <p class="total-number">dRep Count: {total_dreps.toLocaleString()}</p>
-                <p class="total-number">dRep Delegator Count: {total_drep_delegators.toLocaleString()}</p>
                 <br/>
                 </Container>
               </div>
@@ -117,7 +112,6 @@
                 >
                 <p class="total-number">Stake Pool Count: {total_pools.toLocaleString()}</p>
                 <p class="total-number">Stake Pool Operator Count: {total_spos.toLocaleString()}</p>
-                <p class="total-number">Stake Pool Delegator Count: {total_pool_delegators.toLocaleString()}</p>
                 <br/>
                 </Container>
               </div>

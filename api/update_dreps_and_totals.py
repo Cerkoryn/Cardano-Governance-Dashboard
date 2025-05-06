@@ -5,6 +5,21 @@ import json
 import time
 import os
 
+# Whitelisted substrings for meta URLs
+META_URL_WHITELIST = [
+    "ipfs",
+    "github",
+    "gitlab",
+    "cardanofoundation",
+    "xstakepool",
+    "neeup",
+    "learncardano",
+    "coffeepool",
+    "drep.one",
+    "nedscave",
+    "aichi",
+]
+
 def is_valid_jsonld(response):
     try:
         data = response.json()
@@ -116,7 +131,7 @@ class handler(BaseHTTPRequestHandler):
                 return None
 
             meta_url = dRep.get('meta_url')
-            if meta_url and ("ipfs" in meta_url or "github" in meta_url):
+            if meta_url and any(keyword in meta_url for keyword in META_URL_WHITELIST):
                 try:
                     response = requests.get(meta_url, timeout=1)
                     response.raise_for_status()
@@ -124,22 +139,11 @@ class handler(BaseHTTPRequestHandler):
                 except (requests.exceptions.RequestException, requests.exceptions.Timeout):
                     given_name = None
 
-            delegator_url = f"https://api.koios.rest/api/v1/drep_delegators?_drep_id={drep_id}&select=count"
-            try:
-                response = requests.get(delegator_url, timeout=15)
-                response.raise_for_status()
-                delegator_data = response.json()
-                delegator_count = delegator_data[0]['count'] if delegator_data else 0
-            except (requests.exceptions.RequestException, requests.exceptions.Timeout):
-                print({'error': f'Failed to fetch delegators for dRep {drep_id}.'})
-                delegator_count = 0
-
             return {
                 'drep_id': drep_id,
                 'is_active': dRep.get('active'),
                 'active_power': active_power,
                 'given_name': given_name,
-                'delegator_count': delegator_count
             }
 
         # Use ThreadPoolExecutor to process concurrently
@@ -165,7 +169,6 @@ class handler(BaseHTTPRequestHandler):
 
         totals = {
             'total_dreps': len(drep_list),
-            'total_drep_delegators': sum(drep['delegator_count'] for drep in final_data)
         }
 
         url2 = f"{VERCEL_KV_API_URL}/set/drep_totals"
