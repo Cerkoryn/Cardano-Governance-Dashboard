@@ -1,20 +1,13 @@
 import type { Proposal, Pool, dRep, FetchDataResult } from '$lib/types/types';
 import { proposalTypes, ccNames } from '$lib/constants/constants';
 
+// replace the fetch block in src/lib/utils/calcs.ts
 export async function fetchData(): Promise<FetchDataResult & { totalData: { total_spos: number; total_pools: number; circulating_ada: number, total_dreps: number } }> {
     const [spoData, drepData, spoTotal, drepTotal] = await Promise.all([
-      fetch('/api/get_spos')
-        .then((res) => res.json())
-        .then((data) => data.value),
-      fetch('/api/get_dreps')
-        .then((res) => res.json())
-        .then((data) => data.value),
-      fetch('/api/get_spo_totals')
-        .then((res) => res.json())
-        .then((data) => data.value),
-      fetch('/api/get_drep_totals')
-        .then((res) => res.json())
-        .then((data) => data.value),
+      fetch('/api/get_spos').then(res => res.json()),
+      fetch('/api/get_dreps').then(res => res.json()),
+      fetch('/api/get_spo_totals').then(res => res.json()),
+      fetch('/api/get_drep_totals').then(res => res.json()),
     ]);
   
     const totalData = {
