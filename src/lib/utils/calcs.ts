@@ -92,7 +92,8 @@ export function calculateCombinedMAV(drepValues: { label: string; stake: number 
 }
 
 export function calculateProposals(spoData: Pool[], drepData: dRep[], circulatingADA: number, includeInactive: boolean): Proposal[] {
-    const filteredDrepData = includeInactive ? drepData : drepData.filter(drep => drep.is_active);
+    const abstainDrep = drepData.find(drep => drep.drep_id === 'drep_always_abstain');
+    const filteredDrepData = includeInactive ? drepData.slice() : drepData.filter(drep => drep.is_active);
     spoData.sort((a, b) => b.stake - a.stake);
     filteredDrepData.sort((a, b) => b.active_power - a.active_power);
 
@@ -113,13 +114,14 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[], circulatin
     // Move the item with label === "drep_always_abstain" to the end
     const abstainIndex = filteredDrepData.findIndex(drep => drep.drep_id === "drep_always_abstain");
     if (abstainIndex !== -1) {
-        const [abstainDrep] = filteredDrepData.splice(abstainIndex, 1);
+        filteredDrepData.splice(abstainIndex, 1);
         //filteredDrepData.push(abstainDrep);                               // If we ever need to add this back this is where it would go.
     }
 
     proposalTypes.forEach(proposal => {
         if (proposal.title === '% of Circulating ADA Delegated to dReps') {
-            let totalVotingPowerDelegated = filteredDrepData.reduce((acc, drep) => acc + drep.active_power, 0) / 1_000_000;
+            const delegatedLovelace = filteredDrepData.reduce((acc, drep) => acc + drep.active_power, 0) + (abstainDrep ? abstainDrep.active_power : 0);
+            let totalVotingPowerDelegated = delegatedLovelace / 1_000_000;
             let delegatedPercent = (totalVotingPowerDelegated / circulatingADA) * 100;
             let undelegatedPercent = 100 - delegatedPercent;
             proposal.charts[0].values = [
