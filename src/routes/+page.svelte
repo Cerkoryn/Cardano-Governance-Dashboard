@@ -1,4 +1,9 @@
 <script lang=ts>
+    import '@fontsource/inter/400.css';
+    import '@fontsource/inter/500.css';
+    import '@fontsource/inter/600.css';
+    import '@fontsource/inter/700.css';
+    import '$lib/styles/tokens.css';
     import Header from '$lib/components/Header.svelte';
     import Footer from '$lib/components/Footer.svelte';
     import Container from '$lib/components/Container.svelte';

@@ -1,0 +1,47 @@
+/* Design tokens. Light is the default; .dark-mode on <body> switches. */
+:root {
+	--bg: #f7f8fb;
+	--surface: #ffffff;
+	--surface-2: #f1f4f9;
+	--border: #e3e8f0;
+	--text: #111827;
+	--text-muted: #64748b;
+	--accent: #3155ff;        /* participating / dReps */
+	--accent-strong: #0033ad; /* headlines / logo */
+	--positive: #16a34a;      /* SPOs / staking */
+	--warning: #f59e0b;
+	--critical: #dc2626;      /* risk only */
+	--neutral: #cbd5e1;       /* remaining track */
+
+	--radius: 20px;
+	--radius-sm: 12px;
+	--gap: 24px;
+	--maxw: 1120px;
+	--shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+	--font: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+body.dark-mode {
+	--bg: #0f141c;
+	--surface: #161d27;
+	--surface-2: #1c2533;
+	--border: #26303d;
+	--text: #e5e9f0;
+	--text-muted: #94a3b8;
+	--accent: #5b7bff;
+	--accent-strong: #93acff;
+	--positive: #34d27e;
+	--warning: #fbbf24;
+	--critical: #f87171;
+	--neutral: #334155;
+	--shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+html, body { margin: 0; padding: 0; }
+body {
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--font);
+	-webkit-font-smoothing: antialiased;
+}
+*, *::before, *::after { box-sizing: border-box; }
