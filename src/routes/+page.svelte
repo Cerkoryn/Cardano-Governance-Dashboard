@@ -9,9 +9,10 @@
     import Footer from '$lib/components/Footer.svelte';
     import Container from '$lib/components/Container.svelte';
     import SectionHeading from '$lib/components/SectionHeading.svelte';
+    import ThresholdCard from '$lib/components/ThresholdCard.svelte';
     import IndicatorCard from '$lib/components/IndicatorCard.svelte';
     import ConcentrationChart from '$lib/components/ConcentrationChart.svelte';
-    import { fetchData, calculateProposals, calculateKeyIndicators, cumulativeStakeSeries } from '$lib/utils/calcs';
+    import { fetchData, calculateProposals, calculateKeyIndicators, cumulativeStakeSeries, groupThresholdProposals } from '$lib/utils/calcs';
     import type { KeyIndicators } from '$lib/utils/calcs';
     import type { Proposal, Pool, dRep } from '$lib/types/types';
     import { isDarkMode, includeInactiveDReps } from '$lib/stores/stores';
@@ -125,13 +126,15 @@
           <div class="section-wrap"><ConcentrationChart series={conc.series} minSPOsFor51={conc.minSPOsFor51} /></div>
         {/if}
 
-        <!-- Remaining proposals each on their own row -->
-        {#each proposals.slice(3) as proposal, index}
-          <div class="single-container">
-            <Container 
-              proposal={proposal} 
-              index={index + 3}
-            />
+        <SectionHeading title="Governance Thresholds" subtitle="Smallest coalitions that could meet the required threshold for each action." />
+        {#each groupThresholdProposals(proposals) as group}
+          <div class="cat">
+            <h3 class="catname">{group.category}</h3>
+            <div class="catcards">
+              {#each group.proposals as proposal}
+                <div class="card"><ThresholdCard {proposal} /></div>
+              {/each}
+            </div>
           </div>
         {/each}
       </div>
@@ -169,20 +172,6 @@
         color: inherit; 
     }
 
-    .single-container {
-        width: 100%;
-        max-width: 800px; 
-        margin: 0 auto;
-        padding: 0;
-        margin-bottom: 1rem; 
-    }
-
-    @media (max-width: 768px) {
-        .single-container {
-            max-width: 100%;
-        }
-    }
-
     .content {
         width: 100%;
         padding: 0;
@@ -194,6 +183,10 @@
     .section-wrap { padding: 0 24px; }
     @media (max-width: 900px) { .grid.four { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 520px) { .grid.four { grid-template-columns: 1fr; } }
+    .cat { max-width: var(--maxw); margin: 0 auto 24px; padding: 0 24px; }
+    .catname { font-size: 0.95rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin: 24px 0 12px; }
+    .catcards { display: flex; flex-direction: column; gap: 16px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
 
     :global(body) {
         margin: 0;
