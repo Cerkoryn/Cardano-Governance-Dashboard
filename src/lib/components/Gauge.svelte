@@ -18,7 +18,7 @@
 </script>
 
 <div class="gauge" class:disabled>
-	<svg viewBox="0 0 120 70" width="120" height="70" style="color: {hue}">
+	<svg viewBox="0 0 120 70" style="color: {hue}">
 		<defs>
 			<linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
 				<stop offset="0%" stop-color="currentColor" stop-opacity="0.4" />
@@ -55,7 +55,8 @@
 </div>
 
 <style>
-	.gauge { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+	.gauge { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+	.gauge svg { width: 100%; max-width: 200px; height: auto; }
 	.val { font-size: 22px; font-weight: 700; }
 	.label { font-size: 0.78rem; color: var(--text-muted); }
 	.disabled .label { opacity: 0.8; }
