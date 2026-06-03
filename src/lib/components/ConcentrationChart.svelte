@@ -193,39 +193,41 @@
 </script>
 
 <div class="conc card-surface">
-	<div class="explain">
-		<h3>
-			Minimum SPOs controlling 51% of delegated stake
-			<TooltipIcon message="Smallest number of SPOs whose combined delegated stake reaches or exceeds 51%. It does not imply these SPOs collaborate." />
-		</h3>
-		<p>
-			This shows the smallest number of SPOs whose combined delegated stake reaches or exceeds 51%.
-			It does not imply these SPOs are collaborating.
-		</p>
-		<div class="big"><span>{minSPOsFor51}</span> SPOs reach 51%</div>
-		<button class="method" on:click={() => (methodOpen = !methodOpen)}>{methodOpen ? '▾' : '▸'} Methodology</button>
-		{#if methodOpen}
-			<div class="method-body">
-				<p>
-					Stake pool operators are ranked by delegated stake, largest first. The line adds them up
-					until the running total reaches 51% of all delegated stake; that count is the figure shown.
-				</p>
-				<p>
-					Why delegated stake and not total ADA? On Cardano only delegated stake takes part in block
-					production, so undelegated ADA, treasury and reserves do not count. About 56% of all ADA is
-					currently delegated, so 51% of delegated stake is roughly 29% of the total supply.
-				</p>
-				<p>
-					Single pool operators are combined into one SINGLEPOOL group and placed last, since
-					thousands of independent small operators are not a realistic coordinating bloc.
-				</p>
-			</div>
-		{/if}
+	<div class="conc-grid">
+		<div class="explain">
+			<h3>
+				Minimum SPOs controlling 51% of delegated stake
+				<TooltipIcon message="Smallest number of SPOs whose combined delegated stake reaches or exceeds 51%. It does not imply these SPOs collaborate." />
+			</h3>
+			<p>
+				This shows the smallest number of SPOs whose combined delegated stake reaches or exceeds 51%.
+				It does not imply these SPOs are collaborating.
+			</p>
+			<div class="big"><span>{minSPOsFor51}</span> SPOs reach 51%</div>
+		</div>
+		<div class="chartside">
+			<div class="legend"><span class="legend-mark"></span> Cumulative Delegated Stake</div>
+			<div class="chartwrap"><canvas bind:this={canvas}></canvas></div>
+		</div>
 	</div>
-	<div class="chartside">
-		<div class="legend"><span class="legend-mark"></span> Cumulative Delegated Stake</div>
-		<div class="chartwrap"><canvas bind:this={canvas}></canvas></div>
-	</div>
+	<button class="method" on:click={() => (methodOpen = !methodOpen)}>{methodOpen ? '▾' : '▸'} Methodology</button>
+	{#if methodOpen}
+		<div class="method-body">
+			<p>
+				Stake pool operators are ranked by delegated stake, largest first. The line adds them up
+				until the running total reaches 51% of all delegated stake; that count is the figure shown.
+			</p>
+			<p>
+				Why delegated stake and not total ADA? On Cardano only delegated stake takes part in block
+				production, so undelegated ADA, treasury and reserves do not count. About 56% of all ADA is
+				currently delegated, so 51% of delegated stake is roughly 29% of the total supply.
+			</p>
+			<p>
+				Single pool operators are combined into one SINGLEPOOL group and placed last, since
+				thousands of independent small operators are not a realistic coordinating bloc.
+			</p>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -233,6 +235,8 @@
 		max-width: var(--maxw);
 		margin: 0 auto;
 		padding: 24px;
+	}
+	.conc-grid {
 		display: grid;
 		grid-template-columns: 280px 1fr;
 		gap: var(--gap);
@@ -305,7 +309,7 @@
 		min-width: 0;
 	}
 	@media (max-width: 768px) {
-		.conc {
+		.conc-grid {
 			grid-template-columns: 1fr;
 		}
 	}
