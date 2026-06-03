@@ -1,6 +1,7 @@
 <script lang="ts">
 	import TooltipIcon from '$lib/components/TooltipIcon.svelte';
 	import { includeInactiveDReps } from '$lib/stores/stores';
+	import { SITE_NAME, SITE_TAGLINE } from '$lib/constants/display';
 	export let darkMode: boolean;
 	export let toggleTheme: () => void;
 	const HELP = 'These charts show the smallest number of entities that could collectively meet or exceed the required threshold for each Cardano governance action (a Minimum Attack Vector / Nakamoto-style metric).';
@@ -8,8 +9,8 @@
 
 <header class="header">
 	<div class="brand">
-		<h1>Cardano Governance Dashboard</h1>
-		<p>Cardano governance concentration and voting-threshold dashboard</p>
+		<h1>{SITE_NAME}</h1>
+		<p>{SITE_TAGLINE}</p>
 	</div>
 	<div class="controls">
 		<span class="help">What do these charts mean? <TooltipIcon message={HELP} /></span>
