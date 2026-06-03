@@ -10,7 +10,7 @@
 
 <header class="header">
 	<div class="brand">
-		<Logo size={38} />
+		<Logo size={38} {darkMode} />
 		<span class="name">{SITE_NAME}</span>
 		<span class="divider" aria-hidden="true"></span>
 		<p class="tagline">{SITE_TAGLINE}</p>
