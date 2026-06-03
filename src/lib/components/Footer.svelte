@@ -24,24 +24,23 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 100%;
-        max-width: 100%; 
-        padding: 1rem 2rem; 
-        box-sizing: border-box;
-        background-color: var(--footer-bg-color);
-        border-radius: 0;
-        margin-bottom: 0rem;
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 24px;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-muted);
     }
 
     .attributions {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        color: var(--title-text-color);
+        color: var(--text-muted);
     }
 
     .attributions a {
-        color: #d0e1ff;
+        color: var(--accent);
         text-decoration: none;
     }
 
@@ -55,10 +54,10 @@
     }
 
     .margin-icon {
-        font-size: 2rem;
-        color: var(--title-text-color);
+        color: var(--text-muted);
         text-decoration: none;
         margin-left: 1rem;
+        line-height: 0;
     }
 
     .margin-icon:first-child {
@@ -66,7 +65,7 @@
     }
 
     .margin-icon:hover {
-        color: var(--footer-icon-hover-color);
+        color: var(--text);
     }
 </style>
 

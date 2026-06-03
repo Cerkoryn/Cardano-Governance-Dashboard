@@ -78,15 +78,15 @@
     opacity: 0;
     width: max-content;
     max-width: 250px;
-    background-color: var(--tooltip-background-color, #333);
-    color: var(--tooltip-text-color, #fff);
+    background-color: var(--text);
+    color: var(--surface);
     text-align: left;
     border-radius: 6px;
     padding: 8px;
-    position: absolute; 
+    position: absolute;
     z-index: 10000;
     transition: opacity 0.3s, visibility 0.3s;
-    pointer-events: none; 
+    pointer-events: none;
     font-size: 14px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     top: 0;
@@ -96,11 +96,11 @@
   :global(.tooltip-text::after) {
     content: '';
     position: absolute;
-    top: -5px; 
+    top: -5px;
     left: 50%;
     transform: translateX(-50%);
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent var(--tooltip-background-color, #333) transparent;
+    border-color: transparent transparent var(--text) transparent;
   }
 </style>
