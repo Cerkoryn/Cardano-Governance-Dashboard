@@ -52,3 +52,22 @@ describe('cumulativeStakeSeries', () => {
 		expect(cumulativeStakeSeries(spo).minSPOsFor51).toBe(1);
 	});
 });
+
+import { groupThresholdProposals } from '$lib/utils/calcs';
+import type { Proposal } from '$lib/types/types';
+
+describe('groupThresholdProposals', () => {
+	it('groups known threshold proposals by category and drops non-threshold ones', () => {
+		const proposals: Proposal[] = [
+			{ title: '% of Circulating ADA Delegated to dReps', charts: [] },
+			{ title: 'Fewest # Needed to Pass a Vote of No Confidence in Constitutional Committee', charts: [] },
+			{ title: 'Fewest # Needed to Withdraw from the Cardano Treasury', charts: [] }
+		];
+		const groups = groupThresholdProposals(proposals);
+		const cc = groups.find((g) => g.category === 'Constitutional Committee');
+		const tr = groups.find((g) => g.category === 'Treasury');
+		expect(cc?.proposals).toHaveLength(1);
+		expect(tr?.proposals).toHaveLength(1);
+		expect(groups.flatMap((g) => g.proposals).some((p) => p.title.includes('Delegated'))).toBe(false);
+	});
+});

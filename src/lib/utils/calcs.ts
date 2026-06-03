@@ -1,5 +1,6 @@
-import type { Proposal, Pool, dRep, FetchDataResult } from '$lib/types/types';
+import type { Proposal, Pool, dRep, FetchDataResult, ProposalCategory } from '$lib/types/types';
 import { proposalTypes, ccNames } from '$lib/constants/constants';
+import { proposalCategoryByTitle, categoryOrder } from '$lib/constants/display';
 
 export async function fetchData(): Promise<FetchDataResult & { totalData: { total_spos: number; total_pools: number; circulating_ada: number, total_dreps: number } }> {
     const [spoData, drepData, spoTotal, drepTotal] = await Promise.all([
@@ -271,4 +272,19 @@ export function cumulativeStakeSeries(spoData: Pool[]): {
 		}
 	});
 	return { series, minSPOsFor51 };
+}
+
+export type ProposalGroup = { category: ProposalCategory; proposals: Proposal[] };
+
+export function groupThresholdProposals(proposals: Proposal[]): ProposalGroup[] {
+	const byCat = new Map<ProposalCategory, Proposal[]>();
+	for (const p of proposals) {
+		const cat = proposalCategoryByTitle[p.title];
+		if (!cat) continue; // skip delegation / 51% proposals
+		if (!byCat.has(cat)) byCat.set(cat, []);
+		byCat.get(cat)!.push(p);
+	}
+	return categoryOrder
+		.filter((c) => byCat.has(c))
+		.map((c) => ({ category: c, proposals: byCat.get(c)! }));
 }
