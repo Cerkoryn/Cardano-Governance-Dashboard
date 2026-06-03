@@ -1,6 +1,6 @@
 import type { ProposalCategory } from '$lib/types/types';
 
-export const SITE_NAME = 'Cardano Governance Dashboard';
+export const SITE_NAME = 'ChangWatch';
 export const SITE_TAGLINE = 'Cardano governance concentration and voting-threshold dashboard';
 
 // Map canonical proposal.title (logic key, never edited) -> display metadata.

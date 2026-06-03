@@ -1,5 +1,6 @@
 <script lang="ts">
 	import TooltipIcon from '$lib/components/TooltipIcon.svelte';
+	import Logo from '$lib/components/Logo.svelte';
 	import { includeInactiveDReps } from '$lib/stores/stores';
 	import { SITE_NAME, SITE_TAGLINE } from '$lib/constants/display';
 	export let darkMode: boolean;
@@ -9,8 +10,10 @@
 
 <header class="header">
 	<div class="brand">
-		<h1>{SITE_NAME}</h1>
-		<p>{SITE_TAGLINE}</p>
+		<Logo size={38} />
+		<span class="name">{SITE_NAME}</span>
+		<span class="divider" aria-hidden="true"></span>
+		<p class="tagline">{SITE_TAGLINE}</p>
 	</div>
 	<div class="controls">
 		<span class="help">What do these charts mean? <TooltipIcon message={HELP} /></span>
@@ -34,8 +37,10 @@
 		gap: var(--gap); flex-wrap: wrap;
 		max-width: var(--maxw); margin: 0 auto; padding: 20px 24px;
 	}
-	.brand h1 { margin: 0; font-size: 1.35rem; font-weight: 700; color: var(--accent-strong); }
-	.brand p { margin: 2px 0 0; font-size: 0.9rem; color: var(--text-muted); }
+	.brand { display: flex; align-items: center; gap: 14px; }
+	.name { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; color: var(--accent-strong); }
+	.divider { width: 1px; align-self: stretch; min-height: 34px; background: var(--border); }
+	.tagline { margin: 0; font-size: 0.85rem; line-height: 1.3; color: var(--text-muted); max-width: 240px; }
 	.controls { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 	.help { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; color: var(--accent); cursor: default; }
 	.toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-muted); }
