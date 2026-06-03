@@ -1,7 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-  import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
   export let message: string = '';
 
@@ -69,7 +67,9 @@
   aria-haspopup="true"
   aria-expanded="false"
 >
-  <FontAwesomeIcon icon={faQuestionCircle} class="tooltip-icon" />
+  <svg class="tooltip-icon" width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+    <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm0 14.5A6.5 6.5 0 1 1 8 1.5a6.5 6.5 0 0 1 0 13zM8 3.6c-1.45 0-2.4.83-2.4 2.05 0 .3.24.5.55.5.3 0 .5-.18.55-.45.1-.55.5-.86 1.2-.86.7 0 1.18.4 1.18.95 0 .47-.2.72-.86 1.12-.66.4-.96.83-.93 1.5l.01.27c.02.3.24.49.56.49.32 0 .54-.22.54-.55v-.1c0-.45.18-.68.87-1.1.7-.42 1.06-.9 1.06-1.68 0-1.13-.95-1.96-2.33-1.96zM8 11.9c.42 0 .73-.3.73-.7 0-.42-.31-.71-.73-.71-.42 0-.73.3-.73.7 0 .41.31.71.73.71z"/>
+  </svg>
 </div>
 
 <style>  

@@ -45,3 +45,11 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Shared card chrome. Reused by every surface card so radius/border/shadow live in one place. */
+.card-surface {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+}

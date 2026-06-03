@@ -6,9 +6,9 @@
 	export let progress: number | null = null; // 0-100
 	export let accent: 'accent' | 'positive' | 'warning' = 'accent';
 	export let tooltip: string = '';
-	$: barColor = `var(--${accent})`;
+	const barColor = `var(--${accent})`;
 </script>
-<div class="card">
+<div class="card card-surface">
 	<div class="top">
 		<span class="label">{label}</span>
 		{#if tooltip}<TooltipIcon message={tooltip} />{/if}
@@ -20,7 +20,7 @@
 	{#if subline}<div class="subline">{subline}</div>{/if}
 </div>
 <style>
-	.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+	.card { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
 	.top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 	.label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
 	.value { font-size: 2.4rem; font-weight: 700; line-height: 1; }

@@ -5,11 +5,30 @@
 	import type { CumulativePoint } from '$lib/utils/calcs';
 	export let series: CumulativePoint[] = [];
 	export let minSPOsFor51: number;
+	// Lets the chart restyle when the theme toggles (its colors are read from CSS tokens).
+	export let darkMode = false;
 	let canvas: HTMLCanvasElement;
 	let chart: Chart<'line', number[], string> | null = null;
 
 	function cssVar(name: string) {
 		return getComputedStyle(document.body).getPropertyValue(name).trim();
+	}
+
+	function applyThemeColors() {
+		if (!chart) return;
+		chart.data.datasets[0].borderColor = cssVar('--accent');
+		const muted = cssVar('--text-muted');
+		const yScale = chart.options.scales?.y;
+		const xScale = chart.options.scales?.x;
+		if (yScale) {
+			if (yScale.ticks) yScale.ticks.color = muted;
+			if (yScale.grid) yScale.grid.color = cssVar('--border');
+		}
+		if (xScale) {
+			if (xScale.ticks) xScale.ticks.color = muted;
+			if (xScale.title) xScale.title.color = muted;
+		}
+		chart.update();
 	}
 
 	onMount(() => {
@@ -43,9 +62,12 @@
 		});
 	});
 	onDestroy(() => chart?.destroy());
+
+	// Re-read token colors after the theme class flips on <body>.
+	$: if (chart) { darkMode; applyThemeColors(); }
 </script>
 
-<div class="conc">
+<div class="conc card-surface">
 	<div class="explain">
 		<h3>Minimum SPOs controlling 51% of delegated stake <TooltipIcon message="Smallest number of SPOs whose combined delegated stake reaches or exceeds 51%. It does not imply these SPOs collaborate." /></h3>
 		<p>This shows the smallest number of SPOs whose combined delegated stake reaches or exceeds 51%. It does not imply these SPOs are collaborating.</p>
@@ -55,7 +77,7 @@
 </div>
 
 <style>
-	.conc { max-width: var(--maxw); margin: 0 auto; padding: 24px; display: grid; grid-template-columns: 280px 1fr; gap: var(--gap); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+	.conc { max-width: var(--maxw); margin: 0 auto; padding: 24px; display: grid; grid-template-columns: 280px 1fr; gap: var(--gap); }
 	h3 { margin: 0 0 8px; font-size: 1rem; color: var(--text); display: flex; gap: 6px; align-items: center; }
 	.explain p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
 	.big { margin-top: 16px; font-size: 0.95rem; color: var(--text-muted); }

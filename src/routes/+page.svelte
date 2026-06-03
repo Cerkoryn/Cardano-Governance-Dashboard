@@ -20,8 +20,7 @@
 
     let darkMode = get(isDarkMode);
     let proposals: Proposal[] = [];
-    let filteredProposals: Proposal[] = [];
-    let spoData: Pool[] = [];    
+    let spoData: Pool[] = [];
     let drepData: dRep[] = [];
     let total_pools = 0;
     let total_spos = 0;
@@ -46,10 +45,7 @@
         total_pools = data.totalData.total_pools;
         total_spos = data.totalData.total_spos;
         circulatingADA = data.totalData.circulating_ada;
-        total_dreps = data.totalData.total_dreps,
-        proposals = calculateProposals(spoData, drepData, circulatingADA, get(includeInactiveDReps));
-        keyIndicators = calculateKeyIndicators(spoData, drepData, circulatingADA, get(includeInactiveDReps));
-        filterProposals();
+        total_dreps = data.totalData.total_dreps;
         loading = false;
     });
 
@@ -72,13 +68,6 @@
         }
     }
 
-    function filterProposals() {
-        filteredProposals = proposals.filter(proposal => 
-            proposal.title === '% of Circulating ADA Delegated to dReps' || 
-            proposal.title === '% of Circulating ADA Delegated to Stake Pools'
-        );
-    }
-
     $: updateBodyClass();
 
     // Recalculate proposals whenever includeInactiveDReps changes
@@ -87,6 +76,7 @@
         keyIndicators = calculateKeyIndicators(spoData, drepData, circulatingADA, $includeInactiveDReps);
     }
     $: conc = spoData.length ? cumulativeStakeSeries(spoData) : { series: [], minSPOsFor51: 0 };
+    $: thresholdGroups = proposals.length ? groupThresholdProposals(proposals) : [];
 </script>
 
 <Header {darkMode} {toggleTheme} />
@@ -122,16 +112,16 @@
 
         <SectionHeading title="Stake Concentration" />
         {#if conc.series.length}
-          <div class="section-wrap"><ConcentrationChart series={conc.series} minSPOsFor51={conc.minSPOsFor51} /></div>
+          <div class="section-wrap"><ConcentrationChart series={conc.series} minSPOsFor51={conc.minSPOsFor51} {darkMode} /></div>
         {/if}
 
         <SectionHeading title="Governance Thresholds" subtitle="Smallest coalitions that could meet the required threshold for each action." />
-        {#each groupThresholdProposals(proposals) as group}
+        {#each thresholdGroups as group}
           <div class="cat">
             <h3 class="catname">{group.category}</h3>
             <div class="catcards">
               {#each group.proposals as proposal}
-                <div class="card"><ThresholdCard {proposal} /></div>
+                <div class="card-surface"><ThresholdCard {proposal} /></div>
               {/each}
             </div>
           </div>
@@ -174,5 +164,4 @@
     .cat { max-width: var(--maxw); margin: 0 auto 24px; padding: 0 24px; }
     .catname { font-size: 0.95rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin: 24px 0 12px; }
     .catcards { display: flex; flex-direction: column; gap: 16px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
 </style>

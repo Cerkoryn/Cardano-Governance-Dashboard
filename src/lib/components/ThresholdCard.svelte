@@ -17,18 +17,18 @@
 		<h4>{display.title} {#if total?.tooltipMessage}<TooltipIcon message={total.tooltipMessage} />{/if}</h4>
 		<p>{display.description}</p>
 		<div class="total">
-			<span class="num">{total?.displayValue ?? '—'}</span>
+			<span class="num">{total?.displayValue ?? 'N/A'}</span>
 			<span class="cap">total minimum actors</span>
 		</div>
 	</div>
 	<div class="gauges">
-		<Gauge value={gray(drep) ? 'N/A' : (drep?.displayValue ?? '—')} fillPercent={drep?.threshold ?? 0}
+		<Gauge value={gray(drep) ? 'N/A' : (drep?.displayValue ?? 'N/A')} fillPercent={drep?.threshold ?? 0}
 			label={gray(drep) ? 'Not required' : `${Math.round(drep?.threshold ?? 0)}% threshold`}
 			accent="accent" disabled={gray(drep)} />
-		<Gauge value={gray(spo) ? 'N/A' : (spo?.displayValue ?? '—')} fillPercent={spo?.threshold ?? 0}
+		<Gauge value={gray(spo) ? 'N/A' : (spo?.displayValue ?? 'N/A')} fillPercent={spo?.threshold ?? 0}
 			label={gray(spo) ? 'Not required' : `${Math.round(spo?.threshold ?? 0)}% threshold`}
 			accent="positive" disabled={gray(spo)} />
-		<Gauge value={gray(cc) ? 'N/A' : '5'} fillPercent={71.4285}
+		<Gauge value={gray(cc) ? 'N/A' : (cc?.displayValue ?? '5')} fillPercent={cc?.threshold ?? 71.42857143}
 			label={gray(cc) ? 'Not required' : '5 of 7'}
 			accent="warning" disabled={gray(cc)} />
 	</div>
