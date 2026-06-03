@@ -7,7 +7,6 @@
     import Header from '$lib/components/Header.svelte';
     import ProvenanceBar from '$lib/components/ProvenanceBar.svelte';
     import Footer from '$lib/components/Footer.svelte';
-    import Container from '$lib/components/Container.svelte';
     import SectionHeading from '$lib/components/SectionHeading.svelte';
     import ThresholdCard from '$lib/components/ThresholdCard.svelte';
     import IndicatorCard from '$lib/components/IndicatorCard.svelte';
