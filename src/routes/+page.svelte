@@ -10,7 +10,8 @@
     import Container from '$lib/components/Container.svelte';
     import SectionHeading from '$lib/components/SectionHeading.svelte';
     import IndicatorCard from '$lib/components/IndicatorCard.svelte';
-    import { fetchData, calculateProposals, calculateKeyIndicators } from '$lib/utils/calcs';
+    import ConcentrationChart from '$lib/components/ConcentrationChart.svelte';
+    import { fetchData, calculateProposals, calculateKeyIndicators, cumulativeStakeSeries } from '$lib/utils/calcs';
     import type { KeyIndicators } from '$lib/utils/calcs';
     import type { Proposal, Pool, dRep } from '$lib/types/types';
     import { isDarkMode, includeInactiveDReps } from '$lib/stores/stores';
@@ -85,6 +86,7 @@
         proposals = calculateProposals(spoData, drepData, circulatingADA, $includeInactiveDReps);
         keyIndicators = calculateKeyIndicators(spoData, drepData, circulatingADA, $includeInactiveDReps);
     }
+    $: conc = spoData.length ? cumulativeStakeSeries(spoData) : { series: [], minSPOsFor51: 0 };
 </script>
 
 <Header {darkMode} {toggleTheme} />
@@ -117,7 +119,12 @@
             subline="Active dReps participating in governance" />
         </div>
         {/if}
-  
+
+        <SectionHeading title="Stake Concentration" />
+        {#if conc.series.length}
+          <div class="section-wrap"><ConcentrationChart series={conc.series} minSPOsFor51={conc.minSPOsFor51} /></div>
+        {/if}
+
         <!-- Remaining proposals each on their own row -->
         {#each proposals.slice(3) as proposal, index}
           <div class="single-container">
@@ -184,6 +191,7 @@
 
     .grid { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; display: grid; gap: var(--gap); }
     .grid.four { grid-template-columns: repeat(4, 1fr); }
+    .section-wrap { padding: 0 24px; }
     @media (max-width: 900px) { .grid.four { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 520px) { .grid.four { grid-template-columns: 1fr; } }
 
