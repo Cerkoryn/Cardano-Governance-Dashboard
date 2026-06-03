@@ -5,6 +5,7 @@
     import '@fontsource/inter/700.css';
     import '$lib/styles/tokens.css';
     import Header from '$lib/components/Header.svelte';
+    import ProvenanceBar from '$lib/components/ProvenanceBar.svelte';
     import Footer from '$lib/components/Footer.svelte';
     import Container from '$lib/components/Container.svelte';
     import { fetchData, calculateProposals } from '$lib/utils/calcs';
@@ -81,6 +82,7 @@
 </script>
 
 <Header {darkMode} {toggleTheme} />
+<ProvenanceBar />
 
 <main>
     {#if loading}
