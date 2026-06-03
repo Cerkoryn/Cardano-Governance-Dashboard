@@ -248,3 +248,27 @@ export function calculateKeyIndicators(
 
 	return { drepDelegatedPercent, poolDelegatedPercent, minSPOsFor51, activeDReps };
 }
+
+export type CumulativePoint = { rank: number; cumulativePercent: number };
+
+export function cumulativeStakeSeries(spoData: Pool[]): {
+	series: CumulativePoint[];
+	minSPOsFor51: number;
+} {
+	const ordered = orderedSpoData(spoData);
+	const total = ordered.reduce((acc, p) => acc + p.stake, 0);
+	const series: CumulativePoint[] = [];
+	let cum = 0;
+	let minSPOsFor51 = ordered.length;
+	let reached = false;
+	ordered.forEach((p, idx) => {
+		cum += p.stake;
+		const pct = total > 0 ? (cum / total) * 100 : 0;
+		series.push({ rank: idx + 1, cumulativePercent: pct });
+		if (!reached && pct >= 51) {
+			minSPOsFor51 = idx + 1;
+			reached = true;
+		}
+	});
+	return { series, minSPOsFor51 };
+}

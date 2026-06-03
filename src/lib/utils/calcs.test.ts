@@ -34,3 +34,21 @@ describe('calculateKeyIndicators', () => {
 		expect(k.minSPOsFor51).toBe(1);
 	});
 });
+
+import { cumulativeStakeSeries } from '$lib/utils/calcs';
+
+describe('cumulativeStakeSeries', () => {
+	const spo: Pool[] = [
+		{ label: 'A', stake: 600 }, { label: 'B', stake: 300 }, { label: 'SINGLEPOOL', stake: 100 }
+	];
+	it('produces cumulative percentages by rank with SINGLEPOOL last', () => {
+		const { series } = cumulativeStakeSeries(spo);
+		expect(series.map((p) => p.rank)).toEqual([1, 2, 3]);
+		expect(series[0].cumulativePercent).toBeCloseTo(60, 5);
+		expect(series[1].cumulativePercent).toBeCloseTo(90, 5);
+		expect(series[2].cumulativePercent).toBeCloseTo(100, 5);
+	});
+	it('reports minSPOsFor51 consistent with calculateKeyIndicators', () => {
+		expect(cumulativeStakeSeries(spo).minSPOsFor51).toBe(1);
+	});
+});
