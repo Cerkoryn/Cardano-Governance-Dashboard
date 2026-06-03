@@ -8,7 +8,10 @@
     import ProvenanceBar from '$lib/components/ProvenanceBar.svelte';
     import Footer from '$lib/components/Footer.svelte';
     import Container from '$lib/components/Container.svelte';
-    import { fetchData, calculateProposals } from '$lib/utils/calcs';
+    import SectionHeading from '$lib/components/SectionHeading.svelte';
+    import IndicatorCard from '$lib/components/IndicatorCard.svelte';
+    import { fetchData, calculateProposals, calculateKeyIndicators } from '$lib/utils/calcs';
+    import type { KeyIndicators } from '$lib/utils/calcs';
     import type { Proposal, Pool, dRep } from '$lib/types/types';
     import { isDarkMode, includeInactiveDReps } from '$lib/stores/stores';
     import { onMount } from 'svelte';
@@ -23,7 +26,8 @@
     let total_spos = 0;
     let circulatingADA = 0;
     let total_dreps = 0;
-    let loading = true; 
+    let loading = true;
+    let keyIndicators: KeyIndicators | null = null;
 
     onMount(async () => {
         const storedTheme = localStorage.getItem('theme');
@@ -43,6 +47,7 @@
         circulatingADA = data.totalData.circulating_ada;
         total_dreps = data.totalData.total_dreps,
         proposals = calculateProposals(spoData, drepData, circulatingADA, get(includeInactiveDReps));
+        keyIndicators = calculateKeyIndicators(spoData, drepData, circulatingADA, get(includeInactiveDReps));
         filterProposals();
         loading = false;
     });
@@ -78,6 +83,7 @@
     // Recalculate proposals whenever includeInactiveDReps changes
     $: if (spoData.length && drepData.length) {
         proposals = calculateProposals(spoData, drepData, circulatingADA, $includeInactiveDReps);
+        keyIndicators = calculateKeyIndicators(spoData, drepData, circulatingADA, $includeInactiveDReps);
     }
 </script>
 
@@ -91,39 +97,25 @@
       </div>
     {:else}
       <div class="content">
-        <!-- Arrange the first three proposals side by side -->
-        {#if proposals.length > 0}
-          <div class="triple-container">
-            {#if proposals.length > 1}
-              <div class="side-container">
-                <Container 
-                  proposal={proposals[1]} 
-                  index={1}
-                >
-                <p class="total-number">dRep Count: {total_dreps.toLocaleString()}</p>
-                <br/>
-                </Container>
-              </div>
-            {/if}
-            <div class="center-container">
-              <Container 
-                proposal={proposals[0]} 
-                index={0}
-              />
-            </div>
-            {#if proposals.length > 2}
-              <div class="side-container">
-                <Container 
-                  proposal={proposals[2]} 
-                  index={2}
-                >
-                <p class="total-number">Stake Pool Count: {total_pools.toLocaleString()}</p>
-                <p class="total-number">Stake Pool Operator Count: {total_spos.toLocaleString()}</p>
-                <br/>
-                </Container>
-              </div>
-            {/if}
-          </div>
+        <SectionHeading title="Key Indicators" subtitle="Overview of participation and concentration" />
+        {#if keyIndicators}
+        <div class="grid four">
+          <IndicatorCard label="ADA Delegated to dReps" value={`${keyIndicators.drepDelegatedPercent.toFixed(1)}%`}
+            progress={keyIndicators.drepDelegatedPercent} accent="accent"
+            subline={`${total_dreps.toLocaleString()} dReps`}
+            tooltip="Share of circulating ADA delegated to dReps as voting power." />
+          <IndicatorCard label="ADA Delegated to Stake Pools" value={`${keyIndicators.poolDelegatedPercent.toFixed(1)}%`}
+            progress={keyIndicators.poolDelegatedPercent} accent="positive"
+            subline={`${total_pools.toLocaleString()} Stake Pools · ${total_spos.toLocaleString()} Operators`}
+            tooltip="Share of circulating ADA delegated to stake pools." />
+          <IndicatorCard label="Minimum SPOs for 51% Stake" value={keyIndicators.minSPOsFor51.toLocaleString()}
+            accent="warning"
+            subline="SPOs needed to control 51% of delegated stake"
+            tooltip="Smallest set of SPOs whose combined delegated stake reaches 51%. Does not imply coordination." />
+          <IndicatorCard label="Active dReps" value={keyIndicators.activeDReps.toLocaleString()}
+            accent="accent"
+            subline="Active dReps participating in governance" />
+        </div>
         {/if}
   
         <!-- Remaining proposals each on their own row -->
@@ -170,24 +162,6 @@
         color: inherit; 
     }
 
-    .triple-container {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        justify-content: center;
-        margin-bottom: 0rem;
-        gap: 16px;
-    }
-
-    .side-container, .center-container {
-        flex: 1;
-        max-width: 300px;
-    }
-
-    .center-container {
-        max-width: 600px; 
-    }
-
     .single-container {
         width: 100%;
         max-width: 800px; 
@@ -196,33 +170,22 @@
         margin-bottom: 1rem; 
     }
 
-    .total-number {
-        text-align: left;
-        font-size: 15px;
-        padding-left: 1px;
-        padding-right: 0px;
-    }
-
     @media (max-width: 768px) {
-        .triple-container {
-            flex-direction: column;
-            align-items: center;
-        }
-        .side-container, .center-container {
-            max-width: 100%;
-            padding: 0;
-            margin: 0; 
-        }
         .single-container {
-            max-width: 100%; 
+            max-width: 100%;
         }
     }
 
     .content {
         width: 100%;
-        padding: 0; 
-        margin: 0 auto; 
+        padding: 0;
+        margin: 0 auto;
     }
+
+    .grid { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; display: grid; gap: var(--gap); }
+    .grid.four { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 900px) { .grid.four { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .grid.four { grid-template-columns: 1fr; } }
 
     :global(body) {
         margin: 0;
