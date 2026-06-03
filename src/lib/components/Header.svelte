@@ -1,220 +1,46 @@
 <script lang="ts">
-    import TooltipIcon from '$lib/components/TooltipIcon.svelte';
-    import { includeInactiveDReps } from '$lib/stores/stores';
-
-    export let darkMode: boolean;
-    export let toggleTheme: () => void;
+	import TooltipIcon from '$lib/components/TooltipIcon.svelte';
+	import { includeInactiveDReps } from '$lib/stores/stores';
+	export let darkMode: boolean;
+	export let toggleTheme: () => void;
+	const HELP = 'These charts show the smallest number of entities that could collectively meet or exceed the required threshold for each Cardano governance action (a Minimum Attack Vector / Nakamoto-style metric).';
 </script>
 
-<div class="header-bar">
-    <div class="left-controls">
-        <label class="toggle-label">
-            <input 
-                type="checkbox" 
-                bind:checked={$includeInactiveDReps} 
-            />
-            Include Inactive dReps 
-        </label>
-        <div class="info-tooltip">
-            <em> What do these charts mean?</em> <TooltipIcon message="These charts show the Minimum Attack Vector (similarly known as the Nakamoto Coefficient) for each proposal and each governing body on Cardano.<br/><br/>Each chart indicates the smallest number of entities needed to collectively meet or exceed the required threshold for a given governance action." />
-        </div>
-    </div>
-    <div class="title-wrapper">
-        <h1 class="title-text">Cardano Governance Dashboard</h1>
-    </div>
-    <div class="right-controls">
-        <button on:click={toggleTheme}>
-            {#if darkMode}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
-            {:else}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-            {/if}
-        </button>
-    </div>
-</div>
+<header class="header">
+	<div class="brand">
+		<h1>Cardano Governance Dashboard</h1>
+		<p>Cardano governance concentration and voting-threshold dashboard</p>
+	</div>
+	<div class="controls">
+		<span class="help">What do these charts mean? <TooltipIcon message={HELP} /></span>
+		<label class="toggle">
+			<input type="checkbox" bind:checked={$includeInactiveDReps} />
+			Include inactive dReps
+		</label>
+		<button class="theme" on:click={toggleTheme} aria-label="Toggle theme">
+			{#if darkMode}
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+			{:else}
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+			{/if}
+		</button>
+	</div>
+</header>
 
 <style>
-    :root {
-        --header-height: 60px;
-    }
-
-    .header-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1000; 
-        display: flex;
-        align-items: center;
-        justify-content: center; 
-        padding: 1rem 2rem;
-        box-sizing: border-box;
-        background-color: var(--footer-bg-color);
-        border-radius: 0;
-        margin-bottom: 2rem;
-    }
-
-    .left-controls,
-    .right-controls {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        display: flex;
-        align-items: center;
-    }
-
-    .left-controls {
-        left: 2rem;
-    }
-
-    .right-controls {
-        right: 2rem;
-    }
-
-    .toggle-label {
-        display: flex;
-        align-items: center;
-        font-size: 1rem;
-        color: var(--title-text-color);
-    }
-
-    .toggle-label input {
-        margin-right: 0.5rem;
-    }
-
-    .info-tooltip {
-        display: flex;
-        align-items: center;
-        font-size: 0.9rem;
-        color: var(--title-text-color);
-        margin-left: 1rem;
-    }
-
-    .title-wrapper {
-        text-align: center;
-    }
-
-    .title-text {
-        margin: 0;
-        font-size: 2rem; 
-        color: var(--title-text-color);
-    }
-
-    .margin-icon {
-        font-size: 2rem; 
-        color: var(--title-text-color);
-        text-decoration: none;
-        margin-left: 1rem;
-    }
-
-    .margin-icon:hover {
-        color: var(--footer-icon-hover-color); 
-    }
-
-    button {
-        font-size: 1rem;
-        padding: 0rem 0rem;
-        background-color: var(--button-bg-color);
-        color: var(--title-text-color);
-        border: none;
-        border-radius: 0.5rem;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: var(--button-hover-bg-color);
-    }
-
-    @media (max-width: 1280px) {
-        :root {
-            --header-height: 50px; 
-        }
-
-        .header-bar {
-            flex-direction: column;
-            align-items: center;
-            padding: 0.5rem;
-        }
-
-        .left-controls,
-        .right-controls {
-            position: static;
-            transform: none;
-            margin-bottom: 0rem; 
-            width: 100%;
-            display: flex;
-            justify-content: center; 
-            align-items: center;
-        }
-
-        .left-controls {
-            gap: 1rem; 
-            margin-bottom: 0.5rem;
-        }
-
-        .toggle-label {
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem; 
-            color: var(--title-text-color);
-        }
-
-        .toggle-label input {
-            margin-right: 0.25rem; 
-            transform: scale(0.9); 
-        }
-
-        .info-tooltip {
-            display: flex;
-            align-items: center;
-            font-size: 0.6rem; 
-            color: var(--title-text-color);
-            margin-left: 0; 
-            margin-top: 0.3rem; 
-        }
-
-        .title-wrapper {
-            order: 1;
-            width: 100%;
-            text-align: center;
-            margin-bottom: 0.5rem; 
-        }
-
-        .title-text {
-            margin: 0;
-            font-size: 1rem; 
-            color: var(--title-text-color);
-        }
-
-        .margin-icon {
-            font-size: 1.25rem;
-            color: var(--title-text-color);
-            margin-left: 0; 
-            margin-bottom: 0rem;
-        }
-
-        button {
-            font-size: 0.9rem; 
-            padding: 0.3rem 0.6rem; 
-            background-color: var(--button-bg-color);
-            color: var(--title-text-color);
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: var(--button-hover-bg-color);
-        }
-
-        .left-controls {
-            order: 2;
-        }
-
-        .right-controls {
-            order: 3;
-            justify-content: center;
-        }
-    }
+	.header {
+		display: flex; align-items: center; justify-content: space-between;
+		gap: var(--gap); flex-wrap: wrap;
+		max-width: var(--maxw); margin: 0 auto; padding: 20px 24px;
+	}
+	.brand h1 { margin: 0; font-size: 1.35rem; font-weight: 700; color: var(--accent-strong); }
+	.brand p { margin: 2px 0 0; font-size: 0.9rem; color: var(--text-muted); }
+	.controls { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+	.help { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; color: var(--accent); cursor: default; }
+	.toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-muted); }
+	.theme { background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px; color: var(--text); cursor: pointer; line-height: 0; }
+	.theme:hover { background: var(--surface-2); }
+	@media (max-width: 768px) {
+		.header { flex-direction: column; align-items: flex-start; }
+	}
 </style>
-
