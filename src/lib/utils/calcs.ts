@@ -200,3 +200,51 @@ export function calculateProposals(spoData: Pool[], drepData: dRep[], circulatin
 
     return proposalTypes;
 }
+
+const PSEUDO_DREPS = ['drep_always_abstain', 'drep_always_no_confidence'];
+
+// Pools ordered the way the dashboard ranks them: stake desc, SINGLEPOOL last.
+export function orderedSpoData(spoData: Pool[]): Pool[] {
+	const sorted = [...spoData].sort((a, b) => b.stake - a.stake);
+	const i = sorted.findIndex((p) => p.label === 'SINGLEPOOL');
+	if (i !== -1) {
+		const [sp] = sorted.splice(i, 1);
+		sorted.push(sp);
+	}
+	return sorted;
+}
+
+export type KeyIndicators = {
+	drepDelegatedPercent: number;
+	poolDelegatedPercent: number;
+	minSPOsFor51: number;
+	activeDReps: number;
+};
+
+export function calculateKeyIndicators(
+	spoData: Pool[],
+	drepData: dRep[],
+	circulatingADA: number,
+	includeInactive: boolean
+): KeyIndicators {
+	const abstain = drepData.find((d) => d.drep_id === 'drep_always_abstain');
+	const base = includeInactive ? drepData.slice() : drepData.filter((d) => d.is_active);
+	// abstain power is added separately (mirrors calculateProposals), so exclude it from the set
+	const filtered = base.filter((d) => d.drep_id !== 'drep_always_abstain');
+
+	const delegatedLovelace =
+		filtered.reduce((acc, d) => acc + d.active_power, 0) + (abstain ? abstain.active_power : 0);
+	const drepDelegatedPercent = (delegatedLovelace / 1_000_000 / circulatingADA) * 100;
+
+	const poolStake = spoData.reduce((acc, p) => acc + p.stake, 0);
+	const poolDelegatedPercent = (poolStake / circulatingADA) * 100;
+
+	const minSPOsFor51 = calculateSPOMAV(
+		orderedSpoData(spoData).map((p) => ({ label: p.label, stake: p.stake })),
+		51
+	);
+
+	const activeDReps = filtered.filter((d) => !PSEUDO_DREPS.includes(d.drep_id)).length;
+
+	return { drepDelegatedPercent, poolDelegatedPercent, minSPOsFor51, activeDReps };
+}
