@@ -34,7 +34,7 @@
 	</div>
 </div>
 {#if total?.tooltipMessage}
-	<button class="calc" on:click={() => (open = !open)}>{open ? '▾' : '▸'} View calculation</button>
+	<button class="calc" on:click={() => (open = !open)}>{open ? '▾' : '▸'} Methodology</button>
 	{#if open}<div class="calcbody">{@html total.tooltipMessage}</div>{/if}
 {/if}
 <style>

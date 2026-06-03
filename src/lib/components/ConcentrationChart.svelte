@@ -10,6 +10,7 @@
 	export let darkMode = false;
 	let canvas: HTMLCanvasElement;
 	let chart: Chart<'line', number[], string> | null = null;
+	let methodOpen = false;
 
 	// Explanatory diagram: show the leading SPOs around the 51% crossing rather than
 	// the full long tail, so the crossing is readable (like the reference design).
@@ -202,6 +203,24 @@
 			It does not imply these SPOs are collaborating.
 		</p>
 		<div class="big"><span>{minSPOsFor51}</span> SPOs reach 51%</div>
+		<button class="method" on:click={() => (methodOpen = !methodOpen)}>{methodOpen ? '▾' : '▸'} Methodology</button>
+		{#if methodOpen}
+			<div class="method-body">
+				<p>
+					Stake pool operators are ranked by delegated stake, largest first. The line adds them up
+					until the running total reaches 51% of all delegated stake; that count is the figure shown.
+				</p>
+				<p>
+					Why delegated stake and not total ADA? On Cardano only delegated stake takes part in block
+					production, so undelegated ADA, treasury and reserves do not count. About 56% of all ADA is
+					currently delegated, so 51% of delegated stake is roughly 29% of the total supply.
+				</p>
+				<p>
+					Single pool operators are combined into one SINGLEPOOL group and placed last, since
+					thousands of independent small operators are not a realistic coordinating bloc.
+				</p>
+			</div>
+		{/if}
 	</div>
 	<div class="chartside">
 		<div class="legend"><span class="legend-mark"></span> Cumulative Delegated Stake</div>
@@ -240,6 +259,28 @@
 		font-size: 2rem;
 		font-weight: 700;
 		color: var(--accent);
+	}
+	.method {
+		margin-top: 14px;
+		padding: 0;
+		background: none;
+		border: none;
+		color: var(--accent);
+		cursor: pointer;
+		font: inherit;
+		font-size: 0.85rem;
+	}
+	.method-body {
+		margin-top: 8px;
+		font-size: 0.8rem;
+		color: var(--text-muted);
+		line-height: 1.5;
+	}
+	.method-body p {
+		margin: 0 0 8px;
+	}
+	.method-body p:last-child {
+		margin-bottom: 0;
 	}
 	.chartside {
 		min-width: 0;
