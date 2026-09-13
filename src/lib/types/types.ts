@@ -35,3 +35,10 @@ export type Proposal = {
     title: string;
     charts: Chart[];
 };
+
+export type ProposalCategory =
+	| 'Constitutional Committee'
+	| 'Constitution'
+	| 'Protocol Parameters'
+	| 'Hard Fork'
+	| 'Treasury';
