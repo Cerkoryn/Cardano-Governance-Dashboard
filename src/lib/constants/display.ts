@@ -1,6 +1,6 @@
 import type { ActionId, ProposalCategory } from '$lib/types/types';
-export const SITE_NAME = 'ChangWatch';
-export const SITE_TAGLINE = 'Cardano governance concentration and voting-threshold dashboard';
+export const SITE_NAME = 'Cardano GovScope';
+export const SITE_TAGLINE = 'Governance, voting power, and participation';
 export const categoryOrder: ProposalCategory[] = ['Constitutional Committee', 'Constitution', 'Protocol Parameters', 'Hard Fork', 'Treasury'];
 export const actions: { id: ActionId; title: string; category: ProposalCategory; description: string; cc: boolean; securityConditional?: boolean }[] = [
   { id: 'no_confidence', title: 'No confidence in Constitutional Committee', category: 'Constitutional Committee', description: 'Automatic no-confidence stake contributes Yes without adding a voter to the coalition.', cc: false },

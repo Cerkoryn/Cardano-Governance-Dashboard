@@ -4,6 +4,7 @@
   import '@fontsource/inter/600.css';
   import '@fontsource/inter/700.css';
   import '$lib/styles/tokens.css';
+  import { SITE_NAME, SITE_TAGLINE } from '$lib/constants/display';
   import Header from '$lib/components/Header.svelte';
   import ProvenanceBar from '$lib/components/ProvenanceBar.svelte';
   import Footer from '$lib/components/Footer.svelte';
@@ -58,7 +59,18 @@
   const percentage = (n: number | null) => n === null ? 'Unavailable' : `${n.toFixed(1)}%`;
 </script>
 
-<svelte:head><title>ChangWatch · Cardano Governance Dashboard</title><meta name="description" content="Cardano governance participation and qualified voting concentration estimates, with current protocol thresholds and source timestamps." /></svelte:head>
+<svelte:head>
+  <title>{SITE_NAME} · Cardano Governance Dashboard</title>
+  <meta name="description" content="Cardano governance participation and qualified voting concentration estimates, with current protocol thresholds and source timestamps." />
+  <meta property="og:title" content={SITE_NAME} />
+  <meta property="og:site_name" content={SITE_NAME} />
+  <meta property="og:type" content="website" />
+  <meta property="og:description" content={SITE_TAGLINE} />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@Cerkoryn" />
+  <meta name="twitter:title" content={SITE_NAME} />
+  <meta name="twitter:description" content={SITE_TAGLINE} />
+</svelte:head>
 <Header {darkMode} {toggleTheme} />
 <ProvenanceBar {data} {now} />
 <main aria-busy={loading}>

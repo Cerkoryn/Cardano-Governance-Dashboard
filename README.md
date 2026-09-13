@@ -1,6 +1,6 @@
-# ChangWatch
+# Cardano GovScope
 
-A Cardano governance dashboard built with SvelteKit, Chart.js, and Python functions on Vercel. This branch builds on [PR #3](https://github.com/Cerkoryn/Cardano-Governance-Dashboard/pull/3), preserving the contributor's design and commit history while correcting calculations and strengthening the data pipeline.
+Formerly ChangWatch. A Cardano governance dashboard built with SvelteKit, Chart.js, and Python functions on Vercel. This branch builds on [PR #3](https://github.com/Cerkoryn/Cardano-Governance-Dashboard/pull/3), preserving the contributor's design and commit history while correcting calculations and strengthening the data pipeline.
 
 ## Development
 
