@@ -4,6 +4,7 @@ from decimal import Decimal
 from fractions import Fraction
 import json
 import os
+import re
 import time
 import uuid
 
@@ -215,12 +216,23 @@ def collect_spo(client):
 
 class Store:
     def __init__(self, client=None):
+        self.prefix = os.environ.get('CHANGWATCH_KEY_PREFIX', '')
+        environment = os.environ.get('VERCEL_ENV', '')
+        if self.prefix and not re.fullmatch(r'changwatch:preview:[A-Za-z0-9_-]+:', self.prefix):
+            raise DataError('Invalid preview key prefix')
+        if environment == 'preview' and not self.prefix:
+            raise DataError('Preview storage requires an isolated key prefix')
+        if environment == 'production' and self.prefix:
+            raise DataError('Production cannot use preview storage keys')
         self.url = os.environ.get('KV_REST_API_URL', '').rstrip('/')
         token = os.environ.get('KV_REST_API_TOKEN', '')
         if not self.url.startswith('https://') or not token:
             raise DataError('Storage is not configured')
         self.headers = {'Authorization': 'Bearer ' + token}
         self.client = client or Client(budget=8)
+
+    def key(self, name):
+        return self.prefix + name
 
     def command(self, args):
         response = self.client.request('POST', self.url, json=args, headers=self.headers, retry=False)
@@ -229,7 +241,7 @@ class Store:
         return response['result']
 
     def read(self, key):
-        raw = self.command(['GET', key])
+        raw = self.command(['GET', self.key(key)])
         if raw is None:
             raise DataError('Snapshot is not available')
         try:
@@ -238,7 +250,7 @@ class Store:
             raise DataError('Invalid stored snapshot') from None
 
     def dashboard(self):
-        raw = self.command(['MGET', *SNAPSHOT_KEYS])
+        raw = self.command(['MGET', *[self.key(key) for key in SNAPSHOT_KEYS]])
         try:
             if not isinstance(raw, list) or len(raw) != 2:
                 raise ValueError()
@@ -274,7 +286,9 @@ class Store:
                      'active_power': int(r['voting_power_lovelace']), 'given_name': None} for r in value['rows']]
             legacy = {'drep_data': rows, 'drep_totals': {'total_dreps': value['totals']['registered_dreps'] + 2}}
         values = {key: value, **{k: {'value': v} for k, v in legacy.items()}}
-        commands = [['SET', k, json.dumps(v)] for k, v in values.items()]
+        # Preview records expire after a week so abandoned test data does not accumulate.
+        expiry = ['EX', 604800] if self.prefix else []
+        commands = [['SET', self.key(k), json.dumps(v), *expiry] for k, v in values.items()]
         result = self.client.request('POST', self.url + '/multi-exec', json=commands,
                                      headers=self.headers, retry=False)
         if not isinstance(result, list) or len(result) != len(commands) or any(r.get('result') != 'OK' for r in result):

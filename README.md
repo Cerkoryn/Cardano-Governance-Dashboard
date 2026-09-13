@@ -24,7 +24,7 @@ The end-to-end suite starts a local Python API on port 8000 and the production b
 
 For an interactive dashboard without credentials, run `python3 tests/serve_api.py` and `npm run dev` in separate terminals. Fixture data is synthetic, not current mainnet data.
 
-For real collectors, copy `.env.example` to a local ignored file and supply **development-only** Redis credentials and a separate `CRON_SECRET`. Export those variables before running `python3 scripts/dev_api.py`; it intentionally does not load credentials automatically. Vite proxies `/api` to port 8000. Do not use production Redis for development or previews: refreshes also update compatibility keys used by the old site.
+For real collectors, copy `.env.example` to a local ignored file and supply **development-only** Redis credentials and a separate `CRON_SECRET`. Export those variables before running `python3 scripts/dev_api.py`; it intentionally does not load credentials automatically. Vite proxies `/api` to port 8000. Previews require `CHANGWATCH_KEY_PREFIX` (for example, `changwatch:preview:pr4:`). Use a separate database or a restricted Redis ACL credential that can access only that prefix. Never give a preview unrestricted production credentials. Every snapshot, compatibility key, and refresh lock is prefixed; preview records expire after seven days. Production must omit the prefix. Sharing the existing database with a restricted credential avoids another resource but shares its usage quota.
 
 `python3 scripts/check_sources.py` reads Koios and Balance Analytics, reports counts/epochs/runtime, and never connects to Redis or publishes data.
 

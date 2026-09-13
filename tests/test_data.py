@@ -124,6 +124,30 @@ class ClientTests(unittest.TestCase):
 
 @patch.dict(os.environ, ENV)
 class StorageTests(unittest.TestCase):
+    def test_preview_requires_prefix_and_production_rejects_it(self):
+        for env, prefix in [('preview', ''), ('production', 'changwatch:preview:pr4:'), ('preview', '*'), ('preview', 'changwatch:v1:')]:
+            with patch.dict(os.environ, {'VERCEL_ENV': env, 'CHANGWATCH_KEY_PREFIX': prefix}):
+                with self.assertRaises(DataError): Store(Mock())
+
+    def test_preview_prefix_covers_snapshots_legacy_keys_reads_and_locks(self):
+        prefix = 'changwatch:preview:pr4:'
+        with patch.dict(os.environ, {'VERCEL_ENV': 'preview', 'CHANGWATCH_KEY_PREFIX': prefix}):
+            client = Mock(); store = Store(client)
+            self.assertEqual(store.key('changwatch:lock:spo'), prefix + 'changwatch:lock:spo')
+            for kind in ['spo', 'governance']:
+                client.request.return_value = [{'result': 'OK'}] * 3
+                store.publish(FIXTURE[kind])
+                for command in client.request.call_args.kwargs['json']:
+                    self.assertTrue(command[1].startswith(prefix))
+                    self.assertEqual(command[-2:], ['EX', 604800])
+            client.request.return_value = {'result': json.dumps({'value': []})}
+            for key in ['spo_data', 'spo_totals', 'drep_data', 'drep_totals']:
+                store.read(key)
+                self.assertEqual(client.request.call_args.kwargs['json'], ['GET', prefix + key])
+            client.request.return_value = {'result': [json.dumps(FIXTURE['spo']), json.dumps(FIXTURE['governance'])]}
+            self.assertEqual(store.dashboard(), FIXTURE)
+            self.assertEqual(client.request.call_args.kwargs['json'], ['MGET', prefix + 'changwatch:v1:spo', prefix + 'changwatch:v1:governance'])
+
     def test_snapshot_and_legacy_records_publish_in_one_transaction(self):
         for kind in ['spo', 'governance']:
             client = Mock(); client.request.return_value = [{'result': 'OK'}] * 3
@@ -177,11 +201,13 @@ class HandlerTests(unittest.TestCase):
     @patch('server.http.collect_spo')
     @patch('server.http.Store')
     def test_failed_collection_retains_last_good_data_and_releases_owned_lock(self, store, collect):
+        store.return_value.key.side_effect = lambda k: 'changwatch:preview:pr4:' + k
         store.return_value.command.return_value = 'OK'; collect.side_effect = DataError('Incomplete source')
         h = handler(RefreshHandler, 'Bearer test-secret'); h.do_GET()
         store.return_value.publish.assert_not_called()
         self.assertEqual(h.send_json.call_args.args[0], 503)
         self.assertEqual(store.return_value.command.call_args.args[0][0], 'EVAL')
+        self.assertEqual(store.return_value.command.call_args.args[0][3], 'changwatch:preview:pr4:changwatch:lock:spo')
 
     @patch.dict(os.environ, ENV)
     @patch('server.http.collect_spo')
@@ -196,6 +222,7 @@ class HandlerTests(unittest.TestCase):
     @patch('server.http.collect_spo')
     @patch('server.http.Store')
     def test_success_publishes_then_returns_snapshot_id(self, store, collect):
+        store.return_value.key.side_effect = lambda k: 'changwatch:preview:pr4:' + k
         store.return_value.command.return_value = 'OK'; collect.return_value = FIXTURE['spo']
         h = handler(RefreshHandler, 'Bearer test-secret'); h.do_GET()
         store.return_value.publish.assert_called_once_with(FIXTURE['spo'])

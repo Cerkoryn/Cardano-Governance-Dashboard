@@ -53,6 +53,7 @@ class RefreshHandler(JSONHandler):
         key = 'changwatch:lock:' + self.kind
         try:
             store = Store(Client(budget=55))
+            key = store.key(key)
             locked = store.command(['SET', key, owner, 'NX', 'EX', 90]) == 'OK'
             if not locked:
                 self.send_json(200, {'status': 'skipped', 'reason': 'Refresh already running'})
