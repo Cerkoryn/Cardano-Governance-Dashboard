@@ -1,3 +1,12 @@
+<script lang="ts">
+    import type { Dashboard } from '$lib/types/types';
+    export let data: Dashboard | null = null;
+    // Show the older collection time so a partial refresh never overstates freshness.
+    $: lastRefreshed = data ? new Date(Math.min(
+        Date.parse(data.governance.updated_at), Date.parse(data.spo.updated_at)
+    )).toISOString() : null;
+</script>
+
 <footer class="footer-bar">
     <div class="attributions">
         <span>
@@ -8,6 +17,11 @@
             Pool Group Data sourced from 
             <a href="https://www.balanceanalytics.io/" target="_blank">Balance Analytics</a>.
         </span>
+        {#if lastRefreshed}
+            <span title="The older of the governance and stake-pool collection times.">
+                Last refreshed: <time datetime={lastRefreshed}>{new Date(lastRefreshed).toLocaleString()}</time>
+            </span>
+        {/if}
     </div>
     <div class="social-icons">
         <a href="https://github.com/Cerkoryn/Cardano-Governance-Dashboard" target="_blank" rel="noreferrer" aria-label="View the source on GitHub" class="margin-icon">
@@ -22,6 +36,8 @@
 <style>
     .footer-bar {
         display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
         justify-content: space-between;
         align-items: center;
         max-width: var(--maxw);

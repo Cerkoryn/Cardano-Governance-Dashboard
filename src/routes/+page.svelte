@@ -105,7 +105,7 @@
     </div>
   {/if}
 </main>
-<Footer />
+<Footer {data} />
 <style>
     main {
         min-height: 60vh;
