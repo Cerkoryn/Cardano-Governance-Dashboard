@@ -5,11 +5,11 @@
 	--surface-2: #f1f4f9;
 	--border: #e3e8f0;
 	--text: #111827;
-	--text-muted: #64748b;
-	--accent: #5b6cf0;        /* participating / dReps */
+	--text-muted: #526174;
+	--accent: #475bd8;        /* participating / dReps */
 	--accent-strong: #0033ad; /* headlines / logo */
-	--positive: #16a34a;      /* SPOs / staking */
-	--warning: #f59e0b;
+	--positive: #15803d;      /* SPOs / staking */
+	--warning: #b45309;
 	--critical: #dc2626;      /* risk only */
 	--neutral: #cbd5e1;       /* remaining track */
 
@@ -28,7 +28,7 @@ body.dark-mode {
 	--border: #26303d;
 	--text: #e5e9f0;
 	--text-muted: #94a3b8;
-	--accent: #5b7bff;
+	--accent: #8ba2ff;
 	--accent-strong: #93acff;
 	--positive: #34d27e;
 	--warning: #fbbf24;
@@ -53,3 +53,6 @@ body {
 	border-radius: var(--radius);
 	box-shadow: var(--shadow);
 }
+
+:focus-visible { outline: 3px solid var(--accent-strong); outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

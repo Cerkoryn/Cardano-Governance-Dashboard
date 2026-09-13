@@ -1,0 +1,194 @@
+{
+  "spo": {
+    "schema_version": 1,
+    "snapshot_id": "fixture-spo",
+    "kind": "spo",
+    "updated_at": "2026-09-13T12:00:00+00:00",
+    "source_epochs": {
+      "koios": 655,
+      "balance": 655,
+      "supply": 655
+    },
+    "rows": [
+      {
+        "label": "A",
+        "stake_lovelace": "4000000000000000",
+        "is_aggregate": false
+      },
+      {
+        "label": "B",
+        "stake_lovelace": "3000000000000000",
+        "is_aggregate": false
+      },
+      {
+        "label": "SINGLEPOOL",
+        "stake_lovelace": "2000000000000000",
+        "is_aggregate": true
+      },
+      {
+        "label": "C",
+        "stake_lovelace": "1000000000000000",
+        "is_aggregate": false
+      }
+    ],
+    "totals": {
+      "total_pools": 100,
+      "total_spos": 90,
+      "circulating_lovelace": "20000000000000000"
+    }
+  },
+  "governance": {
+    "schema_version": 1,
+    "snapshot_id": "fixture-governance",
+    "kind": "governance",
+    "updated_at": "2026-09-13T12:00:00+00:00",
+    "source_epochs": {
+      "koios": 655
+    },
+    "rows": [
+      {
+        "drep_id": "d1",
+        "is_active": true,
+        "voting_power_lovelace": "4000000000000000"
+      },
+      {
+        "drep_id": "d2",
+        "is_active": true,
+        "voting_power_lovelace": "2000000000000000"
+      },
+      {
+        "drep_id": "d3",
+        "is_active": true,
+        "voting_power_lovelace": "1000000000000000"
+      },
+      {
+        "drep_id": "inactive",
+        "is_active": false,
+        "voting_power_lovelace": "2000000000000000"
+      },
+      {
+        "drep_id": "zero",
+        "is_active": true,
+        "voting_power_lovelace": "0"
+      },
+      {
+        "drep_id": "drep_always_abstain",
+        "is_active": true,
+        "voting_power_lovelace": "1000000000000000"
+      },
+      {
+        "drep_id": "drep_always_no_confidence",
+        "is_active": true,
+        "voting_power_lovelace": "3000000000000000"
+      }
+    ],
+    "totals": {
+      "registered_dreps": 5,
+      "active_dreps": 4
+    },
+    "thresholds": {
+      "no_confidence": {
+        "drep": {
+          "numerator": 67,
+          "denominator": 100
+        },
+        "spo": {
+          "numerator": 51,
+          "denominator": 100
+        }
+      },
+      "committee_normal": {
+        "drep": {
+          "numerator": 67,
+          "denominator": 100
+        },
+        "spo": {
+          "numerator": 51,
+          "denominator": 100
+        }
+      },
+      "committee_no_confidence": {
+        "drep": {
+          "numerator": 3,
+          "denominator": 5
+        },
+        "spo": {
+          "numerator": 51,
+          "denominator": 100
+        }
+      },
+      "constitution": {
+        "drep": {
+          "numerator": 3,
+          "denominator": 4
+        },
+        "spo": null
+      },
+      "hard_fork": {
+        "drep": {
+          "numerator": 3,
+          "denominator": 5
+        },
+        "spo": {
+          "numerator": 51,
+          "denominator": 100
+        }
+      },
+      "network": {
+        "drep": {
+          "numerator": 67,
+          "denominator": 100
+        },
+        "spo": {
+          "numerator": 51,
+          "denominator": 100
+        }
+      },
+      "economic": {
+        "drep": {
+          "numerator": 67,
+          "denominator": 100
+        },
+        "spo": {
+          "numerator": 51,
+          "denominator": 100
+        }
+      },
+      "technical": {
+        "drep": {
+          "numerator": 67,
+          "denominator": 100
+        },
+        "spo": {
+          "numerator": 51,
+          "denominator": 100
+        }
+      },
+      "governance": {
+        "drep": {
+          "numerator": 3,
+          "denominator": 4
+        },
+        "spo": {
+          "numerator": 51,
+          "denominator": 100
+        }
+      },
+      "treasury": {
+        "drep": {
+          "numerator": 67,
+          "denominator": 100
+        },
+        "spo": null
+      }
+    },
+    "committee": {
+      "eligible_members": 7,
+      "minimum_size": 5,
+      "quorum": {
+        "numerator": 2,
+        "denominator": 3
+      }
+    }
+  }
+}

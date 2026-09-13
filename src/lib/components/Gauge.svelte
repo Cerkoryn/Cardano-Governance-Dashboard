@@ -1,15 +1,12 @@
-<script lang="ts" context="module">
-	// Per-instance gradient id (deterministic order => SSR/CSR hydration-safe).
-	let gaugeUid = 0;
-</script>
-
 <script lang="ts">
 	export let value: string;            // center number, e.g. "25" or "N/A"
 	export let fillPercent: number = 0;  // arc fill = governance threshold %
 	export let label: string = '';       // e.g. "67% threshold"
 	export let accent: 'accent' | 'positive' | 'warning' = 'accent';
 	export let disabled: boolean = false;
-	const gid = `gauge-grad-${++gaugeUid}`;
+	export let id: string;
+	export let roleName: string;
+	$: gid = `gauge-grad-${id}`;
 	const R = 50;
 	const HALF = Math.PI * R;
 	$: dash = `${(Math.max(0, Math.min(100, fillPercent)) / 100) * HALF} ${HALF}`;
@@ -18,7 +15,8 @@
 </script>
 
 <div class="gauge" class:disabled>
-	<svg viewBox="0 0 120 70" style="color: {hue}">
+	<strong>{roleName}</strong>
+	<svg aria-hidden="true" viewBox="0 0 120 70" style="color: {hue}">
 		<defs>
 			<linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
 				<stop offset="0%" stop-color="currentColor" stop-opacity="0.4" />
@@ -51,13 +49,14 @@
 			fill={disabled ? 'var(--text-muted)' : 'currentColor'}>{value}</text
 		>
 	</svg>
+	<span class="sr-only">{value}</span>
 	{#if label}<div class="label">{label}</div>{/if}
 </div>
 
 <style>
+	.gauge strong { font-size: 0.85rem; text-align: center; }
 	.gauge { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 	.gauge svg { width: 100%; max-width: 200px; height: auto; }
 	.val { font-size: 22px; font-weight: 700; }
 	.label { font-size: 0.78rem; color: var(--text-muted); }
-	.disabled .label { opacity: 0.8; }
 </style>

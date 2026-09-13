@@ -1,24 +1,17 @@
 {
-  "version": 2,
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
   "functions": {
     "api/*.py": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "server/**",
+      "excludeFiles": "{tests/**,scripts/**,node_modules/**,build/**,.svelte-kit/**}"
     }
   },
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "build/$1"
-    }
-  ],
   "crons": [
-    {
-      "path": "/api/update_dreps_and_totals",
-      "schedule": "0 0 * * *" 
-    },
-    {
-      "path": "/api/update_spos_and_totals",
-      "schedule": "0 0 * * *"  
-    }
+    { "path": "/api/update_dreps_and_totals", "schedule": "0 0 * * *" },
+    { "path": "/api/update_spos_and_totals", "schedule": "0 0 * * *" }
   ]
 }
