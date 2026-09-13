@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, tick } from 'svelte';
 	import Chart from 'chart.js/auto';
 	import type { Plugin } from 'chart.js';
-	import TooltipIcon from '$lib/components/TooltipIcon.svelte';
 	import type { CumulativePoint } from '$lib/utils/calcs';
 	export let series: CumulativePoint[] = [];
-	export let minSPOsFor51: number;
+	export let minSPOsFor51: number | null;
+	export let knownStakePercent: number | null;
 	// Lets the chart restyle when the theme toggles (its colors are read from CSS tokens).
 	export let darkMode = false;
 	let canvas: HTMLCanvasElement;
 	let chart: Chart<'line', number[], string> | null = null;
-	let methodOpen = false;
 
 	// Explanatory diagram: show the leading SPOs around the 51% crossing rather than
 	// the full long tail, so the crossing is readable (like the reference design).
-	$: visibleCount = Math.min(series.length, Math.max(41, minSPOsFor51 + 8));
+	$: visibleCount = Math.min(series.length, Math.max(41, (minSPOsFor51 ?? 0) + 8));
 	$: visible = series.slice(0, visibleCount);
 
 	function cssVar(name: string) {
@@ -44,6 +43,7 @@
 	const marker: Plugin<'line'> = {
 		id: 'marker51',
 		afterDatasetsDraw(c) {
+			if (minSPOsFor51 === null) return;
 			const meta = c.getDatasetMeta(0);
 			const point = meta.data[minSPOsFor51 - 1];
 			if (!point) return;
@@ -100,14 +100,14 @@
 			ctx.textAlign = 'center';
 			ctx.fillStyle = accent;
 			ctx.font = '700 17px Inter, system-ui, sans-serif';
-			ctx.fillText(`${minSPOsFor51} SPOs`, bx + w / 2, by + 17);
+			ctx.fillText(`${minSPOsFor51} groups`, bx + w / 2, by + 17);
 			ctx.fillStyle = muted;
 			ctx.font = '400 12px Inter, system-ui, sans-serif';
 			ctx.fillText('reach 51%', bx + w / 2, by + 33);
 
 			// marker dot at the crossing
 			ctx.beginPath();
-			ctx.arc(xN, y51, 5.5, 0, Math.PI * 2);
+			ctx.arc(xN, point.y, 5.5, 0, Math.PI * 2);
 			ctx.fillStyle = accent;
 			ctx.fill();
 			ctx.lineWidth = 2.5;
@@ -118,13 +118,16 @@
 	};
 
 	function applyThemeColors() {
-		if (!chart) return;
+		const instance = chart;
+		if (!instance) return;
+		instance.data.labels = visible.map(p => String(p.rank));
+		instance.data.datasets[0].data = visible.map(p => p.cumulativePercent);
 		const accent = cssVar('--accent');
 		const muted = cssVar('--text-muted');
-		chart.data.datasets[0].borderColor = accent;
-		chart.data.datasets[0].backgroundColor = hexToRgba(accent, darkMode ? 0.18 : 0.1);
-		const yScale = chart.options.scales?.y;
-		const xScale = chart.options.scales?.x;
+		instance.data.datasets[0].borderColor = accent;
+		instance.data.datasets[0].backgroundColor = hexToRgba(accent, darkMode ? 0.18 : 0.1);
+		const yScale = instance.options.scales?.y;
+		const xScale = instance.options.scales?.x;
 		if (yScale) {
 			if (yScale.ticks) yScale.ticks.color = muted;
 			if (yScale.grid) yScale.grid.color = cssVar('--border');
@@ -133,7 +136,7 @@
 			if (xScale.ticks) xScale.ticks.color = muted;
 			if (xScale.title) xScale.title.color = muted;
 		}
-		chart.update();
+		instance.update();
 	}
 
 	onMount(() => {
@@ -153,7 +156,7 @@
 						borderWidth: 2,
 						pointRadius: 0,
 						pointHoverRadius: 4,
-						tension: 0.25,
+						tension: 0,
 						fill: 'origin'
 					}
 				]
@@ -170,14 +173,14 @@
 						grid: { color: cssVar('--border') }
 					},
 					x: {
-						title: { display: true, text: 'Number of SPOs', color: cssVar('--text-muted') },
+						title: { display: true, text: 'Identified operator groups', color: cssVar('--text-muted') },
 						ticks: { color: cssVar('--text-muted'), maxTicksLimit: 9 },
 						grid: { display: false }
 					}
 				},
 				plugins: {
 					legend: { display: false },
-					tooltip: { callbacks: { label: (c) => `${(c.raw as number).toFixed(1)}% after ${c.label} SPOs` } }
+					tooltip: { callbacks: { label: (c) => `${(c.raw as number).toFixed(1)}% after ${c.label} groups` } }
 				}
 			},
 			plugins: [marker]
@@ -185,52 +188,39 @@
 	});
 	onDestroy(() => chart?.destroy());
 
-	// Re-read token colors after the theme class flips on <body>.
+	// Use a local Chart reference in the update function: mutating the Svelte
+	// binding itself would schedule this effect again after tick().
 	$: if (chart) {
 		darkMode;
-		applyThemeColors();
+		visible;
+		void tick().then(applyThemeColors);
 	}
+
 </script>
 
 <div class="conc card-surface">
 	<div class="conc-grid">
 		<div class="explain">
-			<h3>
-				Minimum SPOs controlling 51% of delegated stake
-				<TooltipIcon message="Smallest number of SPOs whose combined delegated stake reaches or exceeds 51%. It does not imply these SPOs collaborate." />
-			</h3>
-			<p>
-				This shows the smallest number of SPOs whose combined delegated stake reaches or exceeds 51%.
-				It does not imply these SPOs are collaborating.
-			</p>
-			<div class="big"><span>{minSPOsFor51}</span> SPOs reach 51%</div>
-		</div>
+      <h3>Identified operator groups reaching 51%</h3>
+      <p>Known groups cover {knownStakePercent?.toFixed(1) ?? 'an unknown share'}% of reported delegated stake. This estimate uses those groups only and does not imply coordination.</p>
+      <div class="big"><span>{minSPOsFor51 ?? 'N/A'}</span> {minSPOsFor51 === null ? '— identified groups cannot reach 51%' : 'groups reach 51%'}</div>
+    </div>
 		<div class="chartside">
 			<div class="legend"><span class="legend-mark"></span> Cumulative Delegated Stake</div>
-			<div class="chartwrap"><canvas bind:this={canvas}></canvas></div>
+			<div class="chartwrap"><canvas bind:this={canvas} aria-label={`Cumulative delegated stake of identified operator groups. ${minSPOsFor51 === null ? "Identified groups cannot reach 51%." : `${minSPOsFor51} groups reach 51%.`} Full values are in the data table below.`}></canvas></div>
 		</div>
 	</div>
-	<button class="method" on:click={() => (methodOpen = !methodOpen)}>{methodOpen ? '▾' : '▸'} Methodology</button>
-	{#if methodOpen}
-		<div class="method-body">
-			<p>
-				Stake pool operators are ranked by delegated stake, largest first. The line adds them up
-				until the running total reaches 51% of all delegated stake; that count is the figure shown.
-			</p>
-			<p>
-				Why delegated stake and not total ADA? On Cardano only delegated stake takes part in block
-				production, so undelegated ADA, treasury and reserves do not count. About 56% of all ADA is
-				currently delegated, so 51% of delegated stake is roughly 29% of the total supply.
-			</p>
-			<p>
-				Single pool operators are combined into one SINGLEPOOL group and placed last, since
-				thousands of independent small operators are not a realistic coordinating bloc.
-			</p>
-		</div>
-	{/if}
+  <details class="method-body">
+    <summary>Methodology and full chart data</summary>
+    <p>Groups are ordered by stake, largest first. SINGLEPOOL is included in the denominator but excluded from the ranking: it combines many independent operators. The figure is not an exact minimum across every operator. The chart displays the leading {visibleCount} groups; the table includes all identified groups.</p>
+    <table><caption>Cumulative share of all reported delegated stake</caption><thead><tr><th scope="col">Identified groups</th><th scope="col">Cumulative stake</th></tr></thead><tbody>{#each series as point}<tr><th scope="row">{point.rank}</th><td>{point.cumulativePercent.toFixed(2)}%</td></tr>{/each}</tbody></table>
+  </details>
 </div>
 
 <style>
+  summary { cursor: pointer; padding-top: 12px; }
+  table { border-collapse: collapse; margin-top: 12px; }
+  th, td { text-align: left; padding: 6px 16px 6px 0; }
 	.conc {
 		max-width: var(--maxw);
 		margin: 0 auto;
@@ -263,16 +253,6 @@
 		font-size: 2rem;
 		font-weight: 700;
 		color: var(--accent);
-	}
-	.method {
-		margin-top: 14px;
-		padding: 0;
-		background: none;
-		border: none;
-		color: var(--accent);
-		cursor: pointer;
-		font: inherit;
-		font-size: 0.85rem;
 	}
 	.method-body {
 		margin-top: 8px;

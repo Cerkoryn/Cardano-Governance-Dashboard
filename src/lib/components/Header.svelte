@@ -5,13 +5,13 @@
 	import { SITE_NAME, SITE_TAGLINE } from '$lib/constants/display';
 	export let darkMode: boolean;
 	export let toggleTheme: () => void;
-	const HELP = 'These charts show the smallest number of entities that could collectively meet or exceed the required threshold for each Cardano governance action (a Minimum Attack Vector / Nakamoto-style metric).';
+	const HELP = 'These charts show the estimated voting positions needed to meet each action’s threshold under the stated assumptions. Roles can overlap; operator grouping is incomplete.';
 </script>
 
 <header class="header">
 	<div class="brand">
 		<Logo size={38} {darkMode} />
-		<span class="name">{SITE_NAME}</span>
+		<h1 class="name">{SITE_NAME}</h1>
 		<span class="divider" aria-hidden="true"></span>
 		<p class="tagline">{SITE_TAGLINE}</p>
 	</div>
@@ -37,8 +37,8 @@
 		gap: var(--gap); flex-wrap: wrap;
 		max-width: var(--maxw); margin: 0 auto; padding: 20px 24px;
 	}
-	.brand { display: flex; align-items: center; gap: 14px; }
-	.name { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; color: var(--accent-strong); }
+	.brand { flex-wrap: wrap; display: flex; align-items: center; gap: 14px; }
+	.name { margin: 0; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; color: var(--accent-strong); }
 	.divider { width: 1px; align-self: stretch; min-height: 34px; background: var(--border); }
 	.tagline { margin: 0; font-size: 0.85rem; line-height: 1.3; color: var(--text-muted); max-width: 240px; }
 	.controls { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }

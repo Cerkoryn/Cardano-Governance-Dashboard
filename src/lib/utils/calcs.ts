@@ -1,290 +1,93 @@
-import type { Proposal, Pool, dRep, FetchDataResult, ProposalCategory } from '$lib/types/types';
-import { proposalTypes, ccNames } from '$lib/constants/constants';
-import { proposalCategoryByTitle, categoryOrder } from '$lib/constants/display';
+import type { Dashboard, Pool, Proposal, Ratio, VoteEstimate } from '$lib/types/types';
+import { actions, categoryOrder } from '$lib/constants/display';
 
-export async function fetchData(): Promise<FetchDataResult & { totalData: { total_spos: number; total_pools: number; circulating_ada: number, total_dreps: number } }> {
-    const [spoData, drepData, spoTotal, drepTotal] = await Promise.all([
-      fetch('/api/get_spos')
-        .then((res) => res.json())
-        .then((data) => data.value),
-      fetch('/api/get_dreps')
-        .then((res) => res.json())
-        .then((data) => data.value),
-      fetch('/api/get_spo_totals')
-        .then((res) => res.json())
-        .then((data) => data.value),
-      fetch('/api/get_drep_totals')
-        .then((res) => res.json())
-        .then((data) => data.value),
-    ]);
-  
-    const totalData = {
-      total_spos: spoTotal.total_spos,
-      total_pools: spoTotal.total_pools,
-      circulating_ada: Math.round(spoTotal.circulating_ada),
-      total_dreps: drepTotal.total_dreps,
-    };
-  
-    return { spoData, drepData, totalData };
+export const STALE_AFTER_MS = 36 * 60 * 60 * 1000;
+const PSEUDO = new Set(['drep_always_abstain', 'drep_always_no_confidence']);
+const HALF_PLUS = { numerator: 51, denominator: 100 };
+const sum = (values: bigint[]) => values.reduce((a, b) => a + b, 0n);
+const descending = (a: bigint, b: bigint) => a > b ? -1 : a < b ? 1 : 0;
+
+/** Candidates are discretionary voters; automatic Yes power never adds an actor. */
+export function minimumCoalition(candidates: bigint[], denominator: bigint, threshold: Ratio, automaticYes = 0n): number | null {
+  if (threshold.numerator === 0) return 0;
+  if (denominator <= 0n) return null;
+  const required = (denominator * BigInt(threshold.numerator) + BigInt(threshold.denominator) - 1n) / BigInt(threshold.denominator);
+  let power = automaticYes;
+  if (power >= required) return 0;
+  let count = 0;
+  for (const amount of [...candidates].filter(v => v > 0n).sort(descending)) {
+    power += amount;
+    count++;
+    if (power >= required) return count;
   }
-
-export function calculateSPOMAV(values: { label: string; stake: number }[], threshold: number) {
-    const totalStake = values.reduce((acc, value) => acc + value.stake, 0);
-    const thresholdValue = (threshold / 100) * totalStake;
-    let sum = 0;
-    let count = 0;
-    for (let value of values) {
-        sum += value.stake;
-        count++;
-        if (sum >= thresholdValue) break;
-    }
-    return count;
+  return null;
 }
 
-export function calculatedRepMAV(values: { label: string; active_power: number }[], threshold: number) {
-    const totalStake = values.reduce((acc, value) => acc + value.active_power, 0); 
-    const thresholdValue = (threshold / 100) * totalStake;
-    let sum = 0;
-    let count = 0;
-    for (let value of values) {
-        sum += value.active_power;
-        count++;
-        if (sum >= thresholdValue) break;
-    }
-    return count;
+export function percent(part: bigint, total: bigint): number | null {
+  return total > 0n ? Number(part * 1_000_000n / total) / 10_000 : null;
 }
-
-export function calculateCombinedMAV(drepValues: { label: string; stake: number }[], spoValues: { label: string; stake: number }[], drepThreshold: number, spoThreshold: number, greyStatus: { CC: boolean; dRep: boolean; SPO: boolean }) {
-    const drepMAV = calculatedRepMAV(drepValues.map(({ label, stake }) => ({ label, active_power: stake })), drepThreshold);
-    const spoMAV = calculateSPOMAV(spoValues, spoThreshold);
-    const ccMAV = 5
-    const ccLength = 7;
-    const totalMAV = (greyStatus.dRep ? 0 : drepMAV) + (greyStatus.SPO ? 0 : spoMAV) + (greyStatus.CC ? 0 : ccMAV);
-    let totalValues: { label: string; stake: number }[] = [];
-
-    if (!greyStatus.CC) {
-        const ccValues = Array.from({ length: ccLength }, () => ({ label: 'Any CC Member', stake: 1 }));
-        ccValues.forEach((value, index) => {
-            if (index < ccMAV) {
-                totalValues.push(value);
-            }
-        });
-    }
-
-    if (!greyStatus.dRep) {
-        drepValues.forEach((value, index) => {
-            if (index < drepMAV) {
-                totalValues.push({ label: value.label, stake: 1 });
-            }
-        });
-    }
-
-    if (!greyStatus.SPO) {
-        spoValues.forEach((value, index) => {
-            if (index < spoMAV) {
-                totalValues.push({ label: value.label, stake: 1 });
-            }
-        });
-    }
-
-    totalValues.push({ label: 'Other', stake: totalMAV });
-
-    return { totalMAV, totalValues };
+export function thresholdPercent(ratio: Ratio | null): number { return ratio ? 100 * ratio.numerator / ratio.denominator : 0; }
+export function thresholdLabel(ratio: Ratio | null): string {
+  return ratio ? `${thresholdPercent(ratio).toLocaleString(undefined, { maximumFractionDigits: 2 })}%` : 'Not required';
 }
-
-export function calculateProposals(spoData: Pool[], drepData: dRep[], circulatingADA: number, includeInactive: boolean): Proposal[] {
-    const abstainDrep = drepData.find(drep => drep.drep_id === 'drep_always_abstain');
-    const filteredDrepData = includeInactive ? drepData.slice() : drepData.filter(drep => drep.is_active);
-    spoData.sort((a, b) => b.stake - a.stake);
-    filteredDrepData.sort((a, b) => b.active_power - a.active_power);
-
-    // Move the item with label === "SINGLEPOOL" to the end
-    const singlePoolIndex = spoData.findIndex(pool => pool.label === "SINGLEPOOL");
-    if (singlePoolIndex !== -1) {
-        const [singlePool] = spoData.splice(singlePoolIndex, 1);
-        spoData.push(singlePool);
-    }
-
-    // Move the item with label === "drep_always_no_confidence" to the end
-    const noConfidenceIndex = filteredDrepData.findIndex(drep => drep.drep_id === "drep_always_no_confidence");
-    if (noConfidenceIndex !== -1) {
-        const [noConfidenceDrep] = filteredDrepData.splice(noConfidenceIndex, 1);
-        filteredDrepData.push(noConfidenceDrep);
-    }
-
-    // Move the item with label === "drep_always_abstain" to the end
-    const abstainIndex = filteredDrepData.findIndex(drep => drep.drep_id === "drep_always_abstain");
-    if (abstainIndex !== -1) {
-        filteredDrepData.splice(abstainIndex, 1);
-        //filteredDrepData.push(abstainDrep);                               // If we ever need to add this back this is where it would go.
-    }
-
-    proposalTypes.forEach(proposal => {
-        if (proposal.title === '% of Circulating ADA Delegated to dReps') {
-            const delegatedLovelace = filteredDrepData.reduce((acc, drep) => acc + drep.active_power, 0) + (abstainDrep ? abstainDrep.active_power : 0);
-            let totalVotingPowerDelegated = delegatedLovelace / 1_000_000;
-            let delegatedPercent = (totalVotingPowerDelegated / circulatingADA) * 100;
-            let undelegatedPercent = 100 - delegatedPercent;
-            proposal.charts[0].values = [
-                { label: 'Delegated Voting Power', active_power: delegatedPercent } as dRep,
-                { label: 'Undelegated Voting Power', active_power: undelegatedPercent } as dRep
-            ];
-            proposal.charts[0].displayValue = `${delegatedPercent.toFixed(1)}%`;
-        } else if (proposal.title === '% of Circulating ADA Delegated to Stake Pools') {
-            let totalStakeDelegated = spoData.reduce((acc, pool) => acc + pool.stake, 0);
-            let delegatedPercent = (totalStakeDelegated / circulatingADA) * 100;
-            let undelegatedPercent = 100 - delegatedPercent;
-            proposal.charts[0].values = [
-                { label: 'Delegated Stake', stake: delegatedPercent } as Pool,
-                { label: 'Undelegated Stake', stake: undelegatedPercent } as Pool
-            ];
-            proposal.charts[0].displayValue = `${delegatedPercent.toFixed(1)}%`;
-        } else {
-            let totalMav = 0, spoThreshold = 0, drepThreshold = 0;
-            let grayStatus = { CC: false, dRep: false, SPO: false };
-            proposal.charts.forEach(chart => {
-                if (chart.chartType === 'gray') {
-                    chart.values = [{ label: 'N/A', stake: 100 }];
-                    chart.displayValue = 'N/A';
-                    if (chart.title === 'CC') {
-                        grayStatus.CC = true;
-                    } else if (chart.title === 'dReps') {
-                        grayStatus.dRep = true;
-                    } else if (chart.title === 'SPOs') {
-                        grayStatus.SPO = true;
-                    }
-                } else if (chart.title === 'CC') {
-                    chart.values = ccNames;
-                    chart.displayValue = '5';
-                    totalMav += 5;
-                } else if (chart.title === 'dReps') {
-                    chart.values = filteredDrepData.map(dRep => ({
-                        label: dRep.given_name ? dRep.given_name : dRep.drep_id,
-                        active_power: dRep.active_power,
-                        is_active: dRep.is_active,
-                    })) as dRep[];
-                    chart.minPools = calculatedRepMAV(chart.values, chart.threshold);
-                    chart.displayValue = chart.minPools.toString();
-                    totalMav += chart.minPools;
-                    drepThreshold = chart.threshold
-                } else if (chart.title === 'SPOs') {
-                    chart.values = spoData.map(pool => ({
-                        label: pool.label,
-                        stake: pool.stake,
-                        // is_active: pool.is_active, // uncomment this later to be able to toggle retired SPOs.
-                    }));
-                    chart.minPools = calculateSPOMAV(chart.values, chart.threshold);
-                    chart.displayValue = chart.minPools.toString();
-                    totalMav += chart.minPools;
-                    spoThreshold = chart.threshold
-                }
-            });
-            // Calculate the Total chart after all other charts have been processed
-            proposal.charts.forEach(chart => {
-                if (chart.title === 'Total') {
-                    const { totalMAV, totalValues } = calculateCombinedMAV(filteredDrepData.map(dRep => ({ label: dRep.drep_id, stake: dRep.active_power})), spoData.map(pool => ({ label: pool.label, stake: pool.stake})), drepThreshold, spoThreshold, grayStatus);
-                    const spoMAV = calculateSPOMAV(spoData.map(pool => ({ label: pool.label, stake: pool.stake})), 51)
-                    chart.minPools = totalMAV;
-                    chart.values = totalValues;
-
-                    if (proposal.title === 'Fewest # Needed to Change a Network, Economic, or Technical Parameter' || proposal.title === 'Fewest # Needed to Change a Governance Parameter') {
-                        chart.secondaryDisplayValue = totalMav.toString();
-                        chart.displayValue = (totalMav - spoMAV).toString();
-                        chart.secondaryMinPools = totalMAV - spoMAV;
-                    } else {
-                        chart.displayValue = totalMav.toString();
-                    }
-                }
-            });
-        }
-    });
-
-    return proposalTypes;
+export function isStale(updatedAt: string, now = Date.now()): boolean {
+  const updated = Date.parse(updatedAt);
+  return !Number.isFinite(updated) || updated > now + 300_000 || now - updated > STALE_AFTER_MS;
 }
-
-const PSEUDO_DREPS = ['drep_always_abstain', 'drep_always_no_confidence'];
-
-// Pools ordered the way the dashboard ranks them: stake desc, SINGLEPOOL last.
-export function orderedSpoData(spoData: Pool[]): Pool[] {
-	const sorted = [...spoData].sort((a, b) => b.stake - a.stake);
-	const i = sorted.findIndex((p) => p.label === 'SINGLEPOOL');
-	if (i !== -1) {
-		const [sp] = sorted.splice(i, 1);
-		sorted.push(sp);
-	}
-	return sorted;
+export function orderedSpoData(rows: Pool[]): Pool[] {
+  return rows.filter(p => !p.is_aggregate).sort((a, b) => descending(BigInt(a.stake_lovelace), BigInt(b.stake_lovelace)) || a.label.localeCompare(b.label));
 }
-
-export type KeyIndicators = {
-	drepDelegatedPercent: number;
-	poolDelegatedPercent: number;
-	minSPOsFor51: number;
-	activeDReps: number;
-};
-
-export function calculateKeyIndicators(
-	spoData: Pool[],
-	drepData: dRep[],
-	circulatingADA: number,
-	includeInactive: boolean
-): KeyIndicators {
-	const abstain = drepData.find((d) => d.drep_id === 'drep_always_abstain');
-	const base = includeInactive ? drepData.slice() : drepData.filter((d) => d.is_active);
-	// abstain power is added separately (mirrors calculateProposals), so exclude it from the set
-	const filtered = base.filter((d) => d.drep_id !== 'drep_always_abstain');
-
-	const delegatedLovelace =
-		filtered.reduce((acc, d) => acc + d.active_power, 0) + (abstain ? abstain.active_power : 0);
-	const drepDelegatedPercent = (delegatedLovelace / 1_000_000 / circulatingADA) * 100;
-
-	const poolStake = spoData.reduce((acc, p) => acc + p.stake, 0);
-	const poolDelegatedPercent = (poolStake / circulatingADA) * 100;
-
-	const minSPOsFor51 = calculateSPOMAV(
-		orderedSpoData(spoData).map((p) => ({ label: p.label, stake: p.stake })),
-		51
-	);
-
-	const activeDReps = filtered.filter((d) => !PSEUDO_DREPS.includes(d.drep_id)).length;
-
-	return { drepDelegatedPercent, poolDelegatedPercent, minSPOsFor51, activeDReps };
-}
-
 export type CumulativePoint = { rank: number; cumulativePercent: number };
-
-export function cumulativeStakeSeries(spoData: Pool[]): {
-	series: CumulativePoint[];
-	minSPOsFor51: number;
-} {
-	const ordered = orderedSpoData(spoData);
-	const total = ordered.reduce((acc, p) => acc + p.stake, 0);
-	const series: CumulativePoint[] = [];
-	let cum = 0;
-	let minSPOsFor51 = ordered.length;
-	let reached = false;
-	ordered.forEach((p, idx) => {
-		cum += p.stake;
-		const pct = total > 0 ? (cum / total) * 100 : 0;
-		series.push({ rank: idx + 1, cumulativePercent: pct });
-		if (!reached && pct >= 51) {
-			minSPOsFor51 = idx + 1;
-			reached = true;
-		}
-	});
-	return { series, minSPOsFor51 };
+export function cumulativeStakeSeries(rows: Pool[]) {
+  const total = sum(rows.map(p => BigInt(p.stake_lovelace)));
+  let accumulated = 0n;
+  const known = orderedSpoData(rows);
+  return {
+    series: known.map((p, i): CumulativePoint => {
+      accumulated += BigInt(p.stake_lovelace);
+      return { rank: i + 1, cumulativePercent: percent(accumulated, total) ?? 0 };
+    }),
+    minSPOsFor51: minimumCoalition(known.map(p => BigInt(p.stake_lovelace)), total, HALF_PLUS),
+    knownStakePercent: percent(sum(known.map(p => BigInt(p.stake_lovelace))), total)
+  };
 }
-
-export type ProposalGroup = { category: ProposalCategory; proposals: Proposal[] };
-
-export function groupThresholdProposals(proposals: Proposal[]): ProposalGroup[] {
-	const byCat = new Map<ProposalCategory, Proposal[]>();
-	for (const p of proposals) {
-		const cat = proposalCategoryByTitle[p.title];
-		if (!cat) continue; // skip delegation / 51% proposals
-		if (!byCat.has(cat)) byCat.set(cat, []);
-		byCat.get(cat)!.push(p);
-	}
-	return categoryOrder
-		.filter((c) => byCat.has(c))
-		.map((c) => ({ category: c, proposals: byCat.get(c)! }));
+export function calculateKeyIndicators(data: Dashboard) {
+  const supply = BigInt(data.spo.totals.circulating_lovelace);
+  return {
+    drepDelegatedPercent: percent(sum(data.governance.rows.map(d => BigInt(d.voting_power_lovelace))), supply),
+    poolDelegatedPercent: percent(sum(data.spo.rows.map(p => BigInt(p.stake_lovelace))), supply),
+    minSPOsFor51: cumulativeStakeSeries(data.spo.rows).minSPOsFor51,
+    activeDReps: data.governance.rows.filter(d => d.is_active && !PSEUDO.has(d.drep_id)).length
+  };
+}
+const notRequired = (): VoteEstimate => ({ count: 0, threshold: null, required: false });
+function totalVotes(votes: VoteEstimate[]): number | null {
+  return votes.some(v => v.required && v.count === null) ? null : votes.reduce((n, v) => n + (v.required ? v.count ?? 0 : 0), 0);
+}
+export function calculateProposals(data: Dashboard, includeInactive: boolean): Proposal[] {
+  const dreps = data.governance.rows.filter(d => !PSEUDO.has(d.drep_id) && (d.is_active || includeInactive));
+  const powers = dreps.map(d => BigInt(d.voting_power_lovelace));
+  const noConfidence = BigInt(data.governance.rows.find(d => d.drep_id === 'drep_always_no_confidence')?.voting_power_lovelace ?? '0');
+  const denominator = sum(powers) + noConfidence;
+  const spoPower = orderedSpoData(data.spo.rows).map(p => BigInt(p.stake_lovelace));
+  const totalStake = sum(data.spo.rows.map(p => BigInt(p.stake_lovelace)));
+  const committee = data.governance.committee;
+  return actions.map(action => {
+    const thresholds = data.governance.thresholds[action.id];
+    const drep: VoteEstimate = { required: true, threshold: thresholds.drep,
+      count: minimumCoalition(powers, denominator, thresholds.drep, action.id === 'no_confidence' ? noConfidence : 0n),
+      reason: 'Available dRep voting power cannot meet this threshold.' };
+    const spo: VoteEstimate = thresholds.spo ? { required: true, threshold: thresholds.spo,
+      count: minimumCoalition(spoPower, totalStake, thresholds.spo),
+      reason: 'Unavailable from identified operator groups.' } : notRequired();
+    const cc: VoteEstimate = action.cc ? { required: true, threshold: committee.quorum,
+      count: committee.eligible_members < committee.minimum_size ? null : Math.ceil(committee.eligible_members * committee.quorum.numerator / committee.quorum.denominator),
+      reason: 'Committee has fewer eligible members than the protocol minimum.' } : notRequired();
+    return { ...action, securityConditional: !!action.securityConditional, drep, spo, cc,
+      total: totalVotes(action.securityConditional ? [drep, cc] : [drep, spo, cc]),
+      securityTotal: action.securityConditional ? totalVotes([drep, spo, cc]) : null };
+  });
+}
+export function groupThresholdProposals(proposals: Proposal[]) {
+  return categoryOrder.map(category => ({ category, proposals: proposals.filter(p => p.category === category) })).filter(g => g.proposals.length);
 }

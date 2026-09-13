@@ -1,55 +1,16 @@
-import type { ProposalCategory } from '$lib/types/types';
-
+import type { ActionId, ProposalCategory } from '$lib/types/types';
 export const SITE_NAME = 'ChangWatch';
 export const SITE_TAGLINE = 'Cardano governance concentration and voting-threshold dashboard';
-
-// Map canonical proposal.title (logic key, never edited) -> display metadata.
-export const proposalDisplay: Record<string, { title: string; description: string }> = {
-	'Fewest # Needed to Pass a Vote of No Confidence in Constitutional Committee': {
-		title: 'No confidence in Constitutional Committee',
-		description: 'Smallest voter coalition that could pass a no-confidence motion.'
-	},
-	'Fewest # Needed to Elect a New Constitutional Committee while in a Normal State': {
-		title: 'Elect a new Constitutional Committee (normal state)',
-		description: 'Smallest coalition to elect a new committee under normal conditions.'
-	},
-	'Fewest # Needed to Elect a New Constitutional Committee while in a State of No Confidence': {
-		title: 'Elect a new Constitutional Committee (no-confidence state)',
-		description: 'Smallest coalition to elect a new committee while in a state of no confidence.'
-	},
-	'Fewest # Needed to Update the Cardano Constitution': {
-		title: 'Update the Constitution',
-		description: 'Smallest coalition to amend the Cardano constitution.'
-	},
-	'Fewest # Needed to Initiate a Hard Fork': {
-		title: 'Initiate a hard fork',
-		description: 'Smallest coalition to trigger a hard-fork combinator event.'
-	},
-	'Fewest # Needed to Withdraw from the Cardano Treasury': {
-		title: 'Treasury withdrawal',
-		description: 'Smallest coalition to approve a treasury withdrawal.'
-	},
-	'Fewest # Needed to Change a Network, Economic, or Technical Parameter': {
-		title: 'Change a network, economic or technical parameter',
-		description: 'Smallest coalition to change a protocol parameter. SPOs only vote when it is a security parameter.'
-	},
-	'Fewest # Needed to Change a Governance Parameter': {
-		title: 'Change a governance parameter',
-		description: 'Smallest coalition to change a governance parameter. SPOs only vote when it is a security parameter.'
-	}
-};
-
-export const proposalCategoryByTitle: Record<string, ProposalCategory> = {
-	'Fewest # Needed to Pass a Vote of No Confidence in Constitutional Committee': 'Constitutional Committee',
-	'Fewest # Needed to Elect a New Constitutional Committee while in a Normal State': 'Constitutional Committee',
-	'Fewest # Needed to Elect a New Constitutional Committee while in a State of No Confidence': 'Constitutional Committee',
-	'Fewest # Needed to Update the Cardano Constitution': 'Constitution',
-	'Fewest # Needed to Initiate a Hard Fork': 'Hard Fork',
-	'Fewest # Needed to Withdraw from the Cardano Treasury': 'Treasury',
-	'Fewest # Needed to Change a Network, Economic, or Technical Parameter': 'Protocol Parameters',
-	'Fewest # Needed to Change a Governance Parameter': 'Protocol Parameters'
-};
-
-export const categoryOrder: ProposalCategory[] = [
-	'Constitutional Committee', 'Constitution', 'Protocol Parameters', 'Hard Fork', 'Treasury'
+export const categoryOrder: ProposalCategory[] = ['Constitutional Committee', 'Constitution', 'Protocol Parameters', 'Hard Fork', 'Treasury'];
+export const actions: { id: ActionId; title: string; category: ProposalCategory; description: string; cc: boolean; securityConditional?: boolean }[] = [
+  { id: 'no_confidence', title: 'No confidence in Constitutional Committee', category: 'Constitutional Committee', description: 'Automatic no-confidence stake contributes Yes without adding a voter to the coalition.', cc: false },
+  { id: 'committee_normal', title: 'Elect a committee (normal state)', category: 'Constitutional Committee', description: 'Committee update under normal conditions.', cc: false },
+  { id: 'committee_no_confidence', title: 'Elect a committee (no-confidence state)', category: 'Constitutional Committee', description: 'Committee update following a no-confidence motion.', cc: false },
+  { id: 'constitution', title: 'Update the Constitution', category: 'Constitution', description: 'Constitution or guardrails-script update.', cc: true },
+  { id: 'network', title: 'Change a network parameter', category: 'Protocol Parameters', description: 'SPO approval is required only for security-relevant changes.', cc: true, securityConditional: true },
+  { id: 'economic', title: 'Change an economic parameter', category: 'Protocol Parameters', description: 'SPO approval is required only for security-relevant changes.', cc: true, securityConditional: true },
+  { id: 'technical', title: 'Change a technical parameter', category: 'Protocol Parameters', description: 'SPO approval is required only for security-relevant changes.', cc: true, securityConditional: true },
+  { id: 'governance', title: 'Change a governance parameter', category: 'Protocol Parameters', description: 'SPO approval is required only for security-relevant changes.', cc: true, securityConditional: true },
+  { id: 'hard_fork', title: 'Initiate a hard fork', category: 'Hard Fork', description: 'Uses the current on-chain hard-fork voting thresholds.', cc: true },
+  { id: 'treasury', title: 'Treasury withdrawal', category: 'Treasury', description: 'Estimated approvals for a treasury withdrawal.', cc: true }
 ];

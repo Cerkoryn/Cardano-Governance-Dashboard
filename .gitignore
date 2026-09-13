@@ -32,3 +32,8 @@ __pycache__/
 # API test files
 test.py
 BACKUPupdate_dreps.py
+
+# Local validation artifacts
+/test-results/
+/playwright-report/
+/.venv/

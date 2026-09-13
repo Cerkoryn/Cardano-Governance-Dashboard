@@ -7,7 +7,6 @@ export default defineConfig({
 	},
 	test: {
 		environment: 'node',
-		include: ['src/**/*.{test,spec}.{js,ts}'],
-		passWithNoTests: true
+		include: ['src/**/*.{test,spec}.{js,ts}']
 	}
 });
