@@ -6,6 +6,8 @@ A Cardano governance dashboard built with SvelteKit, Chart.js, and Python functi
 
 Use Node 24 and Python 3.12 or later. `.npmrc` enforces the Node version. No private credentials are needed for the tests.
 
+For mise users, `mise.toml` selects Node 24 for this repository. Run `mise install` once. If your shell still selects a different global Node version, use `mise exec -- npm ci` or `mise exec -- npx vercel login` to explicitly use the project environment.
+
 ```sh
 npm ci
 python3 -m venv .venv
